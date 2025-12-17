@@ -1,1 +1,1 @@
-# BlueIsAtlantic.github.io
+# blueisatlantic studios
