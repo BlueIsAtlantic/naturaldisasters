@@ -93,6 +93,12 @@
         .simulator-card:nth-child(1) { animation-delay: 0.1s; }
         .simulator-card:nth-child(2) { animation-delay: 0.2s; }
         .simulator-card:nth-child(3) { animation-delay: 0.3s; }
+        .simulator-card:nth-child(4) { animation-delay: 0.4s; }
+        .simulator-card:nth-child(5) { animation-delay: 0.5s; }
+        .simulator-card:nth-child(6) { animation-delay: 0.6s; }
+        .simulator-card:nth-child(7) { animation-delay: 0.7s; }
+        .simulator-card:nth-child(8) { animation-delay: 0.8s; }
+        .simulator-card:nth-child(9) { animation-delay: 0.9s; }
 
         @keyframes fadeInUp {
             from {
@@ -141,6 +147,12 @@
         .tornado-card .icon-wrapper { animation-delay: 0s; }
         .earthquake-card .icon-wrapper { animation-delay: 0.5s; }
         .tsunami-card .icon-wrapper { animation-delay: 1s; }
+        .flood-card .icon-wrapper { animation-delay: 1.5s; }
+        .wildfire-card .icon-wrapper { animation-delay: 2s; }
+        .solarstorm-card .icon-wrapper { animation-delay: 2.5s; }
+        .meteor-card .icon-wrapper { animation-delay: 3s; }
+        .heatwave-card .icon-wrapper { animation-delay: 3.5s; }
+        .landslide-card .icon-wrapper { animation-delay: 4s; }
 
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
@@ -217,6 +229,30 @@
 
         .tsunami-card {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(41, 128, 185, 0.15) 100%);
+        }
+
+        .flood-card {
+            background: linear-gradient(135deg, rgba(30, 60, 114, 0.15) 0%, rgba(74, 144, 226, 0.15) 100%);
+        }
+
+        .wildfire-card {
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.15) 0%, rgba(211, 84, 0, 0.15) 100%);
+        }
+
+        .solarstorm-card {
+            background: linear-gradient(135deg, rgba(142, 68, 173, 0.15) 0%, rgba(155, 89, 182, 0.15) 100%);
+        }
+
+        .meteor-card {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.15) 0%, rgba(52, 73, 94, 0.15) 100%);
+        }
+
+        .heatwave-card {
+            background: linear-gradient(135deg, rgba(244, 107, 69, 0.15) 0%, rgba(238, 168, 73, 0.15) 100%);
+        }
+
+        .landslide-card {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.15) 0%, rgba(160, 82, 45, 0.15) 100%);
         }
 
         .footer {
@@ -324,6 +360,84 @@
                     <li>Coastal impact analysis</li>
                 </ul>
                 <a href="tsunami.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card flood-card" onclick="window.location.href='flood.html'">
+                <div class="icon-wrapper">💧</div>
+                <h2>Flood</h2>
+                <p>Simulate flooding scenarios from heavy rainfall and understand water level dynamics and evacuation needs.</p>
+                <ul class="features-list">
+                    <li>Rainfall intensity control</li>
+                    <li>Terrain and drainage factors</li>
+                    <li>Water level predictions</li>
+                    <li>Evacuation zone mapping</li>
+                </ul>
+                <a href="flood.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card wildfire-card" onclick="window.location.href='wildfire.html'">
+                <div class="icon-wrapper">🔥</div>
+                <h2>Wildfire</h2>
+                <p>Experience wildfire behavior based on weather, terrain, and fuel conditions. Understand fire intensity and spread.</p>
+                <ul class="features-list">
+                    <li>Fire intensity calculations</li>
+                    <li>Wind and humidity effects</li>
+                    <li>Spread rate predictions</li>
+                    <li>Evacuation planning</li>
+                </ul>
+                <a href="wildfire.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card solarstorm-card" onclick="window.location.href='solarstorm.html'">
+                <div class="icon-wrapper">☀️</div>
+                <h2>Solar Storm</h2>
+                <p>Explore geomagnetic storms and solar flares. Understand their effects on power grids, satellites, and technology.</p>
+                <ul class="features-list">
+                    <li>G-scale storm ratings</li>
+                    <li>CME and flare simulations</li>
+                    <li>Technology impact analysis</li>
+                    <li>Aurora visibility predictions</li>
+                </ul>
+                <a href="solarstorm.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card meteor-card" onclick="window.location.href='meteor.html'">
+                <div class="icon-wrapper">☄️</div>
+                <h2>Meteor Impact</h2>
+                <p>Simulate asteroid and meteor impacts. Calculate kinetic energy, crater size, and destruction radius.</p>
+                <ul class="features-list">
+                    <li>Impact energy calculations</li>
+                    <li>Crater diameter predictions</li>
+                    <li>Shockwave and thermal effects</li>
+                    <li>Threat level assessment</li>
+                </ul>
+                <a href="meteor.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card heatwave-card" onclick="window.location.href='heatwave.html'">
+                <div class="icon-wrapper">🌡️</div>
+                <h2>Heatwave</h2>
+                <p>Model extreme heat events with heat index calculations. Understand health risks and infrastructure stress.</p>
+                <ul class="features-list">
+                    <li>Heat index calculator</li>
+                    <li>Health risk assessments</li>
+                    <li>Power grid stress analysis</li>
+                    <li>Heat exhaustion timing</li>
+                </ul>
+                <a href="heatwave.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card landslide-card" onclick="window.location.href='landslide.html'">
+                <div class="icon-wrapper">⛰️</div>
+                <h2>Landslide</h2>
+                <p>Simulate mountain slope failures and debris flows. Analyze soil saturation, slope angle, and run-out distance.</p>
+                <ul class="features-list">
+                    <li>Slope stability analysis</li>
+                    <li>Debris flow velocity</li>
+                    <li>Run-out distance calculations</li>
+                    <li>Risk assessment</li>
+                </ul>
+                <a href="landslide.html" class="card-button">Launch Simulator</a>
             </div>
         </div>
 

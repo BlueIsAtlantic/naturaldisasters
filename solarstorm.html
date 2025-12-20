@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Storm Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .storm-display {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .storm-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .storm-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #9b59b6;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #8e44ad;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #9b59b6;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>☀️ Solar Storm Simulator</h1>
+        
+        <div class="storm-display" id="stormDisplay">
+            <h2 id="stormClass">G3 - Strong Storm</h2>
+            <p id="kpIndex">Kp Index: 7</p>
+            <p id="fluxLevel">X-ray Flux: M5.0</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Solar Storm Parameters</h3>
+            
+            <div class="control-group">
+                <label for="solarFlare">Solar Flare Class</label>
+                <input type="range" id="solarFlareSlider" min="1" max="10" value="5" step="1">
+                <div class="value-display">
+                    <span id="flareValue">M5.0</span>
+                    <span id="flareClass">Strong</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="cmeSpeed">CME Speed (km/s)</label>
+                <input type="range" id="cmeSpeedSlider" min="300" max="3000" value="1000" step="100">
+                <div class="value-display">
+                    <span id="cmeSpeedValue">1000 km/s</span>
+                    <span id="cmeSpeedMph">2.24M mph</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="protonFlux">Proton Flux (pfu)</label>
+                <input type="range" id="protonFluxSlider" min="1" max="100000" value="1000" step="100">
+                <div class="value-display">
+                    <span id="protonFluxValue">1,000 pfu</span>
+                    <span id="protonLevel">S2</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="kpIndex">Geomagnetic Kp Index</label>
+                <input type="range" id="kpIndexSlider" min="0" max="9" value="7" step="1">
+                <div class="value-display">
+                    <span id="kpIndexValue">Kp 7</span>
+                    <span id="geomagClass">G3 - Strong</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="duration">Storm Duration (hours)</label>
+                <input type="range" id="durationSlider" min="1" max="72" value="12" step="1">
+                <div class="value-display">
+                    <span id="durationValue">12 hours</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Effects</h3>
+                <p id="damageText">Power systems: voltage control problems. Spacecraft: surface charging, increased drag. GPS: intermittent navigation problems. Radio: HF propagation sporadic. Aurora visible at mid-latitudes.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Advisory</h3>
+                <p id="warningText">Power grid operators alerted. Satellite operators may need to take protective action. GPS accuracy may be degraded. Radio communications may be affected.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Arrival Time</h4>
+                <p id="arrivalTime">18 hours</p>
+            </div>
+            <div class="stat-card">
+                <h4>Radiation Dose</h4>
+                <p id="radiationDose">5 mSv</p>
+            </div>
+            <div class="stat-card">
+                <h4>Aurora Visibility</h4>
+                <p id="auroraVisibility">45° latitude</p>
+            </div>
+            <div class="stat-card">
+                <h4>Satellite Risk</h4>
+                <p id="satelliteRisk">Moderate</p>
+            </div>
+            <div class="stat-card">
+                <h4>Power Grid Impact</h4>
+                <p id="powerGridImpact">Alert</p>
+            </div>
+            <div class="stat-card">
+                <h4>HF Radio Blackout</h4>
+                <p id="radioBlackout">Partial</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stormCategories = [
+            { kp: 5, geo: 'G1', name: 'Minor', color: '#27ae60', effects: 'Weak power grid fluctuations. Minor spacecraft operations impact. Migratory animals affected. Aurora at high latitudes.' },
+            { kp: 6, geo: 'G2', name: 'Moderate', color: '#f39c12', effects: 'High-latitude power systems affected. Spacecraft: corrective actions by ground control. HF radio propagation fades. Aurora at mid-latitudes.' },
+            { kp: 7, geo: 'G3', name: 'Strong', color: '#e67e22', effects: 'Power systems: voltage control problems. Spacecraft: surface charging, increased drag. GPS: intermittent navigation problems. Radio: HF propagation sporadic. Aurora visible at mid-latitudes.' },
+            { kp: 8, geo: 'G4', name: 'Severe', color: '#d35400', effects: 'Power systems: widespread voltage control problems, protective systems trip. Spacecraft: surface charging, tracking problems. GPS: degraded navigation. Radio: HF propagation disrupted. Aurora at lower latitudes.' },
+            { kp: 9, geo: 'G5', name: 'Extreme', color: '#c0392b', effects: 'Power systems: widespread blackouts, transformer damage. Spacecraft: extensive surface charging, control problems. GPS: severely degraded. Radio: complete HF blackout. Aurora at equatorial latitudes.' }
+        ];
+
+        const solarFlareSlider = document.getElementById('solarFlareSlider');
+        const cmeSpeedSlider = document.getElementById('cmeSpeedSlider');
+        const protonFluxSlider = document.getElementById('protonFluxSlider');
+        const kpIndexSlider = document.getElementById('kpIndexSlider');
+        const durationSlider = document.getElementById('durationSlider');
+
+        function getStormCategory(kp) {
+            if (kp < 5) return { kp: kp, geo: 'G0', name: 'None', color: '#3498db', effects: 'No significant impacts. Normal space weather conditions.' };
+            for (let cat of stormCategories) {
+                if (kp === cat.kp) return cat;
+            }
+            return stormCategories[stormCategories.length - 1];
+        }
+
+        function getFlareClass(level) {
+            const classes = ['B1.0', 'B5.0', 'C1.0', 'C5.0', 'M1.0', 'M5.0', 'X1.0', 'X5.0', 'X10.0', 'X20.0'];
+            return classes[level - 1] || 'X20+';
+        }
+
+        function getFlareStrength(level) {
+            if (level <= 2) return 'Weak';
+            if (level <= 4) return 'Moderate';
+            if (level <= 6) return 'Strong';
+            if (level <= 8) return 'Very Strong';
+            return 'Extreme';
+        }
+
+        function getProtonLevel(flux) {
+            if (flux < 10) return 'S0 - None';
+            if (flux < 100) return 'S1 - Minor';
+            if (flux < 1000) return 'S2 - Moderate';
+            if (flux < 10000) return 'S3 - Strong';
+            if (flux < 100000) return 'S4 - Severe';
+            return 'S5 - Extreme';
+        }
+
+        function calculateArrivalTime(cmeSpeed) {
+            // Distance to Earth: ~150 million km
+            const distanceKm = 150000000;
+            const timeHours = distanceKm / cmeSpeed / 3600;
+            return Math.max(8, Math.round(timeHours));
+        }
+
+        function calculateRadiationDose(flareLevel, protonFlux) {
+            // Radiation dose for astronauts (mSv)
+            const flareDose = flareLevel * 0.5;
+            const protonDose = Math.log10(protonFlux) * 0.5;
+            return (flareDose + protonDose).toFixed(1);
+        }
+
+        function getAuroraLatitude(kp) {
+            // Approximate latitude where aurora is visible
+            const latitudes = [65, 62, 60, 58, 56, 53, 50, 46, 43, 40];
+            return latitudes[kp] || 65;
+        }
+
+        function getSatelliteRisk(kp, protonFlux) {
+            if (kp >= 8 || protonFlux > 10000) return 'High';
+            if (kp >= 6 || protonFlux > 1000) return 'Moderate';
+            if (kp >= 5 || protonFlux > 100) return 'Elevated';
+            return 'Low';
+        }
+
+        function getPowerGridImpact(kp) {
+            if (kp >= 9) return 'Emergency';
+            if (kp >= 8) return 'Critical';
+            if (kp >= 7) return 'Warning';
+            if (kp >= 6) return 'Alert';
+            if (kp >= 5) return 'Watch';
+            return 'Normal';
+        }
+
+        function getRadioBlackout(flareLevel) {
+            if (flareLevel >= 9) return 'Complete';
+            if (flareLevel >= 7) return 'Extensive';
+            if (flareLevel >= 5) return 'Moderate';
+            if (flareLevel >= 3) return 'Limited';
+            return 'Minor';
+        }
+
+        function getStormWarning(category, flareLevel, kp) {
+            if (kp < 5) {
+                return 'Normal space weather conditions. No special precautions needed.';
+            } else if (kp === 5) {
+                return 'Minor storm. Power grid operators alerted. Satellite operators monitor systems. Amateur radio may experience some interference.';
+            } else if (kp === 6) {
+                return 'Moderate storm. Power grid operators alerted. Satellite operators may need to take protective action. GPS accuracy may be degraded. Radio communications may be affected.';
+            } else if (kp === 7) {
+                return 'STRONG STORM. Power systems affected. Satellite operators take protective measures. GPS navigation problems likely. Radio communications disrupted. Aurora photographers alert!';
+            } else if (kp === 8) {
+                return 'SEVERE STORM! Power grid protection systems may trigger. Spacecraft experiencing problems. GPS severely degraded. HF radio communications disrupted. Widespread aurora visible.';
+            } else {
+                return 'EXTREME STORM - RARE EVENT! Power grid blackouts possible. Transformer damage risk. Spacecraft in serious danger. GPS and radio severely impacted. Take all protective measures. Historic aurora displays expected.';
+            }
+        }
+
+        function updateSimulator() {
+            const flareLevel = parseInt(solarFlareSlider.value);
+            const cmeSpeed = parseInt(cmeSpeedSlider.value);
+            const protonFlux = parseInt(protonFluxSlider.value);
+            const kp = parseInt(kpIndexSlider.value);
+            const duration = parseInt(durationSlider.value);
+            
+            const category = getStormCategory(kp);
+            const flareClass = getFlareClass(flareLevel);
+            const arrivalTime = calculateArrivalTime(cmeSpeed);
+            const radiationDose = calculateRadiationDose(flareLevel, protonFlux);
+            const auroraLat = getAuroraLatitude(kp);
+
+            // Update Display
+            document.getElementById('stormClass').textContent = `${category.geo} - ${category.name} Storm`;
+            document.getElementById('kpIndex').textContent = `Kp Index: ${kp}`;
+            document.getElementById('fluxLevel').textContent = `X-ray Flux: ${flareClass}`;
+            document.getElementById('stormDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('flareValue').textContent = flareClass;
+            document.getElementById('flareClass').textContent = getFlareStrength(flareLevel);
+            document.getElementById('cmeSpeedValue').textContent = `${cmeSpeed.toLocaleString()} km/s`;
+            document.getElementById('cmeSpeedMph').textContent = `${(cmeSpeed * 2237).toFixed(2)}M mph`;
+            document.getElementById('protonFluxValue').textContent = `${protonFlux.toLocaleString()} pfu`;
+            document.getElementById('protonLevel').textContent = getProtonLevel(protonFlux);
+            document.getElementById('kpIndexValue').textContent = `Kp ${kp}`;
+            document.getElementById('geomagClass').textContent = `${category.geo} - ${category.name}`;
+            document.getElementById('durationValue').textContent = `${duration} hours`;
+            
+            document.getElementById('damageText').textContent = category.effects;
+            document.getElementById('warningText').textContent = getStormWarning(category, flareLevel, kp);
+
+            // Update Stats
+            document.getElementById('arrivalTime').textContent = `${arrivalTime} hours`;
+            document.getElementById('radiationDose').textContent = `${radiationDose} mSv`;
+            document.getElementById('auroraVisibility').textContent = `${auroraLat}° latitude`;
+            document.getElementById('satelliteRisk').textContent = getSatelliteRisk(kp, protonFlux);
+            document.getElementById('powerGridImpact').textContent = getPowerGridImpact(kp);
+            document.getElementById('radioBlackout').textContent = getRadioBlackout(flareLevel);
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        solarFlareSlider.addEventListener('input', updateSimulator);
+        cmeSpeedSlider.addEventListener('input', updateSimulator);
+        protonFluxSlider.addEventListener('input', updateSimulator);
+        kpIndexSlider.addEventListener('input', updateSimulator);
+        durationSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildfire Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #FF8C00 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .fire-display {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .fire-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .fire-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #c0392b;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>🔥 Wildfire Simulator</h1>
+        
+        <div class="fire-display" id="fireDisplay">
+            <h2 id="fireIntensity">Intensity: 5,000 kW/m</h2>
+            <p id="fireCategory">Moderate Fire</p>
+            <p id="spreadRate">Spread Rate: 2.5 km/h</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Wildfire Parameters</h3>
+            
+            <div class="control-group">
+                <label for="temperature">Air Temperature (°C)</label>
+                <input type="range" id="temperatureSlider" min="15" max="50" value="30" step="1">
+                <div class="value-display">
+                    <span id="temperatureValue">30°C</span>
+                    <span id="temperatureFahr">86°F</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="windSpeed">Wind Speed (km/h)</label>
+                <input type="range" id="windSpeedSlider" min="0" max="100" value="20" step="5">
+                <div class="value-display">
+                    <span id="windSpeedValue">20 km/h</span>
+                    <span id="windSpeedMph">12 mph</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="humidity">Relative Humidity (%)</label>
+                <input type="range" id="humiditySlider" min="5" max="100" value="30" step="5">
+                <div class="value-display">
+                    <span id="humidityValue">30%</span>
+                    <span id="humidityLevel">Low</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="fuelMoisture">Fuel Moisture Content (%)</label>
+                <input type="range" id="fuelMoistureSlider" min="2" max="30" value="10" step="1">
+                <div class="value-display">
+                    <span id="fuelMoistureValue">10%</span>
+                    <span id="fuelCondition">Dry</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="slope">Terrain Slope (degrees)</label>
+                <input type="range" id="slopeSlider" min="0" max="45" value="15" step="5">
+                <div class="value-display">
+                    <span id="slopeValue">15°</span>
+                    <span id="slopeEffect">Moderate</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Fire Behavior</h3>
+                <p id="damageText">Active crown fire possible. Fire spreads rapidly. Spotting probable. Firefighting difficult. Structures at risk.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">Be prepared to evacuate. Monitor local fire updates. Have emergency supplies ready. Follow all evacuation orders immediately.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Flame Length</h4>
+                <p id="flameLength">5.0 m</p>
+            </div>
+            <div class="stat-card">
+                <h4>Burned Area (24h)</h4>
+                <p id="burnedArea">45 km²</p>
+            </div>
+            <div class="stat-card">
+                <h4>Containment Time</h4>
+                <p id="containmentTime">7 days</p>
+            </div>
+            <div class="stat-card">
+                <h4>Fire Line Intensity</h4>
+                <p id="fireLineIntensity">5,000 kW/m</p>
+            </div>
+            <div class="stat-card">
+                <h4>Spotting Distance</h4>
+                <p id="spottingDistance">1.5 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Evacuation Radius</h4>
+                <p id="evacuationRadius">5 km</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fireCategories = [
+            { min: 0, max: 100, category: 'Low Intensity', color: '#f39c12', behavior: 'Ground fire. Slow spread. Easy to control. Low flames. Minimal spotting.' },
+            { min: 100, max: 500, category: 'Low-Moderate', color: '#e67e22', behavior: 'Surface fire. Moderate spread. Controllable with effort. Short flames. Some spotting possible.' },
+            { min: 500, max: 2000, category: 'Moderate', color: '#d35400', behavior: 'Active surface fire. Fast spread. Difficult to control. Medium flames. Spotting likely.' },
+            { min: 2000, max: 4000, category: 'High', color: '#c0392b', behavior: 'Active crown fire possible. Fire spreads rapidly. Spotting probable. Firefighting difficult. Structures at risk.' },
+            { min: 4000, max: 10000, category: 'Very High', color: '#a93226', behavior: 'Active crown fire. Extreme spread rates. Heavy spotting. Firefighting very dangerous. Mass evacuations necessary.' },
+            { min: 10000, max: 100000, category: 'Extreme', color: '#8b0000', behavior: 'Explosive fire behavior. Firestorm conditions possible. Massive spotting. Suppression impossible. Total evacuation critical.' }
+        ];
+
+        const temperatureSlider = document.getElementById('temperatureSlider');
+        const windSpeedSlider = document.getElementById('windSpeedSlider');
+        const humiditySlider = document.getElementById('humiditySlider');
+        const fuelMoistureSlider = document.getElementById('fuelMoistureSlider');
+        const slopeSlider = document.getElementById('slopeSlider');
+
+        function getFireCategory(intensity) {
+            for (let cat of fireCategories) {
+                if (intensity >= cat.min && intensity < cat.max) {
+                    return cat;
+                }
+            }
+            return fireCategories[fireCategories.length - 1];
+        }
+
+        function calculateFireIntensity(temp, windSpeed, humidity, fuelMoisture, slope) {
+            // Base intensity from temperature and fuel moisture
+            const tempFactor = Math.max(0.5, (temp - 15) / 35);
+            const fuelFactor = Math.max(0.3, (30 - fuelMoisture) / 28);
+            const humidityFactor = Math.max(0.3, (100 - humidity) / 95);
+            
+            // Wind dramatically increases intensity
+            const windFactor = 1 + (windSpeed / 100) * 5;
+            
+            // Slope increases fire intensity (fire travels faster uphill)
+            const slopeFactor = 1 + (slope / 45) * 3;
+            
+            // Calculate fire line intensity (kW/m)
+            const baseIntensity = 1000;
+            const intensity = baseIntensity * tempFactor * fuelFactor * humidityFactor * windFactor * slopeFactor;
+            
+            return Math.round(intensity);
+        }
+
+        function calculateSpreadRate(intensity, windSpeed, slope) {
+            // Spread rate in km/h
+            const baseRate = 0.5;
+            const intensityFactor = Math.sqrt(intensity / 1000);
+            const windFactor = 1 + windSpeed / 50;
+            const slopeFactor = 1 + slope / 30;
+            
+            const spreadRate = baseRate * intensityFactor * windFactor * slopeFactor;
+            return Math.max(0.1, spreadRate);
+        }
+
+        function calculateFlameLength(intensity) {
+            // Byram's equation approximation
+            const flameLength = 0.0775 * Math.pow(intensity, 0.46);
+            return Math.max(0.5, flameLength);
+        }
+
+        function calculateSpottingDistance(intensity, windSpeed) {
+            // Distance firebrands can travel
+            const baseDist = 0.1;
+            const intensityFactor = Math.sqrt(intensity / 1000);
+            const windFactor = windSpeed / 20;
+            
+            const spottingDist = baseDist * intensityFactor * windFactor;
+            return Math.max(0.1, spottingDist);
+        }
+
+        function getHumidityLevel(humidity) {
+            if (humidity < 20) return 'Very Low';
+            if (humidity < 40) return 'Low';
+            if (humidity < 60) return 'Moderate';
+            if (humidity < 80) return 'High';
+            return 'Very High';
+        }
+
+        function getFuelCondition(moisture) {
+            if (moisture < 6) return 'Critically Dry';
+            if (moisture < 10) return 'Very Dry';
+            if (moisture < 15) return 'Dry';
+            if (moisture < 20) return 'Moderate';
+            return 'Moist';
+        }
+
+        function getSlopeEffect(slope) {
+            if (slope < 10) return 'Minimal';
+            if (slope < 20) return 'Moderate';
+            if (slope < 30) return 'Significant';
+            return 'Extreme';
+        }
+
+        function getFireWarning(category, spreadRate) {
+            if (category === 'Low Intensity') {
+                return 'Stay aware of fire conditions. Follow local fire restrictions. Keep emergency supplies ready.';
+            } else if (category === 'Low-Moderate') {
+                return 'Monitor fire updates closely. Be prepared to evacuate if conditions change. Have emergency plan ready.';
+            } else if (category === 'Moderate') {
+                return 'Be prepared to evacuate. Monitor local fire updates. Have emergency supplies ready. Follow all evacuation orders immediately.';
+            } else if (category === 'High') {
+                return 'DANGEROUS FIRE CONDITIONS! Be ready to evacuate at any moment. Fire can change direction rapidly. Stay informed and follow all emergency instructions.';
+            } else if (category === 'Very High') {
+                return 'EXTREME FIRE DANGER! Evacuate immediately if advised. Fire behavior is unpredictable and extremely dangerous. This is a life-threatening situation.';
+            } else {
+                return 'CATASTROPHIC FIRE CONDITIONS! EVACUATE NOW if in fire zone. Firestorm conditions possible. This is an extremely dangerous, life-threatening emergency. Follow all evacuation orders immediately!';
+            }
+        }
+
+        function updateSimulator() {
+            const temp = parseFloat(temperatureSlider.value);
+            const windSpeed = parseFloat(windSpeedSlider.value);
+            const humidity = parseFloat(humiditySlider.value);
+            const fuelMoisture = parseFloat(fuelMoistureSlider.value);
+            const slope = parseFloat(slopeSlider.value);
+            
+            // Calculate fire properties
+            const intensity = calculateFireIntensity(temp, windSpeed, humidity, fuelMoisture, slope);
+            const spreadRate = calculateSpreadRate(intensity, windSpeed, slope);
+            const flameLength = calculateFlameLength(intensity);
+            const spottingDistance = calculateSpottingDistance(intensity, windSpeed);
+            
+            const category = getFireCategory(intensity);
+
+            // Update Display
+            document.getElementById('fireIntensity').textContent = `Intensity: ${intensity.toLocaleString()} kW/m`;
+            document.getElementById('fireCategory').textContent = category.category + ' Fire';
+            document.getElementById('spreadRate').textContent = `Spread Rate: ${spreadRate.toFixed(1)} km/h`;
+            document.getElementById('fireDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('temperatureValue').textContent = `${temp}°C`;
+            document.getElementById('temperatureFahr').textContent = `${Math.round(temp * 9/5 + 32)}°F`;
+            document.getElementById('windSpeedValue').textContent = `${windSpeed} km/h`;
+            document.getElementById('windSpeedMph').textContent = `${Math.round(windSpeed * 0.621371)} mph`;
+            document.getElementById('humidityValue').textContent = `${humidity}%`;
+            document.getElementById('humidityLevel').textContent = getHumidityLevel(humidity);
+            document.getElementById('fuelMoistureValue').textContent = `${fuelMoisture}%`;
+            document.getElementById('fuelCondition').textContent = getFuelCondition(fuelMoisture);
+            document.getElementById('slopeValue').textContent = `${slope}°`;
+            document.getElementById('slopeEffect').textContent = getSlopeEffect(slope);
+            
+            document.getElementById('damageText').textContent = category.behavior;
+            document.getElementById('warningText').textContent = getFireWarning(category.category, spreadRate);
+
+            // Update Stats
+            document.getElementById('flameLength').textContent = `${flameLength.toFixed(1)} m`;
+            
+            const burnedArea = spreadRate * Math.PI * Math.pow(12, 2); // 24 hours of spread
+            document.getElementById('burnedArea').textContent = `${Math.round(burnedArea)} km²`;
+            
+            const containmentDays = Math.ceil(3 + intensity / 2000);
+            document.getElementById('containmentTime').textContent = `${containmentDays} days`;
+            
+            document.getElementById('fireLineIntensity').textContent = `${intensity.toLocaleString()} kW/m`;
+            document.getElementById('spottingDistance').textContent = `${spottingDistance.toFixed(1)} km`;
+            
+            const evacuationRadius = Math.max(2, 2 + spreadRate * 2);
+            document.getElementById('evacuationRadius').textContent = `${Math.round(evacuationRadius)} km`;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        temperatureSlider.addEventListener('input', updateSimulator);
+        windSpeedSlider.addEventListener('input', updateSimulator);
+        humiditySlider.addEventListener('input', updateSimulator);
+        fuelMoistureSlider.addEventListener('input', updateSimulator);
+        slopeSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

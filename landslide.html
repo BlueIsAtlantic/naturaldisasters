@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landslide Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a2c2a 0%, #7f5539 50%, #9c6644 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .landslide-display {
+            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .landslide-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .landslide-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #8b4513;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #654321;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #8b4513;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>⛰️ Landslide Simulator</h1>
+        
+        <div class="landslide-display" id="landslideDisplay">
+            <h2 id="riskLevel">High Risk</h2>
+            <p id="landslideType">Debris Flow</p>
+            <p id="velocity">Velocity: 25 m/s</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Landslide Parameters</h3>
+            
+            <div class="control-group">
+                <label for="slopeAngle">Slope Angle (degrees)</label>
+                <input type="range" id="slopeSlider" min="10" max="60" value="35" step="5">
+                <div class="value-display">
+                    <span id="slopeValue">35°</span>
+                    <span id="slopeCategory">Steep</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="soilSaturation">Soil Saturation (%)</label>
+                <input type="range" id="saturationSlider" min="10" max="100" value="70" step="5">
+                <div class="value-display">
+                    <span id="saturationValue">70%</span>
+                    <span id="saturationLevel">Very Wet</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="rainfall">Recent Rainfall (mm/24h)</label>
+                <input type="range" id="rainfallSlider" min="0" max="500" value="150" step="10">
+                <div class="value-display">
+                    <span id="rainfallValue">150 mm</span>
+                    <span id="rainfallInches">5.9 inches</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="soilType">Soil Cohesion (kPa)</label>
+                <input type="range" id="cohesionSlider" min="0" max="100" value="20" step="5">
+                <div class="value-display">
+                    <span id="cohesionValue">20 kPa</span>
+                    <span id="soilType">Clay/Silt</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="vegetation">Vegetation Cover (%)</label>
+                <input type="range" id="vegetationSlider" min="0" max="100" value="30" step="10">
+                <div class="value-display">
+                    <span id="vegetationValue">30%</span>
+                    <span id="vegetationLevel">Sparse</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Landslide Characteristics</h3>
+                <p id="damageText">Fast-moving debris flow. High velocity mixture of soil, rock, and water. Can travel long distances. Extremely destructive to structures. High casualty risk.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">HIGH LANDSLIDE RISK! Evacuate downslope areas immediately. Move to higher ground perpendicular to flow path. Do not attempt to outrun debris flow.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Failure Probability</h4>
+                <p id="failureProbability">75%</p>
+            </div>
+            <div class="stat-card">
+                <h4>Volume Estimate</h4>
+                <p id="volumeEstimate">50,000 m³</p>
+            </div>
+            <div class="stat-card">
+                <h4>Run-out Distance</h4>
+                <p id="runoutDistance">800 m</p>
+            </div>
+            <div class="stat-card">
+                <h4>Impact Force</h4>
+                <p id="impactForce">500 kN/m²</p>
+            </div>
+            <div class="stat-card">
+                <h4>Warning Time</h4>
+                <p id="warningTime">2-5 min</p>
+            </div>
+            <div class="stat-card">
+                <h4>Affected Area</h4>
+                <p id="affectedArea">0.5 km²</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const riskCategories = [
+            { min: 0, max: 20, category: 'Low Risk', color: '#27ae60', type: 'Slow Slide', effects: 'Slow earth movement. Structural damage gradual. Time for evacuation. Monitoring recommended.' },
+            { min: 20, max: 40, category: 'Moderate Risk', color: '#f39c12', type: 'Earth Slide', effects: 'Moderate velocity movement. Structural damage likely. Some warning time. Evacuation advisable.' },
+            { min: 40, max: 60, category: 'High Risk', color: '#e67e22', type: 'Debris Flow', effects: 'Fast-moving debris flow. High velocity mixture of soil, rock, and water. Can travel long distances. Extremely destructive to structures. High casualty risk.' },
+            { min: 60, max: 80, category: 'Very High Risk', color: '#d35400', type: 'Fast Debris Flow', effects: 'Very fast debris flow. Little to no warning. Massive destructive force. Complete structural destruction. Very high casualty risk. Escape difficult.' },
+            { min: 80, max: 100, category: 'Extreme Risk', color: '#c0392b', type: 'Catastrophic Failure', effects: 'Catastrophic slope failure. Extremely rapid movement. No effective warning time. Total destruction of everything in path. Mass casualties. Unsurvivable in direct path.' }
+        ];
+
+        const slopeSlider = document.getElementById('slopeSlider');
+        const saturationSlider = document.getElementById('saturationSlider');
+        const rainfallSlider = document.getElementById('rainfallSlider');
+        const cohesionSlider = document.getElementById('cohesionSlider');
+        const vegetationSlider = document.getElementById('vegetationSlider');
+
+        function getRiskCategory(riskScore) {
+            for (let cat of riskCategories) {
+                if (riskScore >= cat.min && riskScore < cat.max) {
+                    return cat;
+                }
+            }
+            return riskCategories[riskCategories.length - 1];
+        }
+
+        function calculateRiskScore(slope, saturation, rainfall, cohesion, vegetation) {
+            // Risk increases with slope, saturation, rainfall
+            // Risk decreases with cohesion and vegetation
+            
+            let risk = 0;
+            
+            // Slope factor (0-30 points)
+            risk += (slope / 60) * 30;
+            
+            // Saturation factor (0-25 points)
+            risk += (saturation / 100) * 25;
+            
+            // Rainfall factor (0-20 points)
+            risk += (rainfall / 500) * 20;
+            
+            // Cohesion factor (reduces risk, -15 to 0 points)
+            risk -= (cohesion / 100) * 15;
+            
+            // Vegetation factor (reduces risk, -10 to 0 points)
+            risk -= (vegetation / 100) * 10;
+            
+            return Math.max(0, Math.min(100, risk));
+        }
+
+        function calculateVelocity(slope, saturation, cohesion) {
+            // Velocity increases with slope and saturation, decreases with cohesion
+            const slopeFactor = Math.sin(slope * Math.PI / 180);
+            const saturationFactor = saturation / 100;
+            const cohesionFactor = Math.max(0.2, 1 - cohesion / 100);
+            
+            const velocity = 30 * slopeFactor * saturationFactor * cohesionFactor;
+            return Math.max(0.5, velocity);
+        }
+
+        function calculateVolume(slope, rainfall, vegetation) {
+            // Volume estimation (cubic meters)
+            const baseVolume = 10000;
+            const slopeFactor = slope / 30;
+            const rainfallFactor = 1 + rainfall / 500;
+            const vegetationFactor = Math.max(0.3, 1 - vegetation / 100);
+            
+            return baseVolume * slopeFactor * rainfallFactor * vegetationFactor;
+        }
+
+        function calculateRunoutDistance(velocity, slope) {
+            // How far the landslide will travel
+            const baseDistance = 100;
+            const velocityFactor = velocity / 10;
+            const slopeFactor = slope / 30;
+            
+            return baseDistance * velocityFactor * slopeFactor;
+        }
+
+        function calculateImpactForce(velocity, volume) {
+            // Impact force in kN/m²
+            const density = 2000; // kg/m³
+            const force = 0.5 * density * Math.pow(velocity, 2) / 1000;
+            return force;
+        }
+
+        function getSlopeCategory(angle) {
+            if (angle < 15) return 'Gentle';
+            if (angle < 25) return 'Moderate';
+            if (angle < 35) return 'Steep';
+            if (angle < 45) return 'Very Steep';
+            return 'Extreme';
+        }
+
+        function getSaturationLevel(saturation) {
+            if (saturation < 30) return 'Dry';
+            if (saturation < 50) return 'Moist';
+            if (saturation < 70) return 'Wet';
+            return 'Very Wet';
+        }
+
+        function getSoilType(cohesion) {
+            if (cohesion < 10) return 'Sand/Gravel';
+            if (cohesion < 30) return 'Silt';
+            if (cohesion < 60) return 'Clay/Silt';
+            return 'Clay';
+        }
+
+        function getVegetationLevel(vegetation) {
+            if (vegetation < 20) return 'Barren';
+            if (vegetation < 40) return 'Sparse';
+            if (vegetation < 60) return 'Moderate';
+            if (vegetation < 80) return 'Dense';
+            return 'Very Dense';
+        }
+
+        function getWarningTime(velocity, riskScore) {
+            if (riskScore < 40) return '30+ min';
+            if (riskScore < 60) return '10-20 min';
+            if (riskScore < 80) return '2-5 min';
+            return '<2 min';
+        }
+
+        function getLandslideWarning(category, riskScore) {
+            if (riskScore < 20) {
+                return 'LOW RISK: Monitor slope conditions. Watch for cracks, unusual water flow, or tilting structures. Have evacuation plan ready.';
+            } else if (riskScore < 40) {
+                return 'MODERATE RISK: Be alert for warning signs. Avoid areas below steep slopes during heavy rain. Prepare to evacuate if conditions worsen.';
+            } else if (riskScore < 60) {
+                return 'HIGH LANDSLIDE RISK! Evacuate downslope areas immediately. Move to higher ground perpendicular to flow path. Do not attempt to outrun debris flow.';
+            } else if (riskScore < 80) {
+                return 'VERY HIGH RISK - IMMINENT DANGER! Evacuate NOW! Move to high ground immediately. Debris flow can move faster than you can run. Survival depends on immediate evacuation.';
+            } else {
+                return 'EXTREME DANGER - CATASTROPHIC FAILURE IMMINENT! EVACUATE IMMEDIATELY! This is a life-threatening emergency. Slope failure will be catastrophic. Move to safe location NOW!';
+            }
+        }
+
+        function updateSimulator() {
+            const slope = parseFloat(slopeSlider.value);
+            const saturation = parseFloat(saturationSlider.value);
+            const rainfall = parseFloat(rainfallSlider.value);
+            const cohesion = parseFloat(cohesionSlider.value);
+            const vegetation = parseFloat(vegetationSlider.value);
+            
+            // Calculate landslide properties
+            const riskScore = calculateRiskScore(slope, saturation, rainfall, cohesion, vegetation);
+            const velocity = calculateVelocity(slope, saturation, cohesion);
+            const volume = calculateVolume(slope, rainfall, vegetation);
+            const runoutDistance = calculateRunoutDistance(velocity, slope);
+            const impactForce = calculateImpactForce(velocity, volume);
+            const warningTime = getWarningTime(velocity, riskScore);
+            
+            const category = getRiskCategory(riskScore);
+
+            // Update Display
+            document.getElementById('riskLevel').textContent = category.category;
+            document.getElementById('landslideType').textContent = category.type;
+            document.getElementById('velocity').textContent = `Velocity: ${velocity.toFixed(1)} m/s`;
+            document.getElementById('landslideDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('slopeValue').textContent = `${slope}°`;
+            document.getElementById('slopeCategory').textContent = getSlopeCategory(slope);
+            document.getElementById('saturationValue').textContent = `${saturation}%`;
+            document.getElementById('saturationLevel').textContent = getSaturationLevel(saturation);
+            document.getElementById('rainfallValue').textContent = `${rainfall} mm`;
+            document.getElementById('rainfallInches').textContent = `${(rainfall / 25.4).toFixed(1)} inches`;
+            document.getElementById('cohesionValue').textContent = `${cohesion} kPa`;
+            document.getElementById('soilType').textContent = getSoilType(cohesion);
+            document.getElementById('vegetationValue').textContent = `${vegetation}%`;
+            document.getElementById('vegetationLevel').textContent = getVegetationLevel(vegetation);
+            
+            document.getElementById('damageText').textContent = category.effects;
+            document.getElementById('warningText').textContent = getLandslideWarning(category.category, riskScore);
+
+            // Update Stats
+            document.getElementById('failureProbability').textContent = `${Math.round(riskScore)}%`;
+            document.getElementById('volumeEstimate').textContent = `${Math.round(volume).toLocaleString()} m³`;
+            document.getElementById('runoutDistance').textContent = `${Math.round(runoutDistance)} m`;
+            document.getElementById('impactForce').textContent = `${Math.round(impactForce)} kN/m²`;
+            document.getElementById('warningTime').textContent = warningTime;
+            
+            const affectedArea = (runoutDistance * runoutDistance * 0.5) / 1000000;
+            document.getElementById('affectedArea').textContent = `${affectedArea.toFixed(2)} km²`;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        slopeSlider.addEventListener('input', updateSimulator);
+        saturationSlider.addEventListener('input', updateSimulator);
+        rainfallSlider.addEventListener('input', updateSimulator);
+        cohesionSlider.addEventListener('input', updateSimulator);
+        vegetationSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

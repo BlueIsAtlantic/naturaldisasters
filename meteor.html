@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteor Impact Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .impact-display {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .impact-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .impact-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #c0392b;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>☄️ Meteor Impact Simulator</h1>
+        
+        <div class="impact-display" id="impactDisplay">
+            <h2 id="impactEnergy">1,000 Megatons</h2>
+            <p id="impactCategory">Regional Catastrophe</p>
+            <p id="craterSize">Crater: 2.0 km diameter</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Meteor Parameters</h3>
+            
+            <div class="control-group">
+                <label for="diameter">Meteor Diameter (meters)</label>
+                <input type="range" id="diameterSlider" min="1" max="1000" value="100" step="5">
+                <div class="value-display">
+                    <span id="diameterValue">100 m</span>
+                    <span id="diameterFeet">328 feet</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="velocity">Impact Velocity (km/s)</label>
+                <input type="range" id="velocitySlider" min="11" max="72" value="20" step="1">
+                <div class="value-display">
+                    <span id="velocityValue">20 km/s</span>
+                    <span id="velocityMph">44,740 mph</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="angle">Impact Angle (degrees from horizontal)</label>
+                <input type="range" id="angleSlider" min="15" max="90" value="45" step="5">
+                <div class="value-display">
+                    <span id="angleValue">45°</span>
+                    <span id="angleType">Oblique</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="density">Meteor Density (kg/m³)</label>
+                <input type="range" id="densitySlider" min="1000" max="8000" value="3000" step="500">
+                <div class="value-display">
+                    <span id="densityValue">3,000 kg/m³</span>
+                    <span id="densityType">Stony</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="altitude">Explosion Altitude (km)</label>
+                <input type="range" id="altitudeSlider" min="0" max="50" value="0" step="1">
+                <div class="value-display">
+                    <span id="altitudeValue">Ground Impact</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Impact Effects</h3>
+                <p id="damageText">Massive fireball visible for hundreds of kilometers. Crater formation. Regional devastation. Shockwave causes widespread destruction. Seismic effects felt globally.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Threat Assessment</h3>
+                <p id="warningText">This impact would cause regional devastation. Mass casualties expected. Global climate effects possible. International emergency response required.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Kinetic Energy</h4>
+                <p id="kineticEnergy">1000 MT</p>
+            </div>
+            <div class="stat-card">
+                <h4>Crater Diameter</h4>
+                <p id="craterDiameter">2.0 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Fireball Radius</h4>
+                <p id="fireballRadius">5.5 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Thermal Radiation</h4>
+                <p id="thermalRadius">50 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Shockwave Radius</h4>
+                <p id="shockwaveRadius">120 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Seismic Effect</h4>
+                <p id="seismicMagnitude">7.2</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const impactCategories = [
+            { min: 0, max: 1, category: 'Negligible', color: '#3498db', effects: 'Meteor burns up in atmosphere. Bright fireball visible. No ground damage. May produce meteorites.' },
+            { min: 1, max: 10, category: 'Minor', color: '#2ecc71', effects: 'Small airburst. Loud sonic boom. Broken windows possible. Minor injuries from glass. Small meteorite fragments.' },
+            { min: 10, max: 100, category: 'Local Event', color: '#f39c12', effects: 'Significant airburst. Moderate damage to structures. Trees flattened over small area. Casualties possible.' },
+            { min: 100, max: 1000, category: 'City Destroyer', color: '#e67e22', effects: 'Massive fireball. City-scale destruction. Crater formation if ground impact. Thousands of casualties. Regional impact.' },
+            { min: 1000, max: 100000, category: 'Regional Catastrophe', color: '#d35400', effects: 'Large crater formation. Regional devastation. Mass casualties. Climate effects possible. Global concern.' },
+            { min: 100000, max: 1000000, category: 'Continental Disaster', color: '#c0392b', effects: 'Massive crater. Continental devastation. Millions of casualties. Severe climate effects. Global emergency.' },
+            { min: 1000000, max: 100000000, category: 'Global Catastrophe', color: '#8b0000', effects: 'Extinction-level event. Global devastation. Atmospheric darkening. Mass extinction. Civilization threatened.' }
+        ];
+
+        const diameterSlider = document.getElementById('diameterSlider');
+        const velocitySlider = document.getElementById('velocitySlider');
+        const angleSlider = document.getElementById('angleSlider');
+        const densitySlider = document.getElementById('densitySlider');
+        const altitudeSlider = document.getElementById('altitudeSlider');
+
+        function getImpactCategory(energy) {
+            for (let cat of impactCategories) {
+                if (energy >= cat.min && energy < cat.max) {
+                    return cat;
+                }
+            }
+            return impactCategories[impactCategories.length - 1];
+        }
+
+        function calculateMass(diameter, density) {
+            // Mass = volume * density (assuming sphere)
+            const radius = diameter / 2;
+            const volume = (4/3) * Math.PI * Math.pow(radius, 3);
+            return volume * density;
+        }
+
+        function calculateEnergy(mass, velocity, angle) {
+            // Kinetic energy: 0.5 * m * v^2
+            // Convert to megatons (1 MT = 4.184 × 10^15 J)
+            const velocityMs = velocity * 1000; // Convert km/s to m/s
+            const energy = 0.5 * mass * Math.pow(velocityMs, 2);
+            const energyMegatons = energy / 4.184e15;
+            
+            // Angle factor - perpendicular impacts deliver more energy
+            const angleFactor = Math.sin(angle * Math.PI / 180);
+            
+            return energyMegatons * angleFactor;
+        }
+
+        function calculateCraterDiameter(energy, altitude) {
+            if (altitude > 0) return 0; // Airburst - no crater
+            
+            // Simplified crater scaling: D = C * E^(1/3.4)
+            const craterDiameter = 0.3 * Math.pow(energy * 1000000, 1/3.4); // Convert MT to tons
+            return craterDiameter;
+        }
+
+        function calculateFireballRadius(energy) {
+            // Fireball radius scales with cube root of energy
+            return 0.15 * Math.pow(energy * 1000, 1/3);
+        }
+
+        function calculateThermalRadius(energy) {
+            // Distance for 3rd degree burns
+            return 0.5 * Math.pow(energy * 1000, 0.41);
+        }
+
+        function calculateShockwaveRadius(energy) {
+            // Distance for significant structural damage
+            return 1.5 * Math.pow(energy * 1000, 0.33);
+        }
+
+        function calculateSeismicMagnitude(energy) {
+            // Rough approximation of Richter magnitude
+            const magnitude = 0.67 * Math.log10(energy) + 2.5;
+            return Math.max(0, magnitude);
+        }
+
+        function getDensityType(density) {
+            if (density < 2000) return 'Carbonaceous';
+            if (density < 4000) return 'Stony';
+            if (density < 6000) return 'Stony-Iron';
+            return 'Iron';
+        }
+
+        function getAngleType(angle) {
+            if (angle < 30) return 'Very Oblique';
+            if (angle < 50) return 'Oblique';
+            if (angle < 70) return 'Steep';
+            return 'Nearly Vertical';
+        }
+
+        function getImpactWarning(category, energy) {
+            if (energy < 1) {
+                return 'No significant threat. Meteor will burn up in atmosphere. May produce bright fireball and possible meteorite recovery.';
+            } else if (energy < 10) {
+                return 'Minor threat. Stay away from windows during impact. Seek shelter from possible debris. Local emergency services on alert.';
+            } else if (energy < 100) {
+                return 'LOCAL EMERGENCY! Evacuate impact zone if possible. Seek sturdy shelter immediately. Expect structural damage and casualties.';
+            } else if (energy < 1000) {
+                return 'MAJOR DISASTER! This impact would cause city-scale destruction. Mass evacuation necessary. Thousands of casualties expected. Regional emergency response required.';
+            } else if (energy < 100000) {
+                return 'REGIONAL CATASTROPHE! This impact would cause regional devastation. Mass casualties expected. Global climate effects possible. International emergency response required.';
+            } else if (energy < 1000000) {
+                return 'CONTINENTAL DISASTER! This impact threatens continental survival. Millions of casualties. Severe global climate effects. Worldwide emergency declaration.';
+            } else {
+                return 'EXTINCTION-LEVEL EVENT! This impact threatens human civilization and most life on Earth. Global mass extinction likely. No adequate defense or evacuation possible.';
+            }
+        }
+
+        function updateSimulator() {
+            const diameter = parseFloat(diameterSlider.value);
+            const velocity = parseFloat(velocitySlider.value);
+            const angle = parseFloat(angleSlider.value);
+            const density = parseFloat(densitySlider.value);
+            const altitude = parseFloat(altitudeSlider.value);
+            
+            // Calculate impact properties
+            const mass = calculateMass(diameter, density);
+            const energy = calculateEnergy(mass, velocity, angle);
+            const craterDiameter = calculateCraterDiameter(energy, altitude);
+            const fireballRadius = calculateFireballRadius(energy);
+            const thermalRadius = calculateThermalRadius(energy);
+            const shockwaveRadius = calculateShockwaveRadius(energy);
+            const seismicMag = calculateSeismicMagnitude(energy);
+            
+            const category = getImpactCategory(energy);
+
+            // Update Display
+            if (energy < 1) {
+                document.getElementById('impactEnergy').textContent = `${(energy * 1000).toFixed(0)} Kilotons`;
+            } else if (energy < 1000) {
+                document.getElementById('impactEnergy').textContent = `${energy.toFixed(1)} Megatons`;
+            } else {
+                document.getElementById('impactEnergy').textContent = `${(energy / 1000).toFixed(1)} Gigatons`;
+            }
+            
+            document.getElementById('impactCategory').textContent = category.category;
+            
+            if (altitude > 0) {
+                document.getElementById('craterSize').textContent = `Airburst at ${altitude} km altitude`;
+            } else if (craterDiameter < 0.1) {
+                document.getElementById('craterSize').textContent = 'No crater (too small)';
+            } else {
+                document.getElementById('craterSize').textContent = `Crater: ${craterDiameter.toFixed(2)} km diameter`;
+            }
+            
+            document.getElementById('impactDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('diameterValue').textContent = `${diameter} m`;
+            document.getElementById('diameterFeet').textContent = `${Math.round(diameter * 3.28084)} feet`;
+            document.getElementById('velocityValue').textContent = `${velocity} km/s`;
+            document.getElementById('velocityMph').textContent = `${Math.round(velocity * 2237).toLocaleString()} mph`;
+            document.getElementById('angleValue').textContent = `${angle}°`;
+            document.getElementById('angleType').textContent = getAngleType(angle);
+            document.getElementById('densityValue').textContent = `${density.toLocaleString()} kg/m³`;
+            document.getElementById('densityType').textContent = getDensityType(density);
+            
+            if (altitude === 0) {
+                document.getElementById('altitudeValue').textContent = 'Ground Impact';
+            } else {
+                document.getElementById('altitudeValue').textContent = `${altitude} km (${(altitude * 0.621371).toFixed(1)} miles)`;
+            }
+            
+            document.getElementById('damageText').textContent = category.effects;
+            document.getElementById('warningText').textContent = getImpactWarning(category.category, energy);
+
+            // Update Stats
+            if (energy < 1) {
+                document.getElementById('kineticEnergy').textContent = `${(energy * 1000).toFixed(0)} KT`;
+            } else if (energy < 1000) {
+                document.getElementById('kineticEnergy').textContent = `${energy.toFixed(1)} MT`;
+            } else {
+                document.getElementById('kineticEnergy').textContent = `${(energy / 1000).toFixed(1)} GT`;
+            }
+            
+            if (craterDiameter < 0.1 || altitude > 0) {
+                document.getElementById('craterDiameter').textContent = 'None';
+            } else {
+                document.getElementById('craterDiameter').textContent = `${craterDiameter.toFixed(2)} km`;
+            }
+            
+            document.getElementById('fireballRadius').textContent = `${fireballRadius.toFixed(1)} km`;
+            document.getElementById('thermalRadius').textContent = `${thermalRadius.toFixed(0)} km`;
+            document.getElementById('shockwaveRadius').textContent = `${shockwaveRadius.toFixed(0)} km`;
+            document.getElementById('seismicMagnitude').textContent = seismicMag.toFixed(1);
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        diameterSlider.addEventListener('input', updateSimulator);
+        velocitySlider.addEventListener('input', updateSimulator);
+        angleSlider.addEventListener('input', updateSimulator);
+        densitySlider.addEventListener('input', updateSimulator);
+        altitudeSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

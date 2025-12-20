@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #4a90e2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .flood-display {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .flood-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .flood-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #2980b9;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>💧 Flood Simulator</h1>
+        
+        <div class="flood-display" id="floodDisplay">
+            <h2 id="waterLevel">Water Level: 2.0 m</h2>
+            <p id="floodCategory">Moderate Flooding</p>
+            <p id="flowRate">Flow Rate: 500 m³/s</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Flood Parameters</h3>
+            
+            <div class="control-group">
+                <label for="rainfall">Rainfall Intensity (mm/hour)</label>
+                <input type="range" id="rainfallSlider" min="5" max="300" value="50" step="5">
+                <div class="value-display">
+                    <span id="rainfallValue">50 mm/hour</span>
+                    <span id="rainfallInches">2.0 inches/hour</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="duration">Duration (hours)</label>
+                <input type="range" id="durationSlider" min="1" max="72" value="12" step="1">
+                <div class="value-display">
+                    <span id="durationValue">12 hours</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="terrain">Terrain Slope (degrees)</label>
+                <input type="range" id="terrainSlider" min="0" max="30" value="5" step="1">
+                <div class="value-display">
+                    <span id="terrainValue">5°</span>
+                    <span id="terrainType">Gentle Slope</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="drainage">Drainage System Capacity (%)</label>
+                <input type="range" id="drainageSlider" min="0" max="100" value="50" step="5">
+                <div class="value-display">
+                    <span id="drainageValue">50%</span>
+                    <span id="drainageQuality">Moderate</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="riverLevel">River Base Level (meters)</label>
+                <input type="range" id="riverSlider" min="0" max="20" value="3" step="0.5">
+                <div class="value-display">
+                    <span id="riverValue">3.0 m</span>
+                    <span id="riverFeet">9.8 feet</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Impact</h3>
+                <p id="damageText">Moderate flooding of low-lying areas. Water enters first floors of buildings. Roads may become impassable. Some evacuations necessary.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">Avoid driving through flooded areas. Move to higher ground if water is rising. Stay informed through local authorities.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Total Rainfall</h4>
+                <p id="totalRainfall">600 mm</p>
+            </div>
+            <div class="stat-card">
+                <h4>Affected Area</h4>
+                <p id="affectedArea">5.2 km²</p>
+            </div>
+            <div class="stat-card">
+                <h4>Water Velocity</h4>
+                <p id="waterVelocity">2.5 m/s</p>
+            </div>
+            <div class="stat-card">
+                <h4>Evacuation Zone</h4>
+                <p id="evacuationZone">1 km radius</p>
+            </div>
+            <div class="stat-card">
+                <h4>Peak Water Level</h4>
+                <p id="peakLevel">3.5 m</p>
+            </div>
+            <div class="stat-card">
+                <h4>Receding Time</h4>
+                <p id="recedingTime">24 hours</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const floodCategories = [
+            { min: 0, max: 0.3, category: 'Nuisance', color: '#3498db', damage: 'Minor ponding in low spots. Some streets may flood. Generally passable with caution.' },
+            { min: 0.3, max: 1, category: 'Minor', color: '#2ecc71', damage: 'Flooding of basements and low-lying roads. Some road closures. Minor property damage possible.' },
+            { min: 1, max: 2, category: 'Moderate', color: '#f39c12', damage: 'Flooding of first floors in low areas. Several roads impassable. Evacuations may be necessary. Property damage likely.' },
+            { min: 2, max: 4, category: 'Major', color: '#e67e22', damage: 'Extensive flooding of structures. Many roads closed. Large-scale evacuations required. Significant property damage.' },
+            { min: 4, max: 7, category: 'Severe', color: '#d35400', damage: 'Catastrophic flooding. Complete submersion of ground floors. Infrastructure failure. Life-threatening conditions. Mass evacuations essential.' },
+            { min: 7, max: 100, category: 'Extreme', color: '#c0392b', damage: 'Total devastation. Multi-story flooding. Complete infrastructure collapse. Extreme danger to life. Immediate evacuation critical.' }
+        ];
+
+        const rainfallSlider = document.getElementById('rainfallSlider');
+        const durationSlider = document.getElementById('durationSlider');
+        const terrainSlider = document.getElementById('terrainSlider');
+        const drainageSlider = document.getElementById('drainageSlider');
+        const riverSlider = document.getElementById('riverSlider');
+
+        function getFloodCategory(waterLevel) {
+            for (let cat of floodCategories) {
+                if (waterLevel >= cat.min && waterLevel < cat.max) {
+                    return cat;
+                }
+            }
+            return floodCategories[floodCategories.length - 1];
+        }
+
+        function calculateWaterLevel(rainfall, duration, terrain, drainage, riverBase) {
+            // Base accumulation from rainfall
+            const totalRainfall = (rainfall * duration) / 1000; // Convert to meters
+            
+            // Terrain factor - flatter = more flooding
+            const terrainFactor = 1 + (30 - terrain) / 30;
+            
+            // Drainage factor - worse drainage = more flooding
+            const drainageFactor = 2 - (drainage / 100);
+            
+            // Calculate water level
+            let waterLevel = riverBase + (totalRainfall * terrainFactor * drainageFactor * 0.3);
+            
+            return Math.max(0, waterLevel);
+        }
+
+        function calculateFlowRate(waterLevel, terrain) {
+            // Flow rate increases with water level and slope
+            const slopeFactor = Math.max(0.5, terrain / 10);
+            const flowRate = waterLevel * waterLevel * slopeFactor * 100;
+            return Math.round(flowRate);
+        }
+
+        function calculateWaterVelocity(waterLevel, terrain) {
+            // Velocity based on slope and depth
+            const velocity = Math.sqrt(9.8 * waterLevel * Math.sin(terrain * Math.PI / 180) * 0.5);
+            return Math.max(0.1, velocity);
+        }
+
+        function calculateAffectedArea(waterLevel, terrain) {
+            // Flatter terrain = wider spread
+            const spreadFactor = (30 - terrain) / 10;
+            const area = waterLevel * spreadFactor * 2;
+            return area;
+        }
+
+        function getTerrainType(angle) {
+            if (angle === 0) return 'Flat';
+            if (angle < 5) return 'Very Gentle';
+            if (angle < 10) return 'Gentle';
+            if (angle < 15) return 'Moderate';
+            if (angle < 20) return 'Steep';
+            return 'Very Steep';
+        }
+
+        function getDrainageQuality(capacity) {
+            if (capacity < 20) return 'Poor';
+            if (capacity < 40) return 'Fair';
+            if (capacity < 60) return 'Moderate';
+            if (capacity < 80) return 'Good';
+            return 'Excellent';
+        }
+
+        function getFloodWarning(waterLevel, category) {
+            if (waterLevel < 0.3) {
+                return 'Monitor weather conditions. Avoid low-lying areas if rainfall continues.';
+            } else if (waterLevel < 1) {
+                return 'Avoid driving through flooded areas. Do not attempt to cross flowing water. Stay informed.';
+            } else if (waterLevel < 2) {
+                return 'AVOID ALL FLOODED AREAS. Move to higher ground if water is rising. Never drive through flood water. Evacuate if advised by authorities.';
+            } else if (waterLevel < 4) {
+                return 'DANGEROUS FLOODING! Evacuate immediately if in low-lying areas. Do not return until authorities declare it safe. Life-threatening situation.';
+            } else if (waterLevel < 7) {
+                return 'SEVERE FLOOD - EXTREME DANGER! Evacuate to high ground immediately. This is a life-threatening emergency. Follow all evacuation orders.';
+            } else {
+                return 'CATASTROPHIC FLOODING! EVACUATE NOW! Seek highest ground available. This is an extremely dangerous, life-threatening situation. Immediate action required for survival.';
+            }
+        }
+
+        function updateSimulator() {
+            const rainfall = parseFloat(rainfallSlider.value);
+            const duration = parseFloat(durationSlider.value);
+            const terrain = parseFloat(terrainSlider.value);
+            const drainage = parseFloat(drainageSlider.value);
+            const riverBase = parseFloat(riverSlider.value);
+            
+            // Calculate flood properties
+            const waterLevel = calculateWaterLevel(rainfall, duration, terrain, drainage, riverBase);
+            const flowRate = calculateFlowRate(waterLevel, terrain);
+            const velocity = calculateWaterVelocity(waterLevel, terrain);
+            const affectedArea = calculateAffectedArea(waterLevel, terrain);
+            const totalRainfall = rainfall * duration;
+            
+            const category = getFloodCategory(waterLevel);
+
+            // Update Display
+            document.getElementById('waterLevel').textContent = `Water Level: ${waterLevel.toFixed(1)} m`;
+            document.getElementById('floodCategory').textContent = category.category + ' Flooding';
+            document.getElementById('flowRate').textContent = `Flow Rate: ${flowRate} m³/s`;
+            document.getElementById('floodDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('rainfallValue').textContent = `${rainfall} mm/hour`;
+            document.getElementById('rainfallInches').textContent = `${(rainfall / 25.4).toFixed(1)} inches/hour`;
+            document.getElementById('durationValue').textContent = `${duration} hours`;
+            document.getElementById('terrainValue').textContent = `${terrain}°`;
+            document.getElementById('terrainType').textContent = getTerrainType(terrain);
+            document.getElementById('drainageValue').textContent = `${drainage}%`;
+            document.getElementById('drainageQuality').textContent = getDrainageQuality(drainage);
+            document.getElementById('riverValue').textContent = `${riverBase.toFixed(1)} m`;
+            document.getElementById('riverFeet').textContent = `${(riverBase * 3.28084).toFixed(1)} feet`;
+            
+            document.getElementById('damageText').textContent = category.damage;
+            document.getElementById('warningText').textContent = getFloodWarning(waterLevel, category);
+
+            // Update Stats
+            document.getElementById('totalRainfall').textContent = `${totalRainfall.toFixed(0)} mm`;
+            document.getElementById('affectedArea').textContent = `${affectedArea.toFixed(1)} km²`;
+            document.getElementById('waterVelocity').textContent = `${velocity.toFixed(1)} m/s`;
+            
+            const evacuationRadius = Math.max(0.5, waterLevel * 0.5);
+            document.getElementById('evacuationZone').textContent = `${evacuationRadius.toFixed(1)} km radius`;
+            
+            const peakLevel = waterLevel * 1.15;
+            document.getElementById('peakLevel').textContent = `${peakLevel.toFixed(1)} m`;
+            
+            const recedingTime = Math.round(duration * 2 + waterLevel * 6);
+            document.getElementById('recedingTime').textContent = `${recedingTime} hours`;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        rainfallSlider.addEventListener('input', updateSimulator);
+        durationSlider.addEventListener('input', updateSimulator);
+        terrainSlider.addEventListener('input', updateSimulator);
+        drainageSlider.addEventListener('input', updateSimulator);
+        riverSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

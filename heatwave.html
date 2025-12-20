@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heatwave Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f46b45 0%, #eea849 50%, #f8b500 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .heat-display {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .heat-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .heat-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #c0392b;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>🌡️ Heatwave Simulator</h1>
+        
+        <div class="heat-display" id="heatDisplay">
+            <h2 id="heatIndex">42°C (108°F)</h2>
+            <p id="heatCategory">Extreme Danger</p>
+            <p id="feelsLike">Feels Like: 48°C (118°F)</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Heatwave Parameters</h3>
+            
+            <div class="control-group">
+                <label for="temperature">Air Temperature (°C)</label>
+                <input type="range" id="temperatureSlider" min="25" max="55" value="38" step="1">
+                <div class="value-display">
+                    <span id="temperatureValue">38°C</span>
+                    <span id="temperatureFahr">100°F</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="humidity">Relative Humidity (%)</label>
+                <input type="range" id="humiditySlider" min="10" max="100" value="50" step="5">
+                <div class="value-display">
+                    <span id="humidityValue">50%</span>
+                    <span id="humidityLevel">Moderate</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="windSpeed">Wind Speed (km/h)</label>
+                <input type="range" id="windSpeedSlider" min="0" max="50" value="10" step="5">
+                <div class="value-display">
+                    <span id="windSpeedValue">10 km/h</span>
+                    <span id="windSpeedMph">6 mph</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="duration">Duration (consecutive days)</label>
+                <input type="range" id="durationSlider" min="1" max="30" value="7" step="1">
+                <div class="value-display">
+                    <span id="durationValue">7 days</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="uvIndex">UV Index</label>
+                <input type="range" id="uvIndexSlider" min="1" max="15" value="9" step="1">
+                <div class="value-display">
+                    <span id="uvIndexValue">9</span>
+                    <span id="uvLevel">Very High</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Health Impacts</h3>
+                <p id="damageText">Extreme danger. Heat stroke highly likely. Sunstroke probable. Prolonged exposure dangerous for everyone. Emergency services strained. Elderly and vulnerable at severe risk.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Health Advisory</h3>
+                <p id="warningText">EXTREME HEAT WARNING! Avoid outdoor activities. Stay in air-conditioned areas. Drink plenty of water. Check on elderly neighbors. Heat stroke emergency likely.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Heat Index</h4>
+                <p id="heatIndexStat">48°C</p>
+            </div>
+            <div class="stat-card">
+                <h4>Risk Level</h4>
+                <p id="riskLevel">Extreme</p>
+            </div>
+            <div class="stat-card">
+                <h4>Water Needs</h4>
+                <p id="waterNeeds">6 L/day</p>
+            </div>
+            <div class="stat-card">
+                <h4>Heat Exhaustion Time</h4>
+                <p id="exhaustionTime">45 min</p>
+            </div>
+            <div class="stat-card">
+                <h4>Power Grid Stress</h4>
+                <p id="powerStress">Critical</p>
+            </div>
+            <div class="stat-card">
+                <h4>Fire Danger</h4>
+                <p id="fireDanger">Extreme</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const heatCategories = [
+            { min: 0, max: 27, category: 'Caution', color: '#f39c12', effects: 'Fatigue possible with prolonged exposure and physical activity. Stay hydrated.' },
+            { min: 27, max: 32, category: 'Extreme Caution', color: '#e67e22', effects: 'Heat exhaustion possible. Sunstroke, heat cramps possible with prolonged exposure. Drink plenty of water.' },
+            { min: 32, max: 41, category: 'Danger', color: '#d35400', effects: 'Heat exhaustion likely. Heat stroke probable with prolonged exposure. Limit outdoor activities. Stay hydrated.' },
+            { min: 41, max: 54, category: 'Extreme Danger', color: '#c0392b', effects: 'Heat stroke highly likely. Sunstroke probable. Prolonged exposure dangerous for everyone. Emergency services strained. Elderly and vulnerable at severe risk.' },
+            { min: 54, max: 100, category: 'Catastrophic', color: '#8b0000', effects: 'Imminent heat stroke for anyone exposed. Life-threatening conditions. Mass casualties likely. Infrastructure failure possible. Unsurvivable for extended periods.' }
+        ];
+
+        const temperatureSlider = document.getElementById('temperatureSlider');
+        const humiditySlider = document.getElementById('humiditySlider');
+        const windSpeedSlider = document.getElementById('windSpeedSlider');
+        const durationSlider = document.getElementById('durationSlider');
+        const uvIndexSlider = document.getElementById('uvIndexSlider');
+
+        function getHeatCategory(heatIndex) {
+            for (let cat of heatCategories) {
+                if (heatIndex >= cat.min && heatIndex < cat.max) {
+                    return cat;
+                }
+            }
+            return heatCategories[heatCategories.length - 1];
+        }
+
+        function calculateHeatIndex(temp, humidity) {
+            // Simplified heat index calculation (Steadman's formula approximation)
+            const T = (temp * 9/5) + 32; // Convert to Fahrenheit for formula
+            const RH = humidity;
+            
+            let HI = 0.5 * (T + 61.0 + ((T - 68.0) * 1.2) + (RH * 0.094));
+            
+            if (HI >= 80) {
+                HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH 
+                    - 0.00683783 * T * T - 0.05481717 * RH * RH + 0.00122874 * T * T * RH 
+                    + 0.00085282 * T * RH * RH - 0.00000199 * T * T * RH * RH;
+            }
+            
+            // Convert back to Celsius
+            return (HI - 32) * 5/9;
+        }
+
+        function calculateFeelsLike(temp, humidity, windSpeed) {
+            // Apparent temperature considering humidity and wind
+            let feelsLike = calculateHeatIndex(temp, humidity);
+            
+            // Wind provides slight cooling
+            const windCooling = windSpeed * 0.2;
+            feelsLike -= windCooling;
+            
+            return feelsLike;
+        }
+
+        function getHumidityLevel(humidity) {
+            if (humidity < 30) return 'Low';
+            if (humidity < 50) return 'Moderate';
+            if (humidity < 70) return 'High';
+            return 'Very High';
+        }
+
+        function getUVLevel(uvIndex) {
+            if (uvIndex <= 2) return 'Low';
+            if (uvIndex <= 5) return 'Moderate';
+            if (uvIndex <= 7) return 'High';
+            if (uvIndex <= 10) return 'Very High';
+            return 'Extreme';
+        }
+
+        function calculateWaterNeeds(temp, humidity) {
+            // Liters per day based on temperature
+            const baseNeeds = 2.5;
+            const tempFactor = (temp - 25) / 10;
+            const humidityFactor = humidity / 100;
+            
+            return baseNeeds + tempFactor + humidityFactor;
+        }
+
+        function calculateExhaustionTime(heatIndex) {
+            // Minutes until heat exhaustion in direct sun
+            if (heatIndex < 27) return 240; // 4 hours
+            if (heatIndex < 32) return 120; // 2 hours
+            if (heatIndex < 41) return 60; // 1 hour
+            if (heatIndex < 54) return 30; // 30 minutes
+            return 15; // 15 minutes
+        }
+
+        function getPowerStress(temp, duration) {
+            if (temp < 35 && duration < 3) return 'Normal';
+            if (temp < 38 && duration < 5) return 'Elevated';
+            if (temp < 42 && duration < 7) return 'High';
+            if (temp < 45 && duration < 10) return 'Critical';
+            return 'Emergency';
+        }
+
+        function getFireDanger(temp, humidity) {
+            const dryness = 100 - humidity;
+            const danger = (temp - 25) + dryness;
+            
+            if (danger < 50) return 'Low';
+            if (danger < 70) return 'Moderate';
+            if (danger < 90) return 'High';
+            if (danger < 110) return 'Very High';
+            return 'Extreme';
+        }
+
+        function getHeatWarning(category, duration, heatIndex) {
+            if (heatIndex < 27) {
+                return 'Stay hydrated. Take breaks from outdoor activities. Wear light clothing and sunscreen.';
+            } else if (heatIndex < 32) {
+                return 'Limit outdoor activities during peak heat. Stay hydrated. Watch for signs of heat exhaustion. Check on vulnerable individuals.';
+            } else if (heatIndex < 41) {
+                return 'HEAT ADVISORY! Avoid outdoor activities. Stay in air-conditioned areas. Drink water frequently. Never leave children or pets in vehicles.';
+            } else if (heatIndex < 54) {
+                return 'EXTREME HEAT WARNING! Avoid outdoor activities. Stay in air-conditioned areas. Drink plenty of water. Check on elderly neighbors. Heat stroke emergency likely.';
+            } else {
+                return 'CATASTROPHIC HEAT EMERGENCY! Life-threatening conditions. Do NOT go outside. Seek air-conditioned shelter immediately. Mass casualty event likely. Infrastructure may fail. This is a survival situation.';
+            }
+        }
+
+        function updateSimulator() {
+            const temp = parseFloat(temperatureSlider.value);
+            const humidity = parseFloat(humiditySlider.value);
+            const windSpeed = parseFloat(windSpeedSlider.value);
+            const duration = parseInt(durationSlider.value);
+            const uvIndex = parseInt(uvIndexSlider.value);
+            
+            // Calculate heat properties
+            const heatIndex = calculateHeatIndex(temp, humidity);
+            const feelsLike = calculateFeelsLike(temp, humidity, windSpeed);
+            const waterNeeds = calculateWaterNeeds(temp, humidity);
+            const exhaustionTime = calculateExhaustionTime(heatIndex);
+            const powerStress = getPowerStress(temp, duration);
+            const fireDanger = getFireDanger(temp, humidity);
+            
+            const category = getHeatCategory(heatIndex);
+
+            // Update Display
+            const tempF = Math.round(temp * 9/5 + 32);
+            document.getElementById('heatIndex').textContent = `${Math.round(temp)}°C (${tempF}°F)`;
+            document.getElementById('heatCategory').textContent = category.category;
+            const feelsLikeF = Math.round(feelsLike * 9/5 + 32);
+            document.getElementById('feelsLike').textContent = `Feels Like: ${Math.round(feelsLike)}°C (${feelsLikeF}°F)`;
+            document.getElementById('heatDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('temperatureValue').textContent = `${temp}°C`;
+            document.getElementById('temperatureFahr').textContent = `${tempF}°F`;
+            document.getElementById('humidityValue').textContent = `${humidity}%`;
+            document.getElementById('humidityLevel').textContent = getHumidityLevel(humidity);
+            document.getElementById('windSpeedValue').textContent = `${windSpeed} km/h`;
+            document.getElementById('windSpeedMph').textContent = `${Math.round(windSpeed * 0.621371)} mph`;
+            document.getElementById('durationValue').textContent = `${duration} days`;
+            document.getElementById('uvIndexValue').textContent = uvIndex;
+            document.getElementById('uvLevel').textContent = getUVLevel(uvIndex);
+            
+            document.getElementById('damageText').textContent = category.effects;
+            document.getElementById('warningText').textContent = getHeatWarning(category.category, duration, heatIndex);
+
+            // Update Stats
+            const heatIndexF = Math.round(heatIndex * 9/5 + 32);
+            document.getElementById('heatIndexStat').textContent = `${Math.round(heatIndex)}°C (${heatIndexF}°F)`;
+            document.getElementById('riskLevel').textContent = category.category;
+            document.getElementById('waterNeeds').textContent = `${waterNeeds.toFixed(1)} L/day`;
+            
+            if (exhaustionTime >= 60) {
+                document.getElementById('exhaustionTime').textContent = `${Math.round(exhaustionTime / 60)} hours`;
+            } else {
+                document.getElementById('exhaustionTime').textContent = `${exhaustionTime} min`;
+            }
+            
+            document.getElementById('powerStress').textContent = powerStress;
+            document.getElementById('fireDanger').textContent = fireDanger;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        temperatureSlider.addEventListener('input', updateSimulator);
+        humiditySlider.addEventListener('input', updateSimulator);
+        windSpeedSlider.addEventListener('input', updateSimulator);
+        durationSlider.addEventListener('input', updateSimulator);
+        uvIndexSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>
