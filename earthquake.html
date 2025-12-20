@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earthquake Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a2c2a 0%, #7f5539 50%, #9c6644 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .magnitude-display {
+            background: linear-gradient(135deg, #d35400 0%, #e74c3c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .magnitude-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .magnitude-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #c0392b;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 1em;
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .tsunami-warning {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .tsunami-warning.active {
+            display: block;
+        }
+
+        .tsunami-warning h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .tsunami-warning p {
+            color: #0c5460;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>🌍 Earthquake Simulator</h1>
+        
+        <div class="magnitude-display" id="magnitudeDisplay">
+            <h2 id="magnitudeRating">Magnitude 5.0</h2>
+            <p id="magnitudeType">Moderate Earthquake</p>
+            <p id="energyRelease">Energy: 2.0 × 10¹² joules</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Earthquake Parameters</h3>
+            
+            <div class="control-group">
+                <label for="magnitude">Magnitude (Moment Magnitude Scale)</label>
+                <input type="range" id="magnitudeSlider" min="1.0" max="10.0" value="5.0" step="0.1">
+                <div class="value-display">
+                    <span id="magnitudeValue">5.0</span>
+                    <span id="richterEquiv">Richter: ~5.0</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="depth">Depth (kilometers)</label>
+                <input type="range" id="depthSlider" min="0" max="700" value="10" step="5">
+                <div class="value-display">
+                    <span id="depthValue">10 km</span>
+                    <span id="depthMiles">6.2 miles</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="distance">Distance from Epicenter (km)</label>
+                <input type="range" id="distanceSlider" min="1" max="500" value="50" step="5">
+                <div class="value-display">
+                    <span id="distanceValue">50 km</span>
+                    <span id="distanceMiles">31 miles</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="duration">Duration (seconds)</label>
+                <input type="range" id="durationSlider" min="5" max="300" value="30" step="5">
+                <div class="value-display">
+                    <span id="durationValue">30 seconds</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Earthquake Location</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="underwaterCheck">
+                    <label for="underwaterCheck">Underwater/Submarine Earthquake</label>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Effects</h3>
+                <p id="damageText">Felt by nearly everyone; many awakened. Some dishes and windows broken. Unstable objects overturned. Pendulum clocks may stop.</p>
+            </div>
+
+            <div class="tsunami-warning" id="tsunamiWarning">
+                <h3>🌊 Tsunami Risk Assessment</h3>
+                <p id="tsunamiText">Tsunami generation possible based on magnitude and underwater location.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">Drop, Cover, and Hold On. Stay away from windows and heavy objects that could fall.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Mercalli Intensity</h4>
+                <p id="mercalliIntensity">VI</p>
+            </div>
+            <div class="stat-card">
+                <h4>Felt Radius</h4>
+                <p id="feltRadius">150 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Peak Ground Accel.</h4>
+                <p id="peakAccel">0.18 g</p>
+            </div>
+            <div class="stat-card">
+                <h4>Aftershock Estimate</h4>
+                <p id="aftershocks">10-30</p>
+            </div>
+            <div class="stat-card">
+                <h4>Fault Rupture Length</h4>
+                <p id="ruptureLength">10 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>TNT Equivalent</h4>
+                <p id="tntEquivalent">~500 tons</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const magnitudeData = [
+            { min: 1.0, max: 1.9, type: 'Micro', description: 'Microearthquakes, not felt, or felt rarely. Recorded by seismographs.', color: '#3498db', mercalli: 'I', felt: 0 },
+            { min: 2.0, max: 2.9, type: 'Minor', description: 'Felt slightly by some people. No damage to buildings. Hanging objects may swing.', color: '#2ecc71', mercalli: 'I-II', felt: 10 },
+            { min: 3.0, max: 3.9, type: 'Minor', description: 'Often felt by people, but very rarely causes damage. Shaking of indoor objects can be noticeable.', color: '#27ae60', mercalli: 'II-III', felt: 30 },
+            { min: 4.0, max: 4.9, type: 'Light', description: 'Noticeable shaking of indoor objects and rattling noises. Felt by most people in affected area. Slight damage possible.', color: '#f39c12', mercalli: 'IV-V', felt: 80 },
+            { min: 5.0, max: 5.9, type: 'Moderate', description: 'Can cause damage to poorly constructed buildings. Felt by everyone in affected area. Heavy furniture may move.', color: '#e67e22', mercalli: 'VI-VII', felt: 150 },
+            { min: 6.0, max: 6.9, type: 'Strong', description: 'Damage to well-designed structures. Felt up to hundreds of kilometers away. Can cause serious damage and casualties.', color: '#d35400', mercalli: 'VII-IX', felt: 300 },
+            { min: 7.0, max: 7.9, type: 'Major', description: 'Serious damage over large areas. Most buildings damaged or destroyed. Ground cracks visible. Major casualties likely.', color: '#c0392b', mercalli: 'VIII-X', felt: 500 },
+            { min: 8.0, max: 8.9, type: 'Great', description: 'Extensive and severe damage. Large-scale destruction. Few structures remain standing. Massive casualties expected.', color: '#8b0000', mercalli: 'X-XI', felt: 1000 },
+            { min: 9.0, max: 10.0, type: 'Catastrophic', description: 'Near-total destruction. Waves seen on ground. Objects thrown into air. Catastrophic loss of life and infrastructure.', color: '#4a0000', mercalli: 'XI-XII', felt: 2000 }
+        ];
+
+        const magnitudeSlider = document.getElementById('magnitudeSlider');
+        const depthSlider = document.getElementById('depthSlider');
+        const distanceSlider = document.getElementById('distanceSlider');
+        const durationSlider = document.getElementById('durationSlider');
+        const underwaterCheck = document.getElementById('underwaterCheck');
+
+        function checkTsunamiRisk(magnitude, depth, underwater) {
+            // Tsunami risk factors:
+            // 1. Must be underwater
+            // 2. Magnitude typically needs to be 6.5+
+            // 3. Shallow depth (<70km) is more likely to generate tsunamis
+            
+            if (!underwater) {
+                return { risk: false, level: 'None', message: '' };
+            }
+
+            if (magnitude < 6.5) {
+                return { 
+                    risk: false, 
+                    level: 'None', 
+                    message: '' 
+                };
+            }
+
+            if (depth > 100) {
+                return { 
+                    risk: false, 
+                    level: 'None', 
+                    message: '' 
+                };
+            }
+
+            // High risk scenarios - only show warnings for these
+            if (magnitude >= 7.5 && depth <= 70) {
+                if (magnitude >= 9.0) {
+                    return { 
+                        risk: true, 
+                        level: 'EXTREME', 
+                        message: 'EXTREME TSUNAMI RISK! Magnitude 9+ shallow underwater earthquake. Destructive tsunami highly likely. Waves could exceed 10+ meters. EVACUATE COASTAL AREAS IMMEDIATELY!' 
+                    };
+                } else if (magnitude >= 8.0) {
+                    return { 
+                        risk: true, 
+                        level: 'Very High', 
+                        message: 'VERY HIGH tsunami risk! Major underwater earthquake. Tsunami waves of 5-15 meters possible. Evacuate all coastal areas immediately to high ground.' 
+                    };
+                } else {
+                    return { 
+                        risk: true, 
+                        level: 'High', 
+                        message: 'HIGH tsunami risk! Strong shallow underwater earthquake. Tsunami waves of 2-8 meters possible. Evacuate low-lying coastal areas immediately.' 
+                    };
+                }
+            }
+
+            if (magnitude >= 7.0 && depth <= 70) {
+                return { 
+                    risk: true, 
+                    level: 'Moderate-High', 
+                    message: 'MODERATE-HIGH tsunami risk. Tsunami waves of 1-5 meters possible. Evacuate coastal areas and move to higher ground.' 
+                };
+            }
+
+            if (magnitude >= 6.5 && depth <= 70) {
+                return { 
+                    risk: true, 
+                    level: 'Moderate', 
+                    message: 'MODERATE tsunami risk. Tsunami waves of 0.5-3 meters possible. Stay away from beaches and coastal areas. Move inland and to higher ground.' 
+                };
+            }
+
+            return { 
+                risk: false, 
+                level: 'None', 
+                message: '' 
+            };
+        }
+
+        function getEarthquakeWarning(magnitude, tsunamiRisk) {
+            let baseWarning = '';
+            
+            if (magnitude < 3.0) {
+                baseWarning = 'Generally not felt. No safety action required. May be recorded by seismographs.';
+            } else if (magnitude < 4.0) {
+                baseWarning = 'If indoors, stay calm and be aware of your surroundings. This is typically minor shaking.';
+            } else if (magnitude < 5.0) {
+                baseWarning = 'DROP, COVER, and HOLD ON. Get under sturdy furniture. Stay away from windows and outside walls.';
+            } else if (magnitude < 6.0) {
+                baseWarning = 'DROP, COVER, and HOLD ON immediately. Protect your head and neck. Stay indoors until shaking stops. Expect aftershocks.';
+            } else if (magnitude < 7.0) {
+                baseWarning = 'TAKE IMMEDIATE COVER! Drop, cover, and hold on. This is a strong earthquake. Stay away from buildings, windows, and power lines. Expect significant damage and aftershocks.';
+            } else if (magnitude < 8.0) {
+                baseWarning = 'MAJOR EARTHQUAKE! Take cover immediately. Expect severe damage, collapsed buildings, and infrastructure failure. Stay in safe location. Do not attempt to evacuate during shaking.';
+            } else if (magnitude < 9.0) {
+                baseWarning = 'GREAT EARTHQUAKE - EXTREME DANGER! Take cover immediately. Expect catastrophic damage, widespread destruction, and numerous aftershocks. Await emergency instructions.';
+            } else {
+                baseWarning = 'CATASTROPHIC EARTHQUAKE! This is an extremely rare event. Expect total devastation in affected areas. Take cover and await emergency response. Life-threatening situation.';
+            }
+
+            // Add tsunami warning if there's actual risk
+            if (tsunamiRisk && tsunamiRisk.risk) {
+                baseWarning += ' ⚠️ TSUNAMI WARNING: After shaking stops, immediately move to high ground or inland. Do NOT go to the coast.';
+            }
+
+            return baseWarning;
+        }
+
+        function getMagnitudeData(magnitude) {
+            for (let data of magnitudeData) {
+                if (magnitude >= data.min && magnitude <= data.max) {
+                    return data;
+                }
+            }
+            return magnitudeData[magnitudeData.length - 1];
+        }
+
+        function calculateEnergy(magnitude) {
+            // Energy in joules: log10(E) = 4.8 + 1.5 * M
+            const logEnergy = 4.8 + 1.5 * magnitude;
+            const energy = Math.pow(10, logEnergy);
+            
+            if (energy < 1e9) {
+                return (energy / 1e6).toFixed(1) + ' × 10⁶ joules';
+            } else if (energy < 1e12) {
+                return (energy / 1e9).toFixed(1) + ' × 10⁹ joules';
+            } else if (energy < 1e15) {
+                return (energy / 1e12).toFixed(1) + ' × 10¹² joules';
+            } else if (energy < 1e18) {
+                return (energy / 1e15).toFixed(1) + ' × 10¹⁵ joules';
+            } else {
+                return (energy / 1e18).toFixed(1) + ' × 10¹⁸ joules';
+            }
+        }
+
+        function calculateTNT(magnitude) {
+            const logEnergy = 4.8 + 1.5 * magnitude;
+            const energy = Math.pow(10, logEnergy);
+            const tnt = energy / 4.184e9; // 1 ton TNT = 4.184 × 10^9 joules
+            
+            if (tnt < 1) {
+                return (tnt * 1000).toFixed(0) + ' kg';
+            } else if (tnt < 1000) {
+                return tnt.toFixed(0) + ' tons';
+            } else if (tnt < 1e6) {
+                return (tnt / 1000).toFixed(1) + ' kilotons';
+            } else {
+                return (tnt / 1e6).toFixed(1) + ' megatons';
+            }
+        }
+
+        function calculatePGA(magnitude, distance, depth) {
+            // Simplified Peak Ground Acceleration calculation
+            // PGA decreases with distance and depth
+            const basePGA = Math.pow(10, (magnitude - 5) / 2);
+            const distanceFactor = 1 / (1 + distance / 50);
+            const depthFactor = depth < 50 ? 1 : 50 / depth;
+            const pga = basePGA * distanceFactor * depthFactor;
+            return pga.toFixed(2);
+        }
+
+        function estimateAftershocks(magnitude) {
+            // Aftershock estimation based on Båth's law
+            if (magnitude < 4) return '0-5';
+            if (magnitude < 5) return '5-15';
+            if (magnitude < 6) return '10-30';
+            if (magnitude < 7) return '30-100';
+            if (magnitude < 8) return '100-500';
+            return '500+';
+        }
+
+        function calculateRuptureLength(magnitude) {
+            // Empirical relationship: log(L) = 0.5 * M - 1.9
+            const logLength = 0.5 * magnitude - 1.9;
+            const length = Math.pow(10, logLength);
+            
+            if (length < 1) {
+                return (length * 1000).toFixed(0) + ' m';
+            } else {
+                return length.toFixed(1) + ' km';
+            }
+        }
+
+        function updateSimulator() {
+            const magnitude = parseFloat(magnitudeSlider.value);
+            const depth = parseInt(depthSlider.value);
+            const distance = parseInt(distanceSlider.value);
+            const duration = parseInt(durationSlider.value);
+            const underwater = underwaterCheck.checked;
+            
+            const magData = getMagnitudeData(magnitude);
+            const tsunamiRisk = checkTsunamiRisk(magnitude, depth, underwater);
+
+            // Update Magnitude Display
+            document.getElementById('magnitudeRating').textContent = `Magnitude ${magnitude.toFixed(1)}`;
+            document.getElementById('magnitudeType').textContent = magData.type + ' Earthquake';
+            document.getElementById('energyRelease').textContent = `Energy: ${calculateEnergy(magnitude)}`;
+            document.getElementById('magnitudeDisplay').style.background = `linear-gradient(135deg, ${magData.color} 0%, ${adjustColor(magData.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('magnitudeValue').textContent = magnitude.toFixed(1);
+            document.getElementById('richterEquiv').textContent = `Richter: ~${magnitude.toFixed(1)}`;
+            document.getElementById('depthValue').textContent = `${depth} km`;
+            document.getElementById('depthMiles').textContent = `${(depth * 0.621371).toFixed(1)} miles`;
+            document.getElementById('distanceValue').textContent = `${distance} km`;
+            document.getElementById('distanceMiles').textContent = `${(distance * 0.621371).toFixed(0)} miles`;
+            document.getElementById('durationValue').textContent = `${duration} seconds`;
+            
+            document.getElementById('damageText').textContent = magData.description;
+            
+            // Update tsunami warning - only show if there's actual risk
+            const tsunamiWarningEl = document.getElementById('tsunamiWarning');
+            if (tsunamiRisk.risk) {
+                tsunamiWarningEl.classList.add('active');
+                document.getElementById('tsunamiText').textContent = tsunamiRisk.message;
+            } else {
+                tsunamiWarningEl.classList.remove('active');
+            }
+            
+            // Update warning based on magnitude and tsunami risk
+            document.getElementById('warningText').textContent = getEarthquakeWarning(magnitude, tsunamiRisk);
+
+            // Update Stats
+            document.getElementById('mercalliIntensity').textContent = magData.mercalli;
+            document.getElementById('feltRadius').textContent = `${magData.felt} km`;
+            document.getElementById('peakAccel').textContent = `${calculatePGA(magnitude, distance, depth)} g`;
+            document.getElementById('aftershocks').textContent = estimateAftershocks(magnitude);
+            document.getElementById('ruptureLength').textContent = calculateRuptureLength(magnitude);
+            document.getElementById('tntEquivalent').textContent = calculateTNT(magnitude);
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        magnitudeSlider.addEventListener('input', updateSimulator);
+        depthSlider.addEventListener('input', updateSimulator);
+        distanceSlider.addEventListener('input', updateSimulator);
+        durationSlider.addEventListener('input', updateSimulator);
+        underwaterCheck.addEventListener('change', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

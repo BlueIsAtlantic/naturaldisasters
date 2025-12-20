@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tsunami Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c2340 0%, #1a4d7a 50%, #2980b9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tsunami-display {
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .tsunami-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .tsunami-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #2980b9;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>🌊 Tsunami Simulator</h1>
+        
+        <div class="tsunami-display" id="tsunamiDisplay">
+            <h2 id="waveHeight">Wave Height: 5.0 m</h2>
+            <p id="tsunamiCategory">Moderate Tsunami</p>
+            <p id="waveSpeed">Wave Speed: 500 km/h</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Tsunami Parameters</h3>
+            
+            <div class="control-group">
+                <label for="magnitude">Source Earthquake Magnitude</label>
+                <input type="range" id="magnitudeSlider" min="6.0" max="9.5" value="7.5" step="0.1">
+                <div class="value-display">
+                    <span id="magnitudeValue">7.5</span>
+                    <span>Moment Magnitude</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="waterDepth">Ocean Depth (meters)</label>
+                <input type="range" id="waterDepthSlider" min="100" max="6000" value="4000" step="100">
+                <div class="value-display">
+                    <span id="waterDepthValue">4000 m</span>
+                    <span id="waterDepthFeet">13,123 feet</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="distance">Distance from Source (km)</label>
+                <input type="range" id="distanceSlider" min="10" max="5000" value="500" step="50">
+                <div class="value-display">
+                    <span id="distanceValue">500 km</span>
+                    <span id="distanceMiles">311 miles</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="coastalSlope">Coastal Slope Angle (degrees)</label>
+                <input type="range" id="slopeSlider" min="1" max="45" value="10" step="1">
+                <div class="value-display">
+                    <span id="slopeValue">10°</span>
+                    <span id="slopeType">Gentle Slope</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="runup">Coastal Elevation (meters)</label>
+                <input type="range" id="elevationSlider" min="0" max="50" value="5" step="1">
+                <div class="value-display">
+                    <span id="elevationValue">5 m</span>
+                    <span id="elevationFeet">16 feet</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Impact</h3>
+                <p id="damageText">Moderate damage to coastal structures. Flooding of low-lying areas. Small boats damaged. Some casualties possible.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">Evacuate immediately to higher ground. Do not return until authorities declare it safe.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Open Ocean Height</h4>
+                <p id="openOceanHeight">0.5 m</p>
+            </div>
+            <div class="stat-card">
+                <h4>Wavelength</h4>
+                <p id="wavelength">200 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Wave Period</h4>
+                <p id="wavePeriod">20 min</p>
+            </div>
+            <div class="stat-card">
+                <h4>Run-up Height</h4>
+                <p id="runupHeight">15 m</p>
+            </div>
+            <div class="stat-card">
+                <h4>Inundation Distance</h4>
+                <p id="inundationDist">2.5 km</p>
+            </div>
+            <div class="stat-card">
+                <h4>Arrival Time</h4>
+                <p id="arrivalTime">60 min</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tsunamiCategories = [
+            { min: 0, max: 1, category: 'Minor', color: '#3498db', damage: 'Minimal coastal flooding. Little to no damage. Safe for most structures.' },
+            { min: 1, max: 3, category: 'Moderate', color: '#2ecc71', damage: 'Moderate damage to coastal structures. Flooding of low-lying areas. Small boats damaged. Some casualties possible.' },
+            { min: 3, max: 6, category: 'Strong', color: '#f39c12', damage: 'Significant structural damage. Large boats moved inland. Widespread flooding. Many casualties likely.' },
+            { min: 6, max: 10, category: 'Major', color: '#e67e22', damage: 'Severe destruction of coastal infrastructure. Buildings destroyed. Heavy casualties. Extensive debris field.' },
+            { min: 10, max: 20, category: 'Great', color: '#d35400', damage: 'Catastrophic damage. Total destruction of coastal communities. Massive loss of life. Debris carried far inland.' },
+            { min: 20, max: 100, category: 'Extreme', color: '#c0392b', damage: 'Complete devastation. Near-total destruction. Unprecedented loss of life. Landscape permanently altered.' }
+        ];
+
+        const magnitudeSlider = document.getElementById('magnitudeSlider');
+        const waterDepthSlider = document.getElementById('waterDepthSlider');
+        const distanceSlider = document.getElementById('distanceSlider');
+        const slopeSlider = document.getElementById('slopeSlider');
+        const elevationSlider = document.getElementById('elevationSlider');
+
+        function getTsunamiCategory(height) {
+            for (let cat of tsunamiCategories) {
+                if (height >= cat.min && height < cat.max) {
+                    return cat;
+                }
+            }
+            return tsunamiCategories[tsunamiCategories.length - 1];
+        }
+
+        function calculateWaveHeight(magnitude, waterDepth) {
+            // Simplified tsunami height calculation
+            // Initial wave height in open ocean based on magnitude
+            const baseHeight = Math.pow(10, (magnitude - 7) * 0.5);
+            
+            // Deeper water produces slightly smaller initial waves
+            const depthFactor = Math.sqrt(4000 / waterDepth);
+            
+            return baseHeight * depthFactor;
+        }
+
+        function calculateWaveSpeed(waterDepth) {
+            // Tsunami speed: v = sqrt(g * h) where g = 9.8 m/s²
+            const speedMps = Math.sqrt(9.8 * waterDepth);
+            const speedKmh = speedMps * 3.6;
+            return speedKmh;
+        }
+
+        function calculateCoastalHeight(openOceanHeight, slope, elevation) {
+            // Wave amplification when approaching shore
+            // Steeper slopes = less amplification, gentler slopes = more amplification
+            const slopeFactor = Math.max(1, 45 / slope);
+            const amplificationFactor = 2 + (slopeFactor * 0.5);
+            
+            let coastalHeight = openOceanHeight * amplificationFactor;
+            
+            // Reduce effective height if coastal elevation is high
+            if (elevation > coastalHeight) {
+                coastalHeight = Math.max(0, coastalHeight - elevation * 0.5);
+            }
+            
+            return coastalHeight;
+        }
+
+        function calculateRunup(coastalHeight, slope) {
+            // Run-up is typically 1.5-4 times the coastal wave height
+            // Depends on slope - gentler slopes = higher run-up
+            const runupFactor = 1.5 + (30 / slope) * 0.5;
+            return coastalHeight * Math.min(runupFactor, 4);
+        }
+
+        function calculateInundation(runup, slope) {
+            // Horizontal distance water travels inland
+            // Based on run-up height and slope
+            const slopeRadians = (slope * Math.PI) / 180;
+            const distance = runup / Math.tan(slopeRadians);
+            return distance / 1000; // Convert to km
+        }
+
+        function calculateArrivalTime(distance, speed) {
+            // Time = Distance / Speed
+            const timeHours = distance / speed;
+            return timeHours * 60; // Convert to minutes
+        }
+
+        function getSlopeType(angle) {
+            if (angle < 5) return 'Very Gentle';
+            if (angle < 10) return 'Gentle';
+            if (angle < 20) return 'Moderate';
+            if (angle < 30) return 'Steep';
+            return 'Very Steep';
+        }
+
+        function getWarningLevel(coastalHeight) {
+            if (coastalHeight < 1) return 'Stay alert. Monitor for updates. Move away from shore.';
+            if (coastalHeight < 3) return 'Evacuate low-lying coastal areas immediately. Move to higher ground.';
+            if (coastalHeight < 6) return 'URGENT: Evacuate all coastal areas immediately. Seek high ground at least 30m above sea level.';
+            if (coastalHeight < 10) return 'EXTREME DANGER: Evacuate immediately to high ground. Life-threatening situation.';
+            return 'CATASTROPHIC THREAT: Evacuate immediately. Move inland and to highest possible elevation. Survival depends on immediate action.';
+        }
+
+        function updateSimulator() {
+            const magnitude = parseFloat(magnitudeSlider.value);
+            const waterDepth = parseInt(waterDepthSlider.value);
+            const distance = parseInt(distanceSlider.value);
+            const slope = parseInt(slopeSlider.value);
+            const elevation = parseInt(elevationSlider.value);
+            
+            // Calculate wave properties
+            const openOceanHeight = calculateWaveHeight(magnitude, waterDepth);
+            const waveSpeed = calculateWaveSpeed(waterDepth);
+            const coastalHeight = calculateCoastalHeight(openOceanHeight, slope, elevation);
+            const runup = calculateRunup(coastalHeight, slope);
+            const inundation = calculateInundation(runup, slope);
+            const arrivalTime = calculateArrivalTime(distance, waveSpeed);
+            
+            const category = getTsunamiCategory(coastalHeight);
+
+            // Update Display
+            document.getElementById('waveHeight').textContent = `Wave Height: ${coastalHeight.toFixed(1)} m`;
+            document.getElementById('tsunamiCategory').textContent = category.category + ' Tsunami';
+            document.getElementById('waveSpeed').textContent = `Wave Speed: ${Math.round(waveSpeed)} km/h`;
+            document.getElementById('tsunamiDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('magnitudeValue').textContent = magnitude.toFixed(1);
+            document.getElementById('waterDepthValue').textContent = `${waterDepth} m`;
+            document.getElementById('waterDepthFeet').textContent = `${Math.round(waterDepth * 3.28084).toLocaleString()} feet`;
+            document.getElementById('distanceValue').textContent = `${distance} km`;
+            document.getElementById('distanceMiles').textContent = `${Math.round(distance * 0.621371)} miles`;
+            document.getElementById('slopeValue').textContent = `${slope}°`;
+            document.getElementById('slopeType').textContent = getSlopeType(slope);
+            document.getElementById('elevationValue').textContent = `${elevation} m`;
+            document.getElementById('elevationFeet').textContent = `${Math.round(elevation * 3.28084)} feet`;
+            
+            document.getElementById('damageText').textContent = category.damage;
+            document.getElementById('warningText').textContent = getWarningLevel(coastalHeight);
+
+            // Update Stats
+            document.getElementById('openOceanHeight').textContent = `${openOceanHeight.toFixed(2)} m`;
+            
+            // Wavelength: λ = T * sqrt(g * h), typical period 10-60 min
+            const wavelength = (20 * 60 * Math.sqrt(9.8 * waterDepth)) / 1000;
+            document.getElementById('wavelength').textContent = `${Math.round(wavelength)} km`;
+            
+            // Wave period (time between crests)
+            const period = (wavelength / waveSpeed) * 60;
+            document.getElementById('wavePeriod').textContent = `${Math.round(period)} min`;
+            
+            document.getElementById('runupHeight').textContent = `${runup.toFixed(1)} m`;
+            document.getElementById('inundationDist').textContent = `${inundation.toFixed(2)} km`;
+            document.getElementById('arrivalTime').textContent = `${Math.round(arrivalTime)} min`;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        magnitudeSlider.addEventListener('input', updateSimulator);
+        waterDepthSlider.addEventListener('input', updateSimulator);
+        distanceSlider.addEventListener('input', updateSimulator);
+        slopeSlider.addEventListener('input', updateSimulator);
+        elevationSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

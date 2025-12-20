@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tornado Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #c0392b;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .value-display span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .ef-scale-display {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .ef-scale-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .ef-scale-display p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .damage-description {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .damage-description h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .damage-description p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>🌪️ Tornado Simulator</h1>
+        
+        <div class="ef-scale-display" id="efDisplay">
+            <h2 id="efRating">EF0</h2>
+            <p id="windSpeed">Wind Speed: 65-85 mph</p>
+            <p id="efCategory">Light Damage</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Tornado Controls</h3>
+            
+            <div class="control-group">
+                <label for="windSpeed">Wind Speed (mph)</label>
+                <input type="range" id="windSpeedSlider" min="40" max="320" value="75" step="5">
+                <div class="value-display">
+                    <span id="windSpeedValue">75 mph</span>
+                    <span id="windSpeedKmh">121 km/h</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="tornadoWidth">Tornado Width (yards)</label>
+                <input type="range" id="tornadoWidth" min="10" max="2640" value="100" step="10">
+                <div class="value-display">
+                    <span id="widthValue">100 yards</span>
+                    <span id="widthMeters">91 meters</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="pathLength">Path Length (miles)</label>
+                <input type="range" id="pathLength" min="0.1" max="50" value="5" step="0.5">
+                <div class="value-display">
+                    <span id="pathValue">5.0 miles</span>
+                    <span id="pathKm">8.0 km</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="rotationSpeed">Rotation Speed</label>
+                <input type="range" id="rotationSpeed" min="1" max="10" value="5" step="1">
+                <div class="value-display">
+                    <span id="rotationValue">Medium</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Damage</h3>
+                <p id="damageText">Peels surface off roofs, mobile homes pushed or overturned, moving autos pushed off roads, attached garages may be destroyed.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">Seek shelter immediately in a sturdy building. Go to the lowest floor and interior room.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Pressure Drop</h4>
+                <p id="pressureDrop">10 mb</p>
+            </div>
+            <div class="stat-card">
+                <h4>Duration</h4>
+                <p id="duration">10 min</p>
+            </div>
+            <div class="stat-card">
+                <h4>Danger Level</h4>
+                <p id="dangerLevel">Moderate</p>
+            </div>
+            <div class="stat-card">
+                <h4>Debris Field</h4>
+                <p id="debrisField">0.5 miles</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const efScales = [
+            { rating: 'EF0', minSpeed: 65, maxSpeed: 85, damage: 'Light Damage', description: 'Peels surface off roofs, mobile homes pushed or overturned, moving autos pushed off roads, attached garages may be destroyed.', color: '#74b9ff', danger: 'Low' },
+            { rating: 'EF1', minSpeed: 86, maxSpeed: 110, damage: 'Moderate Damage', description: 'Roofs severely stripped, mobile homes overturned or badly damaged, loss of exterior doors, windows and other glass broken, small outbuildings destroyed.', color: '#0984e3', danger: 'Moderate' },
+            { rating: 'EF2', minSpeed: 111, maxSpeed: 135, damage: 'Considerable Damage', description: 'Roofs torn off well-constructed houses, foundations of frame homes shifted, large trees snapped or uprooted, light-object missiles generated, cars lifted off ground.', color: '#fdcb6e', danger: 'High' },
+            { rating: 'EF3', minSpeed: 136, maxSpeed: 165, damage: 'Severe Damage', description: 'Entire stories of well-constructed houses destroyed, severe damage to large buildings, trains overturned, trees debarked, heavy cars lifted and thrown.', color: '#e17055', danger: 'Very High' },
+            { rating: 'EF4', minSpeed: 166, maxSpeed: 200, damage: 'Devastating Damage', description: 'Well-constructed houses completely leveled, structures with weak foundations blown away, cars thrown and large missiles generated, incredible phenomena occur.', color: '#d63031', danger: 'Extreme' },
+            { rating: 'EF5', minSpeed: 201, maxSpeed: 320, damage: 'Incredible Damage', description: 'Strong frame houses lifted off foundations and swept away, automobile-sized missiles fly through the air, trees debarked, incredible phenomena occur, total devastation.', color: '#8b0000', danger: 'Catastrophic' }
+        ];
+
+        const windSpeedSlider = document.getElementById('windSpeedSlider');
+        const tornadoWidthSlider = document.getElementById('tornadoWidth');
+        const pathLengthSlider = document.getElementById('pathLength');
+        const rotationSpeedSlider = document.getElementById('rotationSpeed');
+
+        function getEFScale(windSpeed) {
+            for (let scale of efScales) {
+                if (windSpeed >= scale.minSpeed && windSpeed <= scale.maxSpeed) {
+                    return scale;
+                }
+            }
+            return efScales[efScales.length - 1];
+        }
+
+        function getTornadoWarning(efRating) {
+            const warnings = {
+                'EF0': 'Take shelter immediately in a sturdy building. Go to the lowest floor, small center room, or closet. Stay away from windows.',
+                'EF1': 'TAKE COVER NOW! Go to basement or interior room on lowest floor. Get under sturdy furniture and protect your head.',
+                'EF2': 'DANGEROUS SITUATION! Seek shelter immediately in a reinforced structure. Mobile homes will be destroyed - evacuate to sturdy building.',
+                'EF3': 'LIFE-THREATENING TORNADO! Take cover immediately in basement or interior room. Protect yourself with mattress or heavy blankets. This tornado can cause severe damage.',
+                'EF4': 'EXTREMELY DANGEROUS TORNADO! This is a life-threatening situation. Seek underground shelter immediately. Above-ground structures may be completely destroyed.',
+                'EF5': 'CATASTROPHIC TORNADO! Seek underground shelter NOW. This is the most dangerous tornado category. Complete destruction of most structures is likely. Your survival depends on immediate underground shelter.'
+            };
+            return warnings[efRating] || warnings['EF0'];
+        }
+
+        function updateSimulator() {
+            const windSpeed = parseInt(windSpeedSlider.value);
+            const width = parseInt(tornadoWidthSlider.value);
+            const pathLength = parseFloat(pathLengthSlider.value);
+            const rotationSpeed = parseInt(rotationSpeedSlider.value);
+            
+            const efScale = getEFScale(windSpeed);
+
+            // Update EF Scale Display
+            document.getElementById('efRating').textContent = efScale.rating;
+            document.getElementById('windSpeed').textContent = `Wind Speed: ${efScale.minSpeed}-${efScale.maxSpeed} mph`;
+            document.getElementById('efCategory').textContent = efScale.damage;
+            document.getElementById('efDisplay').style.background = `linear-gradient(135deg, ${efScale.color} 0%, ${adjustColor(efScale.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('windSpeedValue').textContent = `${windSpeed} mph`;
+            document.getElementById('windSpeedKmh').textContent = `${Math.round(windSpeed * 1.60934)} km/h`;
+            document.getElementById('widthValue').textContent = `${width} yards`;
+            document.getElementById('widthMeters').textContent = `${Math.round(width * 0.9144)} meters`;
+            document.getElementById('pathValue').textContent = `${pathLength.toFixed(1)} miles`;
+            document.getElementById('pathKm').textContent = `${(pathLength * 1.60934).toFixed(1)} km`;
+            
+            const rotationTexts = ['Very Slow', 'Slow', 'Slow', 'Medium-Slow', 'Medium', 'Medium', 'Medium-Fast', 'Fast', 'Fast', 'Very Fast'];
+            document.getElementById('rotationValue').textContent = rotationTexts[rotationSpeed - 1];
+            
+            document.getElementById('damageText').textContent = efScale.description;
+            
+            // Update warning based on EF scale
+            document.getElementById('warningText').textContent = getTornadoWarning(efScale.rating);
+
+            // Update Stats
+            const pressureDrop = Math.round(10 + (windSpeed - 65) / 25 * 90);
+            document.getElementById('pressureDrop').textContent = `${pressureDrop} mb`;
+            
+            const duration = Math.round(5 + pathLength * 2);
+            document.getElementById('duration').textContent = `${duration} min`;
+            
+            document.getElementById('dangerLevel').textContent = efScale.danger;
+            
+            const debrisField = (width / 440 * pathLength * 0.5).toFixed(1);
+            document.getElementById('debrisField').textContent = `${debrisField} miles`;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        windSpeedSlider.addEventListener('input', updateSimulator);
+        tornadoWidthSlider.addEventListener('input', updateSimulator);
+        pathLengthSlider.addEventListener('input', updateSimulator);
+        rotationSpeedSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>
