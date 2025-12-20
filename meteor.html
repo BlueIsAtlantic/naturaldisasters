@@ -167,6 +167,49 @@
             line-height: 1.6;
         }
 
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 1em;
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .tsunami-warning {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .tsunami-warning.active {
+            display: block;
+        }
+
+        .tsunami-warning h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .tsunami-warning p {
+            color: #0c5460;
+            line-height: 1.6;
+        }
+
         .warning-box {
             background: #f8d7da;
             border-left: 4px solid #dc3545;
@@ -281,9 +324,22 @@
                 </div>
             </div>
 
+            <div class="control-group">
+                <label>Impact Location</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="waterImpactCheck">
+                    <label for="waterImpactCheck">Impact in Ocean/Water</label>
+                </div>
+            </div>
+
             <div class="damage-description">
                 <h3>Impact Effects</h3>
                 <p id="damageText">Massive fireball visible for hundreds of kilometers. Crater formation. Regional devastation. Shockwave causes widespread destruction. Seismic effects felt globally.</p>
+            </div>
+
+            <div class="tsunami-warning" id="tsunamiWarning">
+                <h3>🌊 Tsunami Risk Assessment</h3>
+                <p id="tsunamiText">Tsunami generation likely from underwater impact. Wave heights depend on impact energy and ocean depth.</p>
             </div>
 
             <div class="warning-box">
@@ -336,6 +392,47 @@
         const angleSlider = document.getElementById('angleSlider');
         const densitySlider = document.getElementById('densitySlider');
         const altitudeSlider = document.getElementById('altitudeSlider');
+        const waterImpactCheck = document.getElementById('waterImpactCheck');
+
+        function assessTsunamiRisk(energy, waterImpact, altitude) {
+            // Only generate tsunami if impact is in water and at ground/low altitude
+            if (!waterImpact || altitude > 5) {
+                return { risk: false, level: 'None', message: '' };
+            }
+
+            // Tsunami risk based on impact energy
+            if (energy < 10) {
+                return {
+                    risk: false,
+                    level: 'None',
+                    message: ''
+                };
+            } else if (energy < 100) {
+                return {
+                    risk: true,
+                    level: 'Moderate',
+                    message: 'MODERATE tsunami risk. Underwater impact will generate waves. Local tsunami waves of 3-10 meters possible. Coastal areas should evacuate immediately.'
+                };
+            } else if (energy < 1000) {
+                return {
+                    risk: true,
+                    level: 'High',
+                    message: 'HIGH tsunami risk! Large underwater impact. Tsunami waves of 10-30 meters likely. Widespread coastal devastation. Evacuate all coastal regions immediately.'
+                };
+            } else if (energy < 100000) {
+                return {
+                    risk: true,
+                    level: 'Very High',
+                    message: 'VERY HIGH tsunami risk! Massive underwater impact. Catastrophic tsunami waves of 30-100 meters expected. Continental-scale coastal destruction. Mass evacuations critical.'
+                };
+            } else {
+                return {
+                    risk: true,
+                    level: 'Extreme',
+                    message: 'EXTREME TSUNAMI THREAT! Mega-tsunami generation certain. Wave heights exceeding 100+ meters. Global coastal devastation. This is an extinction-level ocean impact. All coastal regions worldwide at risk.'
+                };
+            }
+        }
 
         function getImpactCategory(energy) {
             for (let cat of impactCategories) {
@@ -409,22 +506,31 @@
             return 'Nearly Vertical';
         }
 
-        function getImpactWarning(category, energy) {
+        function getImpactWarning(category, energy, tsunamiRisk) {
+            let baseWarning = '';
+            
             if (energy < 1) {
-                return 'No significant threat. Meteor will burn up in atmosphere. May produce bright fireball and possible meteorite recovery.';
+                baseWarning = 'No significant threat. Meteor will burn up in atmosphere. May produce bright fireball and possible meteorite recovery.';
             } else if (energy < 10) {
-                return 'Minor threat. Stay away from windows during impact. Seek shelter from possible debris. Local emergency services on alert.';
+                baseWarning = 'Minor threat. Stay away from windows during impact. Seek shelter from possible debris. Local emergency services on alert.';
             } else if (energy < 100) {
-                return 'LOCAL EMERGENCY! Evacuate impact zone if possible. Seek sturdy shelter immediately. Expect structural damage and casualties.';
+                baseWarning = 'LOCAL EMERGENCY! Evacuate impact zone if possible. Seek sturdy shelter immediately. Expect structural damage and casualties.';
             } else if (energy < 1000) {
-                return 'MAJOR DISASTER! This impact would cause city-scale destruction. Mass evacuation necessary. Thousands of casualties expected. Regional emergency response required.';
+                baseWarning = 'MAJOR DISASTER! This impact would cause city-scale destruction. Mass evacuation necessary. Thousands of casualties expected. Regional emergency response required.';
             } else if (energy < 100000) {
-                return 'REGIONAL CATASTROPHE! This impact would cause regional devastation. Mass casualties expected. Global climate effects possible. International emergency response required.';
+                baseWarning = 'REGIONAL CATASTROPHE! This impact would cause regional devastation. Mass casualties expected. Global climate effects possible. International emergency response required.';
             } else if (energy < 1000000) {
-                return 'CONTINENTAL DISASTER! This impact threatens continental survival. Millions of casualties. Severe global climate effects. Worldwide emergency declaration.';
+                baseWarning = 'CONTINENTAL DISASTER! This impact threatens continental survival. Millions of casualties. Severe global climate effects. Worldwide emergency declaration.';
             } else {
-                return 'EXTINCTION-LEVEL EVENT! This impact threatens human civilization and most life on Earth. Global mass extinction likely. No adequate defense or evacuation possible.';
+                baseWarning = 'EXTINCTION-LEVEL EVENT! This impact threatens human civilization and most life on Earth. Global mass extinction likely. No adequate defense or evacuation possible.';
             }
+
+            // Add tsunami warning if there's risk
+            if (tsunamiRisk && tsunamiRisk.risk) {
+                baseWarning += ' 🌊 TSUNAMI WARNING: Massive waves will devastate all coastal areas. Evacuate to high ground immediately!';
+            }
+
+            return baseWarning;
         }
 
         function updateSimulator() {
@@ -433,6 +539,7 @@
             const angle = parseFloat(angleSlider.value);
             const density = parseFloat(densitySlider.value);
             const altitude = parseFloat(altitudeSlider.value);
+            const waterImpact = waterImpactCheck.checked;
             
             // Calculate impact properties
             const mass = calculateMass(diameter, density);
@@ -442,6 +549,7 @@
             const thermalRadius = calculateThermalRadius(energy);
             const shockwaveRadius = calculateShockwaveRadius(energy);
             const seismicMag = calculateSeismicMagnitude(energy);
+            const tsunamiRisk = assessTsunamiRisk(energy, waterImpact, altitude);
             
             const category = getImpactCategory(energy);
 
@@ -458,6 +566,8 @@
             
             if (altitude > 0) {
                 document.getElementById('craterSize').textContent = `Airburst at ${altitude} km altitude`;
+            } else if (waterImpact) {
+                document.getElementById('craterSize').textContent = `Ocean Impact - Underwater crater`;
             } else if (craterDiameter < 0.1) {
                 document.getElementById('craterSize').textContent = 'No crater (too small)';
             } else {
@@ -483,7 +593,17 @@
             }
             
             document.getElementById('damageText').textContent = category.effects;
-            document.getElementById('warningText').textContent = getImpactWarning(category.category, energy);
+            
+            // Update tsunami warning display
+            const tsunamiWarningEl = document.getElementById('tsunamiWarning');
+            if (tsunamiRisk.risk) {
+                tsunamiWarningEl.classList.add('active');
+                document.getElementById('tsunamiText').textContent = tsunamiRisk.message;
+            } else {
+                tsunamiWarningEl.classList.remove('active');
+            }
+            
+            document.getElementById('warningText').textContent = getImpactWarning(category.category, energy, tsunamiRisk);
 
             // Update Stats
             if (energy < 1) {
@@ -495,7 +615,11 @@
             }
             
             if (craterDiameter < 0.1 || altitude > 0) {
-                document.getElementById('craterDiameter').textContent = 'None';
+                if (waterImpact && altitude === 0) {
+                    document.getElementById('craterDiameter').textContent = 'Underwater';
+                } else {
+                    document.getElementById('craterDiameter').textContent = 'None';
+                }
             } else {
                 document.getElementById('craterDiameter').textContent = `${craterDiameter.toFixed(2)} km`;
             }
@@ -515,6 +639,7 @@
         angleSlider.addEventListener('input', updateSimulator);
         densitySlider.addEventListener('input', updateSimulator);
         altitudeSlider.addEventListener('input', updateSimulator);
+        waterImpactCheck.addEventListener('change', updateSimulator);
 
         // Initialize
         updateSimulator();
