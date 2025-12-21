@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -81,6 +82,49 @@
 
         .download-button:active {
             transform: translateY(0px);
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .language-select {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            outline: none;
+        }
+
+        .language-select:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .language-select:focus {
+            background: rgba(52, 152, 219, 0.3);
+            border-color: rgba(52, 152, 219, 0.5);
+        }
+
+        .language-select option {
+            background: rgba(13, 27, 62, 0.98);
+            color: white;
+            padding: 10px;
+        }
+
+        .topbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
         }
 
         .download-icon {
@@ -386,17 +430,38 @@
 
             .topbar {
                 padding: 12px 20px;
-                flex-direction: column;
-                gap: 15px;
+                flex-direction: row;
+                justify-content: space-between;
             }
 
             .topbar-logo {
-                font-size: 1.3em;
+                font-size: 1.1em;
+            }
+
+            .topbar-right {
+                gap: 10px;
+            }
+
+            .language-selector {
+                gap: 5px;
+            }
+
+            .language-select {
+                padding: 6px 10px;
+                font-size: 0.75em;
             }
 
             .download-button {
-                font-size: 0.9em;
-                padding: 10px 20px;
+                font-size: 0.7em;
+                padding: 8px 12px;
+            }
+
+            .download-button span {
+                display: none;
+            }
+
+            .download-button::after {
+                content: 'Download';
             }
         }
     </style>
@@ -406,145 +471,195 @@
         <div class="topbar-logo">
             <span>blueisatlantic</span>
         </div>
-        <a href="#" class="download-button" onclick="alert('Desktop app coming soon!'); return false;">
-            <span>Download Desktop App</span>
-        </a>
+        <div class="topbar-right">
+            <div class="language-selector">
+                <select class="language-select" id="languageSelect" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="lt">Lietuvių</option>
+                    <option value="es">Español</option>
+                    <option value="ru">Русский</option>
+                    <option value="de">Deutsch</option>
+                </select>
+            </div>
+            <a href="#" class="download-button" onclick="alert(getTranslation('index.downloadAlert')); return false;">
+                <span id="downloadButtonText">Download Desktop App</span>
+            </a>
+        </div>
     </div>
 
     <div class="main-content">
         <div class="container">
         <div class="hero-section">
-            <h1>Natural Disaster Simulators</h1>
-            <p class="subtitle">Experience and understand the power of nature's most devastating phenomena</p>
+            <h1 id="mainTitle">Natural Disaster Simulators</h1>
+            <p class="subtitle" id="mainSubtitle">Experience and understand the power of nature's most devastating phenomena</p>
         </div>
 
         <div class="cards-container">
             <div class="simulator-card tornado-card" onclick="window.location.href='tornado.html'">
                 <div class="icon-wrapper">🌪️</div>
-                <h2>Tornado</h2>
-                <p>Simulate powerful tornadoes and understand their devastating force through the Enhanced Fujita Scale.</p>
+                <h2 id="tornadoTitle">Tornado</h2>
+                <p id="tornadoDesc">Simulate powerful tornadoes and understand their devastating force through the Enhanced Fujita Scale.</p>
                 <ul class="features-list">
-                    <li>Wind speeds up to 320 mph</li>
-                    <li>EF0 to EF5 scale ratings</li>
-                    <li>Damage predictions</li>
-                    <li>Safety warnings</li>
+                    <li id="tornadoF1">Wind speeds up to 320 mph</li>
+                    <li id="tornadoF2">EF0 to EF5 scale ratings</li>
+                    <li id="tornadoF3">Damage predictions</li>
+                    <li id="tornadoF4">Safety warnings</li>
                 </ul>
-                <a href="tornado.html" class="card-button">Launch Simulator</a>
+                <a href="tornado.html" class="card-button" id="tornadoBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card earthquake-card" onclick="window.location.href='earthquake.html'">
                 <div class="icon-wrapper">🌍</div>
-                <h2>Earthquake</h2>
-                <p>Explore seismic activity from minor tremors to catastrophic quakes on the Moment Magnitude Scale.</p>
+                <h2 id="earthquakeTitle">Earthquake</h2>
+                <p id="earthquakeDesc">Explore seismic activity from minor tremors to catastrophic quakes on the Moment Magnitude Scale.</p>
                 <ul class="features-list">
-                    <li>Magnitude 1.0 to 10.0</li>
-                    <li>Depth and distance factors</li>
-                    <li>Tsunami risk assessment</li>
-                    <li>Energy calculations</li>
+                    <li id="earthquakeF1">Magnitude 1.0 to 10.0</li>
+                    <li id="earthquakeF2">Depth and distance factors</li>
+                    <li id="earthquakeF3">Tsunami risk assessment</li>
+                    <li id="earthquakeF4">Energy calculations</li>
                 </ul>
-                <a href="earthquake.html" class="card-button">Launch Simulator</a>
+                <a href="earthquake.html" class="card-button" id="earthquakeBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card tsunami-card" onclick="window.location.href='tsunami.html'">
                 <div class="icon-wrapper">🌊</div>
-                <h2>Tsunami</h2>
-                <p>Witness the immense power of ocean waves triggered by underwater earthquakes and understand coastal impacts.</p>
+                <h2 id="tsunamiTitle">Tsunami</h2>
+                <p id="tsunamiDesc">Witness the immense power of ocean waves triggered by underwater earthquakes and understand coastal impacts.</p>
                 <ul class="features-list">
-                    <li>Wave heights up to 20+ meters</li>
-                    <li>Run-up and inundation data</li>
-                    <li>Arrival time predictions</li>
-                    <li>Coastal impact analysis</li>
+                    <li id="tsunamiF1">Wave heights up to 20+ meters</li>
+                    <li id="tsunamiF2">Run-up and inundation data</li>
+                    <li id="tsunamiF3">Arrival time predictions</li>
+                    <li id="tsunamiF4">Coastal impact analysis</li>
                 </ul>
-                <a href="tsunami.html" class="card-button">Launch Simulator</a>
+                <a href="tsunami.html" class="card-button" id="tsunamiBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card flood-card" onclick="window.location.href='flood.html'">
                 <div class="icon-wrapper">💧</div>
-                <h2>Flood</h2>
-                <p>Simulate flooding scenarios from heavy rainfall and understand water level dynamics and evacuation needs.</p>
+                <h2 id="floodTitle">Flood</h2>
+                <p id="floodDesc">Simulate flooding scenarios from heavy rainfall and understand water level dynamics and evacuation needs.</p>
                 <ul class="features-list">
-                    <li>Rainfall intensity control</li>
-                    <li>Terrain and drainage factors</li>
-                    <li>Water level predictions</li>
-                    <li>Evacuation zone mapping</li>
+                    <li id="floodF1">Rainfall intensity control</li>
+                    <li id="floodF2">Terrain and drainage factors</li>
+                    <li id="floodF3">Water level predictions</li>
+                    <li id="floodF4">Evacuation zone mapping</li>
                 </ul>
-                <a href="flood.html" class="card-button">Launch Simulator</a>
+                <a href="flood.html" class="card-button" id="floodBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card wildfire-card" onclick="window.location.href='wildfire.html'">
                 <div class="icon-wrapper">🔥</div>
-                <h2>Wildfire</h2>
-                <p>Experience wildfire behavior based on weather, terrain, and fuel conditions. Understand fire intensity and spread.</p>
+                <h2 id="wildfireTitle">Wildfire</h2>
+                <p id="wildfireDesc">Experience wildfire behavior based on weather, terrain, and fuel conditions. Understand fire intensity and spread.</p>
                 <ul class="features-list">
-                    <li>Fire intensity calculations</li>
-                    <li>Wind and humidity effects</li>
-                    <li>Spread rate predictions</li>
-                    <li>Evacuation planning</li>
+                    <li id="wildfireF1">Fire intensity calculations</li>
+                    <li id="wildfireF2">Wind and humidity effects</li>
+                    <li id="wildfireF3">Spread rate predictions</li>
+                    <li id="wildfireF4">Evacuation planning</li>
                 </ul>
-                <a href="wildfire.html" class="card-button">Launch Simulator</a>
+                <a href="wildfire.html" class="card-button" id="wildfireBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card solarstorm-card" onclick="window.location.href='solarstorm.html'">
                 <div class="icon-wrapper">☀️</div>
-                <h2>Solar Storm</h2>
-                <p>Explore geomagnetic storms and solar flares. Understand their effects on power grids, satellites, and technology.</p>
+                <h2 id="solarstormTitle">Solar Storm</h2>
+                <p id="solarstormDesc">Explore geomagnetic storms and solar flares. Understand their effects on power grids, satellites, and technology.</p>
                 <ul class="features-list">
-                    <li>G-scale storm ratings</li>
-                    <li>CME and flare simulations</li>
-                    <li>Technology impact analysis</li>
-                    <li>Aurora visibility predictions</li>
+                    <li id="solarstormF1">G-scale storm ratings</li>
+                    <li id="solarstormF2">CME and flare simulations</li>
+                    <li id="solarstormF3">Technology impact analysis</li>
+                    <li id="solarstormF4">Aurora visibility predictions</li>
                 </ul>
-                <a href="solarstorm.html" class="card-button">Launch Simulator</a>
+                <a href="solarstorm.html" class="card-button" id="solarstormBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card meteor-card" onclick="window.location.href='meteor.html'">
                 <div class="icon-wrapper">☄️</div>
-                <h2>Meteor Impact</h2>
-                <p>Simulate asteroid and meteor impacts. Calculate kinetic energy, crater size, and destruction radius.</p>
+                <h2 id="meteorTitle">Meteor Impact</h2>
+                <p id="meteorDesc">Simulate asteroid and meteor impacts. Calculate kinetic energy, crater size, and destruction radius.</p>
                 <ul class="features-list">
-                    <li>Impact energy calculations</li>
-                    <li>Crater diameter predictions</li>
-                    <li>Shockwave and thermal effects</li>
-                    <li>Threat level assessment</li>
+                    <li id="meteorF1">Impact energy calculations</li>
+                    <li id="meteorF2">Crater diameter predictions</li>
+                    <li id="meteorF3">Shockwave and thermal effects</li>
+                    <li id="meteorF4">Threat level assessment</li>
                 </ul>
-                <a href="meteor.html" class="card-button">Launch Simulator</a>
+                <a href="meteor.html" class="card-button" id="meteorBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card heatwave-card" onclick="window.location.href='heatwave.html'">
                 <div class="icon-wrapper">🌡️</div>
-                <h2>Heatwave</h2>
-                <p>Model extreme heat events with heat index calculations. Understand health risks and infrastructure stress.</p>
+                <h2 id="heatwaveTitle">Heatwave</h2>
+                <p id="heatwaveDesc">Model extreme heat events with heat index calculations. Understand health risks and infrastructure stress.</p>
                 <ul class="features-list">
-                    <li>Heat index calculator</li>
-                    <li>Health risk assessments</li>
-                    <li>Power grid stress analysis</li>
-                    <li>Heat exhaustion timing</li>
+                    <li id="heatwaveF1">Heat index calculator</li>
+                    <li id="heatwaveF2">Health risk assessments</li>
+                    <li id="heatwaveF3">Power grid stress analysis</li>
+                    <li id="heatwaveF4">Heat exhaustion timing</li>
                 </ul>
-                <a href="heatwave.html" class="card-button">Launch Simulator</a>
+                <a href="heatwave.html" class="card-button" id="heatwaveBtn">Launch Simulator</a>
             </div>
 
             <div class="simulator-card landslide-card" onclick="window.location.href='landslide.html'">
                 <div class="icon-wrapper">⛰️</div>
-                <h2>Landslide</h2>
-                <p>Simulate mountain slope failures and debris flows. Analyze soil saturation, slope angle, and run-out distance.</p>
+                <h2 id="landslideTitle">Landslide</h2>
+                <p id="landslideDesc">Simulate mountain slope failures and debris flows. Analyze soil saturation, slope angle, and run-out distance.</p>
                 <ul class="features-list">
-                    <li>Slope stability analysis</li>
-                    <li>Debris flow velocity</li>
-                    <li>Run-out distance calculations</li>
-                    <li>Risk assessment</li>
+                    <li id="landslideF1">Slope stability analysis</li>
+                    <li id="landslideF2">Debris flow velocity</li>
+                    <li id="landslideF3">Run-out distance calculations</li>
+                    <li id="landslideF4">Risk assessment</li>
                 </ul>
-                <a href="landslide.html" class="card-button">Launch Simulator</a>
+                <a href="landslide.html" class="card-button" id="landslideBtn">Launch Simulator</a>
             </div>
         </div>
 
         <div class="footer">
-            <p>Educational simulators for understanding natural disaster dynamics and safety protocols</p>
+            <p id="footerText">Educational simulators for understanding natural disaster dynamics and safety protocols</p>
         </div>
     </div>
     </div>
 
     <!-- Floating particles -->
     <script>
+        // Language change function
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            updatePageLanguage();
+        }
+
+        function updatePageLanguage() {
+            const lang = getLanguage();
+            
+            // Update dropdown selection
+            document.getElementById('languageSelect').value = lang;
+            
+            // Update page title
+            document.title = getTranslation('index.title');
+            
+            // Update main content
+            document.getElementById('mainTitle').textContent = getTranslation('index.title');
+            document.getElementById('mainSubtitle').textContent = getTranslation('index.subtitle');
+            document.getElementById('downloadButtonText').textContent = getTranslation('index.downloadButton');
+            document.getElementById('footerText').textContent = getTranslation('index.footer');
+            
+            // Update all simulator cards
+            const simulators = ['tornado', 'earthquake', 'tsunami', 'flood', 'wildfire', 'solarstorm', 'meteor', 'heatwave', 'landslide'];
+            simulators.forEach(sim => {
+                document.getElementById(sim + 'Title').textContent = getTranslation(`index.${sim}.title`);
+                document.getElementById(sim + 'Desc').textContent = getTranslation(`index.${sim}.description`);
+                document.getElementById(sim + 'F1').textContent = getTranslation(`index.${sim}.feature1`);
+                document.getElementById(sim + 'F2').textContent = getTranslation(`index.${sim}.feature2`);
+                document.getElementById(sim + 'F3').textContent = getTranslation(`index.${sim}.feature3`);
+                document.getElementById(sim + 'F4').textContent = getTranslation(`index.${sim}.feature4`);
+                document.getElementById(sim + 'Btn').textContent = getTranslation(`index.${sim}.button`);
+            });
+        }
+
+        // Initialize language on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            updatePageLanguage();
+        });
+        
         // Create floating particles
         for (let i = 0; i < 15; i++) {
             const particle = document.createElement('div');

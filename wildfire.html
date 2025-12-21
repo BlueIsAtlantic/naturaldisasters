@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wildfire Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -224,9 +225,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
-        <h1>🔥 Wildfire Simulator</h1>
+        <h1 id="pageTitle">🔥 Wildfire Simulator</h1>
         
         <div class="fire-display" id="fireDisplay">
             <h2 id="fireIntensity">Intensity: 5,000 kW/m</h2>
@@ -235,10 +236,10 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Wildfire Parameters</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Wildfire Parameters</h3>
             
             <div class="control-group">
-                <label for="temperature">Air Temperature (°C)</label>
+                <label for="temperature" id="temperatureLabel">Air Temperature (°C)</label>
                 <input type="range" id="temperatureSlider" min="15" max="50" value="30" step="1">
                 <div class="value-display">
                     <span id="temperatureValue">30°C</span>
@@ -247,7 +248,7 @@
             </div>
 
             <div class="control-group">
-                <label for="windSpeed">Wind Speed (km/h)</label>
+                <label for="windSpeed" id="windSpeedLabel">Wind Speed (km/h)</label>
                 <input type="range" id="windSpeedSlider" min="0" max="100" value="20" step="5">
                 <div class="value-display">
                     <span id="windSpeedValue">20 km/h</span>
@@ -256,7 +257,7 @@
             </div>
 
             <div class="control-group">
-                <label for="humidity">Relative Humidity (%)</label>
+                <label for="humidity" id="humidityLabel">Relative Humidity (%)</label>
                 <input type="range" id="humiditySlider" min="5" max="100" value="30" step="5">
                 <div class="value-display">
                     <span id="humidityValue">30%</span>
@@ -265,7 +266,7 @@
             </div>
 
             <div class="control-group">
-                <label for="fuelMoisture">Fuel Moisture Content (%)</label>
+                <label for="fuelMoisture" id="fuelMoistureLabel">Fuel Moisture Content (%)</label>
                 <input type="range" id="fuelMoistureSlider" min="2" max="30" value="10" step="1">
                 <div class="value-display">
                     <span id="fuelMoistureValue">10%</span>
@@ -274,7 +275,7 @@
             </div>
 
             <div class="control-group">
-                <label for="slope">Terrain Slope (degrees)</label>
+                <label for="slope" id="slopeLabel">Terrain Slope (degrees)</label>
                 <input type="range" id="slopeSlider" min="0" max="45" value="15" step="5">
                 <div class="value-display">
                     <span id="slopeValue">15°</span>
@@ -283,12 +284,12 @@
             </div>
 
             <div class="damage-description">
-                <h3>Fire Behavior</h3>
+                <h3 id="behaviorTitle">Fire Behavior</h3>
                 <p id="damageText">Active crown fire possible. Fire spreads rapidly. Spotting probable. Firefighting difficult. Structures at risk.</p>
             </div>
 
             <div class="warning-box">
-                <h3>⚠️ Safety Warning</h3>
+                <h3 id="warningTitle">⚠️ Safety Warning</h3>
                 <p id="warningText">Be prepared to evacuate. Monitor local fire updates. Have emergency supplies ready. Follow all evacuation orders immediately.</p>
             </div>
         </div>
@@ -417,18 +418,27 @@
 
         function getFireWarning(category, spreadRate) {
             if (category === 'Low Intensity') {
-                return 'Stay aware of fire conditions. Follow local fire restrictions. Keep emergency supplies ready.';
+                return getDynamicTranslation('wildfire', 'warnings', 'Very Low');
             } else if (category === 'Low-Moderate') {
-                return 'Monitor fire updates closely. Be prepared to evacuate if conditions change. Have emergency plan ready.';
+                return getDynamicTranslation('wildfire', 'warnings', 'Low');
             } else if (category === 'Moderate') {
-                return 'Be prepared to evacuate. Monitor local fire updates. Have emergency supplies ready. Follow all evacuation orders immediately.';
+                return getDynamicTranslation('wildfire', 'warnings', 'Moderate');
             } else if (category === 'High') {
-                return 'DANGEROUS FIRE CONDITIONS! Be ready to evacuate at any moment. Fire can change direction rapidly. Stay informed and follow all emergency instructions.';
+                return getDynamicTranslation('wildfire', 'warnings', 'High');
             } else if (category === 'Very High') {
-                return 'EXTREME FIRE DANGER! Evacuate immediately if advised. Fire behavior is unpredictable and extremely dangerous. This is a life-threatening situation.';
+                return getDynamicTranslation('wildfire', 'warnings', 'Very High');
             } else {
-                return 'CATASTROPHIC FIRE CONDITIONS! EVACUATE NOW if in fire zone. Firestorm conditions possible. This is an extremely dangerous, life-threatening emergency. Follow all evacuation orders immediately!';
+                return getDynamicTranslation('wildfire', 'warnings', 'Extreme');
             }
+        }
+
+        function getFireIntensityLevel(category) {
+            if (category === 'Low Intensity') return getDynamicTranslation('wildfire', 'intensities', 'Very Low');
+            else if (category === 'Low-Moderate') return getDynamicTranslation('wildfire', 'intensities', 'Low');
+            else if (category === 'Moderate') return getDynamicTranslation('wildfire', 'intensities', 'Moderate');
+            else if (category === 'High') return getDynamicTranslation('wildfire', 'intensities', 'High');
+            else if (category === 'Very High') return getDynamicTranslation('wildfire', 'intensities', 'Very High');
+            else return getDynamicTranslation('wildfire', 'intensities', 'Extreme');
         }
 
         function updateSimulator() {
@@ -494,7 +504,23 @@
         slopeSlider.addEventListener('input', updateSimulator);
 
         // Initialize
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = getTranslation('wildfire.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '🔥 ' + getTranslation('wildfire.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('temperatureLabel').textContent = getTranslation('wildfire.temperature');
+            document.getElementById('windSpeedLabel').textContent = getTranslation('wildfire.windSpeed');
+            document.getElementById('humidityLabel').textContent = getTranslation('wildfire.humidity');
+            document.getElementById('fuelMoistureLabel').textContent = getTranslation('wildfire.fuelMoisture');
+            document.getElementById('slopeLabel').textContent = getTranslation('wildfire.slope');
+            document.getElementById('behaviorTitle').textContent = getTranslation('common.fireBehavior');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+        });
         updateSimulator();
+        
     </script>
 </body>
 </html>

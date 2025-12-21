@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tsunami Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -224,9 +225,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
-        <h1>🌊 Tsunami Simulator</h1>
+        <h1 id="pageTitle">🌊 Tsunami Simulator</h1>
         
         <div class="tsunami-display" id="tsunamiDisplay">
             <h2 id="waveHeight">Wave Height: 5.0 m</h2>
@@ -235,10 +236,10 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Tsunami Parameters</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Tsunami Parameters</h3>
             
             <div class="control-group">
-                <label for="magnitude">Source Earthquake Magnitude</label>
+                <label for="magnitude" id="magnitudeLabel">Source Earthquake Magnitude</label>
                 <input type="range" id="magnitudeSlider" min="6.0" max="9.5" value="7.5" step="0.1">
                 <div class="value-display">
                     <span id="magnitudeValue">7.5</span>
@@ -247,7 +248,7 @@
             </div>
 
             <div class="control-group">
-                <label for="waterDepth">Ocean Depth (meters)</label>
+                <label for="waterDepth" id="waterDepthLabel">Ocean Depth (meters)</label>
                 <input type="range" id="waterDepthSlider" min="100" max="6000" value="4000" step="100">
                 <div class="value-display">
                     <span id="waterDepthValue">4000 m</span>
@@ -256,7 +257,7 @@
             </div>
 
             <div class="control-group">
-                <label for="distance">Distance from Source (km)</label>
+                <label for="distance" id="distanceLabel">Distance from Source (km)</label>
                 <input type="range" id="distanceSlider" min="10" max="5000" value="500" step="50">
                 <div class="value-display">
                     <span id="distanceValue">500 km</span>
@@ -288,7 +289,7 @@
             </div>
 
             <div class="warning-box">
-                <h3>⚠️ Safety Warning</h3>
+                <h3 id="warningTitle">⚠️ Safety Warning</h3>
                 <p id="warningText">Evacuate immediately to higher ground. Do not return until authorities declare it safe.</p>
             </div>
         </div>
@@ -410,11 +411,21 @@
         }
 
         function getWarningLevel(coastalHeight) {
-            if (coastalHeight < 1) return 'Stay alert. Monitor for updates. Move away from shore.';
-            if (coastalHeight < 3) return 'Evacuate low-lying coastal areas immediately. Move to higher ground.';
-            if (coastalHeight < 6) return 'URGENT: Evacuate all coastal areas immediately. Seek high ground at least 30m above sea level.';
-            if (coastalHeight < 10) return 'EXTREME DANGER: Evacuate immediately to high ground. Life-threatening situation.';
-            return 'CATASTROPHIC THREAT: Evacuate immediately. Move inland and to highest possible elevation. Survival depends on immediate action.';
+            if (coastalHeight < 1) return getDynamicTranslation('tsunami', 'warnings', 'No Threat');
+            if (coastalHeight < 3) return getDynamicTranslation('tsunami', 'warnings', 'Minor');
+            if (coastalHeight < 6) return getDynamicTranslation('tsunami', 'warnings', 'Moderate');
+            if (coastalHeight < 10) return getDynamicTranslation('tsunami', 'warnings', 'Major');
+            if (coastalHeight < 15) return getDynamicTranslation('tsunami', 'warnings', 'Severe');
+            return getDynamicTranslation('tsunami', 'warnings', 'Catastrophic');
+        }
+
+        function getThreatCategory(coastalHeight) {
+            if (coastalHeight < 1) return getDynamicTranslation('tsunami', 'categories', 'No Threat');
+            if (coastalHeight < 3) return getDynamicTranslation('tsunami', 'categories', 'Minor');
+            if (coastalHeight < 6) return getDynamicTranslation('tsunami', 'categories', 'Moderate');
+            if (coastalHeight < 10) return getDynamicTranslation('tsunami', 'categories', 'Major');
+            if (coastalHeight < 15) return getDynamicTranslation('tsunami', 'categories', 'Severe');
+            return getDynamicTranslation('tsunami', 'categories', 'Catastrophic');
         }
 
         function updateSimulator() {
@@ -481,7 +492,23 @@
         elevationSlider.addEventListener('input', updateSimulator);
 
         // Initialize
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = getTranslation('tsunami.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '🌊 ' + getTranslation('tsunami.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('magnitudeLabel').textContent = getTranslation('tsunami.magnitude');
+            document.getElementById('waterDepthLabel').textContent = getTranslation('tsunami.waterDepth');
+            document.getElementById('distanceLabel').textContent = getTranslation('tsunami.distance');
+            document.getElementById('slopeLabel').textContent = getTranslation('tsunami.slope');
+            document.getElementById('elevationLabel').textContent = getTranslation('tsunami.elevation');
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+        });
         updateSimulator();
+        
     </script>
 </body>
 </html>

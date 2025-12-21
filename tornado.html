@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tornado Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -220,9 +221,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">Back to Home</a>
         
-        <h1>🌪️ Tornado Simulator</h1>
+        <h1 id="pageTitle">🌪️ Tornado Simulator</h1>
         
         <div class="ef-scale-display" id="efDisplay">
             <h2 id="efRating">EF0</h2>
@@ -231,10 +232,10 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Tornado Controls</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Tornado Controls</h3>
             
             <div class="control-group">
-                <label for="windSpeed">Wind Speed (mph)</label>
+                <label for="windSpeed" id="windSpeedLabel">Wind Speed (mph)</label>
                 <input type="range" id="windSpeedSlider" min="40" max="320" value="75" step="5">
                 <div class="value-display">
                     <span id="windSpeedValue">75 mph</span>
@@ -243,7 +244,7 @@
             </div>
 
             <div class="control-group">
-                <label for="tornadoWidth">Tornado Width (yards)</label>
+                <label for="tornadoWidth" id="widthLabel">Tornado Width (yards)</label>
                 <input type="range" id="tornadoWidth" min="10" max="2640" value="100" step="10">
                 <div class="value-display">
                     <span id="widthValue">100 yards</span>
@@ -252,7 +253,7 @@
             </div>
 
             <div class="control-group">
-                <label for="pathLength">Path Length (miles)</label>
+                <label for="pathLength" id="pathLengthLabel">Path Length (miles)</label>
                 <input type="range" id="pathLength" min="0.1" max="50" value="5" step="0.5">
                 <div class="value-display">
                     <span id="pathValue">5.0 miles</span>
@@ -261,7 +262,7 @@
             </div>
 
             <div class="control-group">
-                <label for="rotationSpeed">Rotation Speed</label>
+                <label for="rotationSpeed" id="rotationSpeedLabel">Rotation Speed</label>
                 <input type="range" id="rotationSpeed" min="1" max="10" value="5" step="1">
                 <div class="value-display">
                     <span id="rotationValue">Medium</span>
@@ -269,12 +270,12 @@
             </div>
 
             <div class="damage-description">
-                <h3>Expected Damage</h3>
+                <h3 id="damageTitle">Expected Damage</h3>
                 <p id="damageText">Peels surface off roofs, mobile homes pushed or overturned, moving autos pushed off roads, attached garages may be destroyed.</p>
             </div>
 
             <div class="warning-box">
-                <h3>⚠️ Safety Warning</h3>
+                <h3 id="warningTitle">⚠️ Safety Warning</h3>
                 <p id="warningText">Seek shelter immediately in a sturdy building. Go to the lowest floor and interior room.</p>
             </div>
         </div>
@@ -301,12 +302,12 @@
 
     <script>
         const efScales = [
-            { rating: 'EF0', minSpeed: 65, maxSpeed: 85, damage: 'Light Damage', description: 'Peels surface off roofs, mobile homes pushed or overturned, moving autos pushed off roads, attached garages may be destroyed.', color: '#74b9ff', danger: 'Low' },
-            { rating: 'EF1', minSpeed: 86, maxSpeed: 110, damage: 'Moderate Damage', description: 'Roofs severely stripped, mobile homes overturned or badly damaged, loss of exterior doors, windows and other glass broken, small outbuildings destroyed.', color: '#0984e3', danger: 'Moderate' },
-            { rating: 'EF2', minSpeed: 111, maxSpeed: 135, damage: 'Considerable Damage', description: 'Roofs torn off well-constructed houses, foundations of frame homes shifted, large trees snapped or uprooted, light-object missiles generated, cars lifted off ground.', color: '#fdcb6e', danger: 'High' },
-            { rating: 'EF3', minSpeed: 136, maxSpeed: 165, damage: 'Severe Damage', description: 'Entire stories of well-constructed houses destroyed, severe damage to large buildings, trains overturned, trees debarked, heavy cars lifted and thrown.', color: '#e17055', danger: 'Very High' },
-            { rating: 'EF4', minSpeed: 166, maxSpeed: 200, damage: 'Devastating Damage', description: 'Well-constructed houses completely leveled, structures with weak foundations blown away, cars thrown and large missiles generated, incredible phenomena occur.', color: '#d63031', danger: 'Extreme' },
-            { rating: 'EF5', minSpeed: 201, maxSpeed: 320, damage: 'Incredible Damage', description: 'Strong frame houses lifted off foundations and swept away, automobile-sized missiles fly through the air, trees debarked, incredible phenomena occur, total devastation.', color: '#8b0000', danger: 'Catastrophic' }
+            { rating: 'EF0', minSpeed: 65, maxSpeed: 85, color: '#74b9ff', danger: 'Low' },
+            { rating: 'EF1', minSpeed: 86, maxSpeed: 110, color: '#0984e3', danger: 'Moderate' },
+            { rating: 'EF2', minSpeed: 111, maxSpeed: 135, color: '#fdcb6e', danger: 'High' },
+            { rating: 'EF3', minSpeed: 136, maxSpeed: 165, color: '#e17055', danger: 'Very High' },
+            { rating: 'EF4', minSpeed: 166, maxSpeed: 200, color: '#d63031', danger: 'Extreme' },
+            { rating: 'EF5', minSpeed: 201, maxSpeed: 320, color: '#8b0000', danger: 'Catastrophic' }
         ];
 
         const windSpeedSlider = document.getElementById('windSpeedSlider');
@@ -323,18 +324,6 @@
             return efScales[efScales.length - 1];
         }
 
-        function getTornadoWarning(efRating) {
-            const warnings = {
-                'EF0': 'Take shelter immediately in a sturdy building. Go to the lowest floor, small center room, or closet. Stay away from windows.',
-                'EF1': 'TAKE COVER NOW! Go to basement or interior room on lowest floor. Get under sturdy furniture and protect your head.',
-                'EF2': 'DANGEROUS SITUATION! Seek shelter immediately in a reinforced structure. Mobile homes will be destroyed - evacuate to sturdy building.',
-                'EF3': 'LIFE-THREATENING TORNADO! Take cover immediately in basement or interior room. Protect yourself with mattress or heavy blankets. This tornado can cause severe damage.',
-                'EF4': 'EXTREMELY DANGEROUS TORNADO! This is a life-threatening situation. Seek underground shelter immediately. Above-ground structures may be completely destroyed.',
-                'EF5': 'CATASTROPHIC TORNADO! Seek underground shelter NOW. This is the most dangerous tornado category. Complete destruction of most structures is likely. Your survival depends on immediate underground shelter.'
-            };
-            return warnings[efRating] || warnings['EF0'];
-        }
-
         function updateSimulator() {
             const windSpeed = parseInt(windSpeedSlider.value);
             const width = parseInt(tornadoWidthSlider.value);
@@ -343,10 +332,16 @@
             
             const efScale = getEFScale(windSpeed);
 
+            // Get translated content
+            const damageCategory = getDynamicTranslation('tornado', 'categories', efScale.rating);
+            const damageDescription = getDynamicTranslation('tornado', 'descriptions', efScale.rating);
+            const warningText = getDynamicTranslation('tornado', 'warnings', efScale.rating);
+            const dangerLevel = getDynamicTranslation('tornado', 'dangerLevels', efScale.danger);
+
             // Update EF Scale Display
             document.getElementById('efRating').textContent = efScale.rating;
             document.getElementById('windSpeed').textContent = `Wind Speed: ${efScale.minSpeed}-${efScale.maxSpeed} mph`;
-            document.getElementById('efCategory').textContent = efScale.damage;
+            document.getElementById('efCategory').textContent = damageCategory;
             document.getElementById('efDisplay').style.background = `linear-gradient(135deg, ${efScale.color} 0%, ${adjustColor(efScale.color, -20)} 100%)`;
             
             // Update Values
@@ -360,10 +355,9 @@
             const rotationTexts = ['Very Slow', 'Slow', 'Slow', 'Medium-Slow', 'Medium', 'Medium', 'Medium-Fast', 'Fast', 'Fast', 'Very Fast'];
             document.getElementById('rotationValue').textContent = rotationTexts[rotationSpeed - 1];
             
-            document.getElementById('damageText').textContent = efScale.description;
-            
-            // Update warning based on EF scale
-            document.getElementById('warningText').textContent = getTornadoWarning(efScale.rating);
+            // Use translated damage and warning text
+            document.getElementById('damageText').textContent = damageDescription;
+            document.getElementById('warningText').textContent = warningText;
 
             // Update Stats
             const pressureDrop = Math.round(10 + (windSpeed - 65) / 25 * 90);
@@ -372,7 +366,7 @@
             const duration = Math.round(5 + pathLength * 2);
             document.getElementById('duration').textContent = `${duration} min`;
             
-            document.getElementById('dangerLevel').textContent = efScale.danger;
+            document.getElementById('dangerLevel').textContent = dangerLevel;
             
             const debrisField = (width / 440 * pathLength * 0.5).toFixed(1);
             document.getElementById('debrisField').textContent = `${debrisField} miles`;
@@ -389,6 +383,21 @@
 
         // Initialize
         updateSimulator();
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            const lang = getLanguage();
+            document.title = getTranslation('tornado.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '🌪️ ' + getTranslation('tornado.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('windSpeedLabel').textContent = getTranslation('tornado.windSpeed');
+            document.getElementById('widthLabel').textContent = getTranslation('tornado.width');
+            document.getElementById('pathLengthLabel').textContent = getTranslation('tornado.pathLength');
+            document.getElementById('rotationSpeedLabel').textContent = getTranslation('tornado.rotationSpeed');
+            document.getElementById('damageTitle').textContent = getTranslation('common.damageDescription');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+        });
     </script>
 </body>
 </html>

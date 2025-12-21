@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landslide Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -224,9 +225,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
-        <h1>⛰️ Landslide Simulator</h1>
+        <h1 id="pageTitle">⛰️ Landslide Simulator</h1>
         
         <div class="landslide-display" id="landslideDisplay">
             <h2 id="riskLevel">High Risk</h2>
@@ -235,7 +236,7 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Landslide Parameters</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Landslide Parameters</h3>
             
             <div class="control-group">
                 <label for="slopeAngle">Slope Angle (degrees)</label>
@@ -256,7 +257,7 @@
             </div>
 
             <div class="control-group">
-                <label for="rainfall">Recent Rainfall (mm/24h)</label>
+                <label for="rainfall" id="rainfallLabel">Recent Rainfall (mm/24h)</label>
                 <input type="range" id="rainfallSlider" min="0" max="500" value="150" step="10">
                 <div class="value-display">
                     <span id="rainfallValue">150 mm</span>
@@ -274,7 +275,7 @@
             </div>
 
             <div class="control-group">
-                <label for="vegetation">Vegetation Cover (%)</label>
+                <label for="vegetation" id="vegetationLabel">Vegetation Cover (%)</label>
                 <input type="range" id="vegetationSlider" min="0" max="100" value="30" step="10">
                 <div class="value-display">
                     <span id="vegetationValue">30%</span>
@@ -283,12 +284,12 @@
             </div>
 
             <div class="damage-description">
-                <h3>Landslide Characteristics</h3>
+                <h3 id="characteristicsTitle">Landslide Characteristics</h3>
                 <p id="damageText">Fast-moving debris flow. High velocity mixture of soil, rock, and water. Can travel long distances. Extremely destructive to structures. High casualty risk.</p>
             </div>
 
             <div class="warning-box">
-                <h3>⚠️ Safety Warning</h3>
+                <h3 id="warningTitle">⚠️ Safety Warning</h3>
                 <p id="warningText">HIGH LANDSLIDE RISK! Evacuate downslope areas immediately. Move to higher ground perpendicular to flow path. Do not attempt to outrun debris flow.</p>
             </div>
         </div>
@@ -444,16 +445,27 @@
 
         function getLandslideWarning(category, riskScore) {
             if (riskScore < 20) {
-                return 'LOW RISK: Monitor slope conditions. Watch for cracks, unusual water flow, or tilting structures. Have evacuation plan ready.';
+                return getDynamicTranslation('landslide', 'warnings', 'Very Low');
             } else if (riskScore < 40) {
-                return 'MODERATE RISK: Be alert for warning signs. Avoid areas below steep slopes during heavy rain. Prepare to evacuate if conditions worsen.';
+                return getDynamicTranslation('landslide', 'warnings', 'Low');
             } else if (riskScore < 60) {
-                return 'HIGH LANDSLIDE RISK! Evacuate downslope areas immediately. Move to higher ground perpendicular to flow path. Do not attempt to outrun debris flow.';
+                return getDynamicTranslation('landslide', 'warnings', 'Moderate');
             } else if (riskScore < 80) {
-                return 'VERY HIGH RISK - IMMINENT DANGER! Evacuate NOW! Move to high ground immediately. Debris flow can move faster than you can run. Survival depends on immediate evacuation.';
+                return getDynamicTranslation('landslide', 'warnings', 'High');
+            } else if (riskScore < 90) {
+                return getDynamicTranslation('landslide', 'warnings', 'Very High');
             } else {
-                return 'EXTREME DANGER - CATASTROPHIC FAILURE IMMINENT! EVACUATE IMMEDIATELY! This is a life-threatening emergency. Slope failure will be catastrophic. Move to safe location NOW!';
+                return getDynamicTranslation('landslide', 'warnings', 'Extreme');
             }
+        }
+
+        function getLandslideRiskLevel(riskScore) {
+            if (riskScore < 20) return getDynamicTranslation('landslide', 'risks', 'Very Low');
+            else if (riskScore < 40) return getDynamicTranslation('landslide', 'risks', 'Low');
+            else if (riskScore < 60) return getDynamicTranslation('landslide', 'risks', 'Moderate');
+            else if (riskScore < 80) return getDynamicTranslation('landslide', 'risks', 'High');
+            else if (riskScore < 90) return getDynamicTranslation('landslide', 'risks', 'Very High');
+            else return getDynamicTranslation('landslide', 'risks', 'Extreme');
         }
 
         function updateSimulator() {
@@ -516,7 +528,23 @@
         vegetationSlider.addEventListener('input', updateSimulator);
 
         // Initialize
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = getTranslation('landslide.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '⛰️ ' + getTranslation('landslide.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('slopeLabel').textContent = getTranslation('landslide.slope');
+            document.getElementById('saturationLabel').textContent = getTranslation('landslide.saturation');
+            document.getElementById('rainfallLabel').textContent = getTranslation('landslide.rainfall');
+            document.getElementById('cohesionLabel').textContent = getTranslation('landslide.cohesion');
+            document.getElementById('vegetationLabel').textContent = getTranslation('landslide.vegetation');
+            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+        });
         updateSimulator();
+        
     </script>
 </body>
 </html>

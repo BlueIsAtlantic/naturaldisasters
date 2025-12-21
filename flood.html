@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flood Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -224,9 +225,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
-        <h1>💧 Flood Simulator</h1>
+        <h1 id="pageTitle">💧 Flood Simulator</h1>
         
         <div class="flood-display" id="floodDisplay">
             <h2 id="waterLevel">Water Level: 2.0 m</h2>
@@ -235,10 +236,10 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Flood Parameters</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Flood Parameters</h3>
             
             <div class="control-group">
-                <label for="rainfall">Rainfall Intensity (mm/hour)</label>
+                <label for="rainfall" id="rainfallLabel">Rainfall Intensity (mm/hour)</label>
                 <input type="range" id="rainfallSlider" min="5" max="300" value="50" step="5">
                 <div class="value-display">
                     <span id="rainfallValue">50 mm/hour</span>
@@ -247,7 +248,7 @@
             </div>
 
             <div class="control-group">
-                <label for="duration">Duration (hours)</label>
+                <label for="duration" id="durationLabel">Duration (hours)</label>
                 <input type="range" id="durationSlider" min="1" max="72" value="12" step="1">
                 <div class="value-display">
                     <span id="durationValue">12 hours</span>
@@ -255,7 +256,7 @@
             </div>
 
             <div class="control-group">
-                <label for="terrain">Terrain Slope (degrees)</label>
+                <label for="terrain" id="terrainLabel">Terrain Slope (degrees)</label>
                 <input type="range" id="terrainSlider" min="0" max="30" value="5" step="1">
                 <div class="value-display">
                     <span id="terrainValue">5°</span>
@@ -264,7 +265,7 @@
             </div>
 
             <div class="control-group">
-                <label for="drainage">Drainage System Capacity (%)</label>
+                <label for="drainage" id="drainageLabel">Drainage System Capacity (%)</label>
                 <input type="range" id="drainageSlider" min="0" max="100" value="50" step="5">
                 <div class="value-display">
                     <span id="drainageValue">50%</span>
@@ -273,7 +274,7 @@
             </div>
 
             <div class="control-group">
-                <label for="riverLevel">River Base Level (meters)</label>
+                <label for="riverLevel" id="riverLevelLabel">River Base Level (meters)</label>
                 <input type="range" id="riverSlider" min="0" max="20" value="3" step="0.5">
                 <div class="value-display">
                     <span id="riverValue">3.0 m</span>
@@ -282,12 +283,12 @@
             </div>
 
             <div class="damage-description">
-                <h3>Expected Impact</h3>
+                <h3 id="impactTitle">Expected Impact</h3>
                 <p id="damageText">Moderate flooding of low-lying areas. Water enters first floors of buildings. Roads may become impassable. Some evacuations necessary.</p>
             </div>
 
             <div class="warning-box">
-                <h3>⚠️ Safety Warning</h3>
+                <h3 id="warningTitle">⚠️ Safety Warning</h3>
                 <p id="warningText">Avoid driving through flooded areas. Move to higher ground if water is rising. Stay informed through local authorities.</p>
             </div>
         </div>
@@ -400,18 +401,27 @@
 
         function getFloodWarning(waterLevel, category) {
             if (waterLevel < 0.3) {
-                return 'Monitor weather conditions. Avoid low-lying areas if rainfall continues.';
+                return getDynamicTranslation('flood', 'warnings', 'Nuisance');
             } else if (waterLevel < 1) {
-                return 'Avoid driving through flooded areas. Do not attempt to cross flowing water. Stay informed.';
+                return getDynamicTranslation('flood', 'warnings', 'Minor');
             } else if (waterLevel < 2) {
-                return 'AVOID ALL FLOODED AREAS. Move to higher ground if water is rising. Never drive through flood water. Evacuate if advised by authorities.';
+                return getDynamicTranslation('flood', 'warnings', 'Moderate');
             } else if (waterLevel < 4) {
-                return 'DANGEROUS FLOODING! Evacuate immediately if in low-lying areas. Do not return until authorities declare it safe. Life-threatening situation.';
+                return getDynamicTranslation('flood', 'warnings', 'Major');
             } else if (waterLevel < 7) {
-                return 'SEVERE FLOOD - EXTREME DANGER! Evacuate to high ground immediately. This is a life-threatening emergency. Follow all evacuation orders.';
+                return getDynamicTranslation('flood', 'warnings', 'Severe');
             } else {
-                return 'CATASTROPHIC FLOODING! EVACUATE NOW! Seek highest ground available. This is an extremely dangerous, life-threatening situation. Immediate action required for survival.';
+                return getDynamicTranslation('flood', 'warnings', 'Extreme');
             }
+        }
+
+        function getFloodCategory(waterLevel) {
+            if (waterLevel < 0.3) return getDynamicTranslation('flood', 'categories', 'Nuisance');
+            else if (waterLevel < 1) return getDynamicTranslation('flood', 'categories', 'Minor');
+            else if (waterLevel < 2) return getDynamicTranslation('flood', 'categories', 'Moderate');
+            else if (waterLevel < 4) return getDynamicTranslation('flood', 'categories', 'Major');
+            else if (waterLevel < 7) return getDynamicTranslation('flood', 'categories', 'Severe');
+            else return getDynamicTranslation('flood', 'categories', 'Extreme');
         }
 
         function updateSimulator() {
@@ -476,7 +486,23 @@
         riverSlider.addEventListener('input', updateSimulator);
 
         // Initialize
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = getTranslation('flood.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '💧 ' + getTranslation('flood.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('rainfallLabel').textContent = getTranslation('flood.rainfall');
+            document.getElementById('durationLabel').textContent = getTranslation('flood.duration');
+            document.getElementById('terrainLabel').textContent = getTranslation('flood.terrain');
+            document.getElementById('drainageLabel').textContent = getTranslation('flood.drainage');
+            document.getElementById('riverLevelLabel').textContent = getTranslation('flood.riverLevel');
+            document.getElementById('impactTitle').textContent = getTranslation('common.expectedImpact');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+        });
         updateSimulator();
+        
     </script>
 </body>
 </html>

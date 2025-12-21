@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earthquake Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -267,9 +268,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
-        <h1>🌍 Earthquake Simulator</h1>
+        <h1 id="pageTitle">🌍 Earthquake Simulator</h1>
         
         <div class="magnitude-display" id="magnitudeDisplay">
             <h2 id="magnitudeRating">Magnitude 5.0</h2>
@@ -278,7 +279,7 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Earthquake Parameters</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Earthquake Parameters</h3>
             
             <div class="control-group">
                 <label for="magnitude">Magnitude (Moment Magnitude Scale)</label>
@@ -299,7 +300,7 @@
             </div>
 
             <div class="control-group">
-                <label for="distance">Distance from Epicenter (km)</label>
+                <label for="distance" id="distanceLabel">Distance from Epicenter (km)</label>
                 <input type="range" id="distanceSlider" min="1" max="500" value="50" step="5">
                 <div class="value-display">
                     <span id="distanceValue">50 km</span>
@@ -308,7 +309,7 @@
             </div>
 
             <div class="control-group">
-                <label for="duration">Duration (seconds)</label>
+                <label for="duration" id="durationLabel">Duration (seconds)</label>
                 <input type="range" id="durationSlider" min="5" max="300" value="30" step="5">
                 <div class="value-display">
                     <span id="durationValue">30 seconds</span>
@@ -324,17 +325,17 @@
             </div>
 
             <div class="damage-description">
-                <h3>Expected Effects</h3>
+                <h3 id="effectsTitle">Expected Effects</h3>
                 <p id="damageText">Felt by nearly everyone; many awakened. Some dishes and windows broken. Unstable objects overturned. Pendulum clocks may stop.</p>
             </div>
 
             <div class="tsunami-warning" id="tsunamiWarning">
-                <h3>🌊 Tsunami Risk Assessment</h3>
+                <h3 id="tsunamiTitle">🌊 Tsunami Risk Assessment</h3>
                 <p id="tsunamiText">Tsunami generation possible based on magnitude and underwater location.</p>
             </div>
 
             <div class="warning-box">
-                <h3>⚠️ Safety Warning</h3>
+                <h3 id="warningTitle">⚠️ Safety Warning</h3>
                 <p id="warningText">Drop, Cover, and Hold On. Stay away from windows and heavy objects that could fall.</p>
             </div>
         </div>
@@ -385,6 +386,20 @@
         const distanceSlider = document.getElementById('distanceSlider');
         const durationSlider = document.getElementById('durationSlider');
         const underwaterCheck = document.getElementById('underwaterCheck');
+
+        function getEarthquakeWarning(type) {
+            const warnings = {
+                "Micro": getDynamicTranslation("earthquake", "warnings", "Not Felt"),
+                "Minor": getDynamicTranslation("earthquake", "warnings", "Weak"),
+                "Light": getDynamicTranslation("earthquake", "warnings", "Light"),
+                "Moderate": getDynamicTranslation("earthquake", "warnings", "Moderate"),
+                "Strong": getDynamicTranslation("earthquake", "warnings", "Strong"),
+                "Major": getDynamicTranslation("earthquake", "warnings", "Very Strong"),
+                "Great": getDynamicTranslation("earthquake", "warnings", "Severe"),
+                "Catastrophic": getDynamicTranslation("earthquake", "warnings", "Extreme")
+            };
+            return warnings[type] || warnings["Micro"];
+        }
 
         function checkTsunamiRisk(magnitude, depth, underwater) {
             // Tsunami risk factors:
@@ -599,7 +614,8 @@
             }
             
             // Update warning based on magnitude and tsunami risk
-            document.getElementById('warningText').textContent = getEarthquakeWarning(magnitude, tsunamiRisk);
+            const warningText = getEarthquakeWarning(magnitudeInfo.type);
+            document.getElementById('warningText').textContent = warningText;
 
             // Update Stats
             document.getElementById('mercalliIntensity').textContent = magData.mercalli;
@@ -621,7 +637,28 @@
         underwaterCheck.addEventListener('change', updateSimulator);
 
         // Initialize
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = getTranslation('earthquake.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '🌍 ' + getTranslation('earthquake.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('magnitudeLabel').textContent = getTranslation('earthquake.magnitude');
+            document.getElementById('depthLabel').textContent = getTranslation('earthquake.depth');
+            document.getElementById('distanceLabel').textContent = getTranslation('earthquake.distance');
+            document.getElementById('durationLabel').textContent = getTranslation('earthquake.duration');
+            document.getElementById('underwaterLabel').textContent = getTranslation('earthquake.underwater');
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            const tsunamiTitle = document.getElementById('tsunamiTitle');
+            if (tsunamiTitle) tsunamiTitle.textContent = '🌊 ' + getTranslation('common.tsunamiRisk');
+        });
         updateSimulator();
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+        });
     </script>
 </body>
 </html>

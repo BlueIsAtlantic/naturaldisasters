@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heatwave Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -224,9 +225,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
-        <h1>🌡️ Heatwave Simulator</h1>
+        <h1 id="pageTitle">🌡️ Heatwave Simulator</h1>
         
         <div class="heat-display" id="heatDisplay">
             <h2 id="heatIndex">42°C (108°F)</h2>
@@ -235,10 +236,10 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Heatwave Parameters</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Heatwave Parameters</h3>
             
             <div class="control-group">
-                <label for="temperature">Air Temperature (°C)</label>
+                <label for="temperature" id="temperatureLabel">Air Temperature (°C)</label>
                 <input type="range" id="temperatureSlider" min="25" max="55" value="38" step="1">
                 <div class="value-display">
                     <span id="temperatureValue">38°C</span>
@@ -247,7 +248,7 @@
             </div>
 
             <div class="control-group">
-                <label for="humidity">Relative Humidity (%)</label>
+                <label for="humidity" id="humidityLabel">Relative Humidity (%)</label>
                 <input type="range" id="humiditySlider" min="10" max="100" value="50" step="5">
                 <div class="value-display">
                     <span id="humidityValue">50%</span>
@@ -256,7 +257,7 @@
             </div>
 
             <div class="control-group">
-                <label for="windSpeed">Wind Speed (km/h)</label>
+                <label for="windSpeed" id="windSpeedLabel">Wind Speed (km/h)</label>
                 <input type="range" id="windSpeedSlider" min="0" max="50" value="10" step="5">
                 <div class="value-display">
                     <span id="windSpeedValue">10 km/h</span>
@@ -265,7 +266,7 @@
             </div>
 
             <div class="control-group">
-                <label for="duration">Duration (consecutive days)</label>
+                <label for="duration" id="durationLabel">Duration (consecutive days)</label>
                 <input type="range" id="durationSlider" min="1" max="30" value="7" step="1">
                 <div class="value-display">
                     <span id="durationValue">7 days</span>
@@ -273,7 +274,7 @@
             </div>
 
             <div class="control-group">
-                <label for="uvIndex">UV Index</label>
+                <label for="uvIndex" id="uvIndexLabel">UV Index</label>
                 <input type="range" id="uvIndexSlider" min="1" max="15" value="9" step="1">
                 <div class="value-display">
                     <span id="uvIndexValue">9</span>
@@ -282,7 +283,7 @@
             </div>
 
             <div class="damage-description">
-                <h3>Health Impacts</h3>
+                <h3 id="impactsTitle">Health Impacts</h3>
                 <p id="damageText">Extreme danger. Heat stroke highly likely. Sunstroke probable. Prolonged exposure dangerous for everyone. Emergency services strained. Elderly and vulnerable at severe risk.</p>
             </div>
 
@@ -426,16 +427,24 @@
 
         function getHeatWarning(category, duration, heatIndex) {
             if (heatIndex < 27) {
-                return 'Stay hydrated. Take breaks from outdoor activities. Wear light clothing and sunscreen.';
+                return getDynamicTranslation('heatwave', 'warnings', 'Low');
             } else if (heatIndex < 32) {
-                return 'Limit outdoor activities during peak heat. Stay hydrated. Watch for signs of heat exhaustion. Check on vulnerable individuals.';
+                return getDynamicTranslation('heatwave', 'warnings', 'Moderate');
             } else if (heatIndex < 41) {
-                return 'HEAT ADVISORY! Avoid outdoor activities. Stay in air-conditioned areas. Drink water frequently. Never leave children or pets in vehicles.';
+                return getDynamicTranslation('heatwave', 'warnings', 'High');
             } else if (heatIndex < 54) {
-                return 'EXTREME HEAT WARNING! Avoid outdoor activities. Stay in air-conditioned areas. Drink plenty of water. Check on elderly neighbors. Heat stroke emergency likely.';
+                return getDynamicTranslation('heatwave', 'warnings', 'Very High');
             } else {
-                return 'CATASTROPHIC HEAT EMERGENCY! Life-threatening conditions. Do NOT go outside. Seek air-conditioned shelter immediately. Mass casualty event likely. Infrastructure may fail. This is a survival situation.';
+                return getDynamicTranslation('heatwave', 'warnings', 'Extreme');
             }
+        }
+
+        function getHeatRiskLevel(heatIndex) {
+            if (heatIndex < 27) return getDynamicTranslation('heatwave', 'risks', 'Low');
+            else if (heatIndex < 32) return getDynamicTranslation('heatwave', 'risks', 'Moderate');
+            else if (heatIndex < 41) return getDynamicTranslation('heatwave', 'risks', 'High');
+            else if (heatIndex < 54) return getDynamicTranslation('heatwave', 'risks', 'Very High');
+            else return getDynamicTranslation('heatwave', 'risks', 'Extreme');
         }
 
         function updateSimulator() {
@@ -504,7 +513,23 @@
         uvIndexSlider.addEventListener('input', updateSimulator);
 
         // Initialize
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = getTranslation('heatwave.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '🌡️ ' + getTranslation('heatwave.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('temperatureLabel').textContent = getTranslation('heatwave.temperature');
+            document.getElementById('humidityLabel').textContent = getTranslation('heatwave.humidity');
+            document.getElementById('windSpeedLabel').textContent = getTranslation('heatwave.windSpeed');
+            document.getElementById('durationLabel').textContent = getTranslation('heatwave.duration');
+            document.getElementById('uvIndexLabel').textContent = getTranslation('heatwave.uvIndex');
+            document.getElementById('impactsTitle').textContent = getTranslation('common.healthImpacts');
+            document.getElementById('advisoryTitle').textContent = '🌡️ ' + getTranslation('common.healthAdvisory');
+        });
         updateSimulator();
+        
     </script>
 </body>
 </html>

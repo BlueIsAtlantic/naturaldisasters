@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solar Storm Simulator</title>
+    <script src="translations.js"></script>
     <style>
         * {
             margin: 0;
@@ -224,9 +225,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
-        <h1>☀️ Solar Storm Simulator</h1>
+        <h1 id="pageTitle">☀️ Solar Storm Simulator</h1>
         
         <div class="storm-display" id="stormDisplay">
             <h2 id="stormClass">G3 - Strong Storm</h2>
@@ -235,7 +236,7 @@
         </div>
 
         <div class="controls-section">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Solar Storm Parameters</h3>
+            <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Solar Storm Parameters</h3>
             
             <div class="control-group">
                 <label for="solarFlare">Solar Flare Class</label>
@@ -247,7 +248,7 @@
             </div>
 
             <div class="control-group">
-                <label for="cmeSpeed">CME Speed (km/s)</label>
+                <label for="cmeSpeed" id="cmeSpeedLabel">CME Speed (km/s)</label>
                 <input type="range" id="cmeSpeedSlider" min="300" max="3000" value="1000" step="100">
                 <div class="value-display">
                     <span id="cmeSpeedValue">1000 km/s</span>
@@ -256,7 +257,7 @@
             </div>
 
             <div class="control-group">
-                <label for="protonFlux">Proton Flux (pfu)</label>
+                <label for="protonFlux" id="protonFluxLabel">Proton Flux (pfu)</label>
                 <input type="range" id="protonFluxSlider" min="1" max="100000" value="1000" step="100">
                 <div class="value-display">
                     <span id="protonFluxValue">1,000 pfu</span>
@@ -265,7 +266,7 @@
             </div>
 
             <div class="control-group">
-                <label for="kpIndex">Geomagnetic Kp Index</label>
+                <label for="kpIndex" id="kpIndexLabel">Geomagnetic Kp Index</label>
                 <input type="range" id="kpIndexSlider" min="0" max="9" value="7" step="1">
                 <div class="value-display">
                     <span id="kpIndexValue">Kp 7</span>
@@ -274,7 +275,7 @@
             </div>
 
             <div class="control-group">
-                <label for="duration">Storm Duration (hours)</label>
+                <label for="duration" id="durationLabel">Storm Duration (hours)</label>
                 <input type="range" id="durationSlider" min="1" max="72" value="12" step="1">
                 <div class="value-display">
                     <span id="durationValue">12 hours</span>
@@ -282,7 +283,7 @@
             </div>
 
             <div class="damage-description">
-                <h3>Expected Effects</h3>
+                <h3 id="effectsTitle">Expected Effects</h3>
                 <p id="damageText">Power systems: voltage control problems. Spacecraft: surface charging, increased drag. GPS: intermittent navigation problems. Radio: HF propagation sporadic. Aurora visible at mid-latitudes.</p>
             </div>
 
@@ -411,18 +412,22 @@
 
         function getStormWarning(category, flareLevel, kp) {
             if (kp < 5) {
-                return 'Normal space weather conditions. No special precautions needed.';
+                return getDynamicTranslation('solarstorm', 'warnings', 'G1'); // Use G1 for normal conditions
             } else if (kp === 5) {
-                return 'Minor storm. Power grid operators alerted. Satellite operators monitor systems. Amateur radio may experience some interference.';
+                return getDynamicTranslation('solarstorm', 'warnings', 'G1');
             } else if (kp === 6) {
-                return 'Moderate storm. Power grid operators alerted. Satellite operators may need to take protective action. GPS accuracy may be degraded. Radio communications may be affected.';
+                return getDynamicTranslation('solarstorm', 'warnings', 'G2');
             } else if (kp === 7) {
-                return 'STRONG STORM. Power systems affected. Satellite operators take protective measures. GPS navigation problems likely. Radio communications disrupted. Aurora photographers alert!';
+                return getDynamicTranslation('solarstorm', 'warnings', 'G3');
             } else if (kp === 8) {
-                return 'SEVERE STORM! Power grid protection systems may trigger. Spacecraft experiencing problems. GPS severely degraded. HF radio communications disrupted. Widespread aurora visible.';
+                return getDynamicTranslation('solarstorm', 'warnings', 'G4');
             } else {
-                return 'EXTREME STORM - RARE EVENT! Power grid blackouts possible. Transformer damage risk. Spacecraft in serious danger. GPS and radio severely impacted. Take all protective measures. Historic aurora displays expected.';
+                return getDynamicTranslation('solarstorm', 'warnings', 'G5');
             }
+        }
+
+        function getStormScaleName(geo) {
+            return getDynamicTranslation('solarstorm', 'scales', geo) || geo;
         }
 
         function updateSimulator() {
@@ -478,7 +483,23 @@
         durationSlider.addEventListener('input', updateSimulator);
 
         // Initialize
+        
+        // Load translations
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = getTranslation('solarstorm.title');
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '☀️ ' + getTranslation('solarstorm.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            document.getElementById('flareClassLabel').textContent = getTranslation('solarstorm.flareClass');
+            document.getElementById('cmeSpeedLabel').textContent = getTranslation('solarstorm.cmeSpeed');
+            document.getElementById('protonFluxLabel').textContent = getTranslation('solarstorm.protonFlux');
+            document.getElementById('kpIndexLabel').textContent = getTranslation('solarstorm.kpIndex');
+            document.getElementById('durationLabel').textContent = getTranslation('solarstorm.duration');
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            document.getElementById('advisoryTitle').textContent = '⚡ ' + getTranslation('common.safetyAdvisory');
+        });
         updateSimulator();
+        
     </script>
 </body>
 </html>
