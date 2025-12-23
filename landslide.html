@@ -4,228 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landslide Simulator</title>
-    <script src="translations.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4a2c2a 0%, #7f5539 50%, #9c6644 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
-            width: 100%;
-            position: relative;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background: rgba(52, 152, 219, 0.1);
-            border: 2px solid rgba(52, 152, 219, 0.3);
-            border-radius: 50px;
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .back-button:hover {
-            background: rgba(52, 152, 219, 0.2);
-            border-color: rgba(52, 152, 219, 0.5);
-            transform: translateX(-5px);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .landslide-display {
-            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .landslide-display h2 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .landslide-display p {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-
-        .controls-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-group label {
-            display: block;
-            font-weight: 600;
-            color: #34495e;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .control-group input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #dfe6e9;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #8b4513;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background: #654321;
-        }
-
-        .control-group input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #8b4513;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-        }
-
-        .value-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.95em;
-            color: #7f8c8d;
-        }
-
-        .value-display span {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .damage-description {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .damage-description h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .damage-description p {
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .warning-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .warning-box h3 {
-            color: #721c24;
-            margin-bottom: 10px;
-        }
-
-        .warning-box p {
-            color: #721c24;
-            line-height: 1.6;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h4 {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #2c3e50;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="shared.css">
+    <script src="translations/core.js"></script>
+    <script src="translations/static.js"></script>
+    <script src="translations/dynamic/landslide.js"></script>
+    
 </head>
-<body>
+<body class="landslide-theme">
     <div class="container">
-        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
+                <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
         <h1 id="pageTitle">⛰️ Landslide Simulator</h1>
         
@@ -239,7 +26,7 @@
             <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Landslide Parameters</h3>
             
             <div class="control-group">
-                <label for="slopeAngle">Slope Angle (degrees)</label>
+                <label for="slopeAngle" id="slopeLabel">Slope Angle (degrees)</label>
                 <input type="range" id="slopeSlider" min="10" max="60" value="35" step="5">
                 <div class="value-display">
                     <span id="slopeValue">35°</span>
@@ -248,7 +35,7 @@
             </div>
 
             <div class="control-group">
-                <label for="soilSaturation">Soil Saturation (%)</label>
+                <label for="soilSaturation" id="saturationLabel">Soil Saturation (%)</label>
                 <input type="range" id="saturationSlider" min="10" max="100" value="70" step="5">
                 <div class="value-display">
                     <span id="saturationValue">70%</span>
@@ -266,7 +53,7 @@
             </div>
 
             <div class="control-group">
-                <label for="soilType">Soil Cohesion (kPa)</label>
+                <label for="soilType" id="cohesionLabel">Soil Cohesion (kPa)</label>
                 <input type="range" id="cohesionSlider" min="0" max="100" value="20" step="5">
                 <div class="value-display">
                     <span id="cohesionValue">20 kPa</span>
@@ -486,7 +273,7 @@
             const category = getRiskCategory(riskScore);
 
             // Update Display
-            document.getElementById('riskLevel').textContent = category.category;
+            document.getElementById('riskLevel').textContent = getLandslideRiskLevel(riskScore);
             document.getElementById('landslideType').textContent = category.type;
             document.getElementById('velocity').textContent = `Velocity: ${velocity.toFixed(1)} m/s`;
             document.getElementById('landslideDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
@@ -504,7 +291,7 @@
             document.getElementById('vegetationLevel').textContent = getVegetationLevel(vegetation);
             
             document.getElementById('damageText').textContent = category.effects;
-            document.getElementById('warningText').textContent = getLandslideWarning(category.category, riskScore);
+            document.getElementById('warningText').textContent = getLandslideWarning(category, riskScore);
 
             // Update Stats
             document.getElementById('failureProbability').textContent = `${Math.round(riskScore)}%`;
@@ -542,9 +329,61 @@
             document.getElementById('vegetationLabel').textContent = getTranslation('landslide.vegetation');
             document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
             document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            // Translate title elements
+            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
+            
+            // Translate stat labels
+            document.getElementById('safetyFactorLabel').textContent = getTranslation('landslide.safetyFactor');
+            document.getElementById('velocityLabel').textContent = getTranslation('landslide.slideVelocity');
+            document.getElementById('runoutLabel').textContent = getTranslation('landslide.runoutDistance');
+            document.getElementById('volumeLabel').textContent = getTranslation('landslide.debrisVolume');
         });
         updateSimulator();
         
-    </script>
+    
+        // Language change function
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            loadTranslations();
+            updateLandslideSimulator(); // Update dynamic content too
+        }
+
+        // Load translations function
+        function loadTranslations() {
+            const lang = getLanguage();
+            
+            // Set language selector value
+            // Update page title
+            document.title = getTranslation('landslide.title');
+            
+            // Translate static UI elements
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '🏔️ ' + getTranslation('landslide.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            
+            // Translate specific labels
+            document.getElementById('slopeLabel').textContent = getTranslation('landslide.slope');
+            document.getElementById('saturationLabel').textContent = getTranslation('landslide.saturation');
+            document.getElementById('rainfallLabel').textContent = getTranslation('landslide.rainfall');
+            document.getElementById('cohesionLabel').textContent = getTranslation('landslide.cohesion');
+            document.getElementById('vegetationLabel').textContent = getTranslation('landslide.vegetation');
+            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            // Translate title elements
+            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
+            
+            // Translate stat labels
+            document.getElementById('safetyFactorLabel').textContent = getTranslation('landslide.safetyFactor');
+            document.getElementById('velocityLabel').textContent = getTranslation('landslide.slideVelocity');
+            document.getElementById('runoutLabel').textContent = getTranslation('landslide.runoutDistance');
+            document.getElementById('volumeLabel').textContent = getTranslation('landslide.debrisVolume');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTranslations();
+            updateLandslideSimulator();
+        });
+</script>
 </body>
 </html>

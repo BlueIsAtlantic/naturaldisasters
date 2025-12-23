@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hurricane Simulator</title>
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body class="hurricane-theme">
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>🌀 Hurricane Simulator</h1>
+        
+        <div class="hurricane-display" id="hurricaneDisplay">
+            <h2 id="categoryRating">Category 3</h2>
+            <p id="windSpeedDisplay">Wind Speed: 111-129 mph</p>
+            <p id="categoryName">Major Hurricane</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Hurricane Parameters</h3>
+            
+            <div class="control-group">
+                <label for="windSpeed">Maximum Sustained Wind Speed (mph)</label>
+                <input type="range" id="windSpeedSlider" min="30" max="200" value="115" step="1">
+                <div class="value-display">
+                    <span id="windSpeedValue">115 mph</span>
+                    <span id="windSpeedKmh">185 km/h</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="pressure">Central Pressure (millibars)</label>
+                <input type="range" id="pressureSlider" min="882" max="990" value="950" step="1">
+                <div class="value-display">
+                    <span id="pressureValue">950 mb</span>
+                    <span id="pressureInHg">28.05 inHg</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="diameter">Hurricane Diameter (miles)</label>
+                <input type="range" id="diameterSlider" min="60" max="600" value="300" step="10">
+                <div class="value-display">
+                    <span id="diameterValue">300 miles</span>
+                    <span id="diameterKm">483 km</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="stormSurge">Storm Surge Height (feet)</label>
+                <input type="range" id="stormSurgeSlider" min="4" max="25" value="12" step="1">
+                <div class="value-display">
+                    <span id="stormSurgeValue">12 feet</span>
+                    <span id="stormSurgeMeters">3.7 meters</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="forwardSpeed">Forward Speed (mph)</label>
+                <input type="range" id="forwardSpeedSlider" min="5" max="40" value="15" step="1">
+                <div class="value-display">
+                    <span id="forwardSpeedValue">15 mph</span>
+                    <span id="forwardSpeedKmh">24 km/h</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Radius of Max Winds</h4>
+                    <p id="eyeRadius">30 miles</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Expected Rainfall</h4>
+                    <p id="rainfall">10-15 inches</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Coastal Flooding</h4>
+                    <p id="flooding">Extensive</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Power Outage Duration</h4>
+                    <p id="outages">Weeks to months</p>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Impact</h3>
+                <p id="damageText">Devastating damage will occur: Well-built framed homes may incur major damage or removal of roof decking and gable ends. Many trees will be snapped or uprooted, blocking numerous roads. Electricity and water will be unavailable for several days to weeks after the storm passes.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">EXTREMELY DANGEROUS HURRICANE! Evacuate immediately if ordered. This is a life-threatening situation. Storm surge and winds will cause catastrophic damage. Complete destruction of mobile/manufactured homes. Extensive structural damage to homes and buildings.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const hurricaneCategories = [
+            { rating: 'Tropical Depression', minSpeed: 30, maxSpeed: 38, color: '#b2bec3', severity: 'Tropical Depression', surge: '0-2' },
+            { rating: 'Tropical Storm', minSpeed: 39, maxSpeed: 73, color: '#74b9ff', severity: 'Tropical Storm', surge: '0-3' },
+            { rating: 'Category 1', minSpeed: 74, maxSpeed: 95, color: '#fdcb6e', severity: 'Hurricane', surge: '4-5' },
+            { rating: 'Category 2', minSpeed: 96, maxSpeed: 110, color: '#e17055', severity: 'Hurricane', surge: '6-8' },
+            { rating: 'Category 3', minSpeed: 111, maxSpeed: 129, color: '#d63031', severity: 'Major Hurricane', surge: '9-12' },
+            { rating: 'Category 4', minSpeed: 130, maxSpeed: 156, color: '#c0392b', severity: 'Major Hurricane', surge: '13-18' },
+            { rating: 'Category 5', minSpeed: 157, maxSpeed: 200, color: '#8b0000', severity: 'Major Hurricane', surge: '19+' }
+        ];
+
+        const hurricaneData = {
+            descriptions: {
+                'Tropical Depression': 'Organized system of clouds and thunderstorms with defined circulation. Winds are below tropical storm force. Some rain and gusty winds possible. Minimal threat to well-constructed structures.',
+                'Tropical Storm': 'Tropical storm conditions with strong winds. Some damage to roofing and siding materials. Large branches break off trees. Shallow rooted trees may be toppled. Extensive damage to power lines and poles.',
+                'Category 1': 'Very dangerous winds will produce some damage: Well-constructed frame homes could have damage to roof, shingles, vinyl siding and gutters. Large branches of trees will snap and shallowly rooted trees may be toppled. Extensive damage to power lines and poles likely will result in power outages that could last a few to several days.',
+                'Category 2': 'Extremely dangerous winds will cause extensive damage: Well-constructed frame homes could sustain major roof and siding damage. Many shallowly rooted trees will be snapped or uprooted and block numerous roads. Near-total power loss is expected with outages that could last from several days to weeks.',
+                'Category 3': 'Devastating damage will occur: Well-built framed homes may incur major damage or removal of roof decking and gable ends. Many trees will be snapped or uprooted, blocking numerous roads. Electricity and water will be unavailable for several days to weeks after the storm passes.',
+                'Category 4': 'Catastrophic damage will occur: Well-built framed homes can sustain severe damage with loss of most of the roof structure and/or some exterior walls. Most trees will be snapped or uprooted and power poles downed. Fallen trees and power poles will isolate residential areas. Power outages will last weeks to possibly months. Most of the area will be uninhabitable for weeks or months.',
+                'Category 5': 'Catastrophic damage will occur: A high percentage of framed homes will be destroyed, with total roof failure and wall collapse. Fallen trees and power poles will isolate residential areas. Power outages will last for weeks to possibly months. Most of the area will be uninhabitable for weeks or months.'
+            },
+            warnings: {
+                'Tropical Depression': 'TROPICAL DEPRESSION WATCH: Monitor weather conditions closely. System may strengthen. Prepare for heavy rainfall and possible flooding. Secure loose outdoor objects.',
+                'Tropical Storm': 'TROPICAL STORM WARNING! Secure outdoor objects. Stay indoors during the storm. Be prepared for power outages and flooding. Avoid driving through flooded areas.',
+                'Category 1': 'HURRICANE WARNING! Complete preparations and evacuate if ordered. Dangerous storm surge expected. Secure all outdoor items. Stay away from windows. Power outages likely for several days.',
+                'Category 2': 'EXTREMELY DANGEROUS HURRICANE! Evacuate immediately if in storm surge zone or mobile home. Life-threatening storm surge and winds expected. Extensive power outages likely for weeks.',
+                'Category 3': 'MAJOR HURRICANE WARNING! EVACUATE NOW if ordered! Life-threatening storm surge and catastrophic winds expected. This is an extremely dangerous situation. Most of the area will be uninhabitable for weeks.',
+                'Category 4': 'CATASTROPHIC HURRICANE! EVACUATE IMMEDIATELY! This is a life-threatening situation. Complete destruction likely in worst hit areas. Catastrophic storm surge will cause extreme coastal flooding. Area may be uninhabitable for months.',
+                'Category 5': 'CATASTROPHIC CATEGORY 5 HURRICANE! EVACUATE NOW! LIFE-THREATENING SITUATION! Total devastation expected. Most structures will be destroyed. Catastrophic storm surge and winds. Area will be uninhabitable for extended period. This is one of the strongest hurricanes possible.'
+            }
+        };
+
+        const windSpeedSlider = document.getElementById('windSpeedSlider');
+        const pressureSlider = document.getElementById('pressureSlider');
+        const diameterSlider = document.getElementById('diameterSlider');
+        const stormSurgeSlider = document.getElementById('stormSurgeSlider');
+        const forwardSpeedSlider = document.getElementById('forwardSpeedSlider');
+
+        function getHurricaneCategory(windSpeed) {
+            for (let category of hurricaneCategories) {
+                if (windSpeed >= category.minSpeed && windSpeed <= category.maxSpeed) {
+                    return category;
+                }
+            }
+            return hurricaneCategories[hurricaneCategories.length - 1];
+        }
+
+        function updateSimulator() {
+            const windSpeed = parseInt(windSpeedSlider.value);
+            const pressure = parseInt(pressureSlider.value);
+            const diameter = parseInt(diameterSlider.value);
+            const stormSurge = parseInt(stormSurgeSlider.value);
+            const forwardSpeed = parseInt(forwardSpeedSlider.value);
+            
+            const category = getHurricaneCategory(windSpeed);
+            const damageDescription = hurricaneData.descriptions[category.rating];
+            const warningText = hurricaneData.warnings[category.rating];
+
+            // Update Category Display
+            document.getElementById('categoryRating').textContent = category.rating;
+            document.getElementById('windSpeedDisplay').textContent = `Wind Speed: ${category.minSpeed}-${category.maxSpeed} mph`;
+            document.getElementById('categoryName').textContent = category.severity;
+            document.getElementById('hurricaneDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('windSpeedValue').textContent = `${windSpeed} mph`;
+            document.getElementById('windSpeedKmh').textContent = `${Math.round(windSpeed * 1.60934)} km/h`;
+            document.getElementById('pressureValue').textContent = `${pressure} mb`;
+            document.getElementById('pressureInHg').textContent = `${(pressure * 0.02953).toFixed(2)} inHg`;
+            document.getElementById('diameterValue').textContent = `${diameter} miles`;
+            document.getElementById('diameterKm').textContent = `${Math.round(diameter * 1.60934)} km`;
+            document.getElementById('stormSurgeValue').textContent = `${stormSurge} feet`;
+            document.getElementById('stormSurgeMeters').textContent = `${(stormSurge * 0.3048).toFixed(1)} meters`;
+            document.getElementById('forwardSpeedValue').textContent = `${forwardSpeed} mph`;
+            document.getElementById('forwardSpeedKmh').textContent = `${Math.round(forwardSpeed * 1.60934)} km/h`;
+
+            // Update Stats
+            const eyeRadius = Math.round(diameter * 0.1);
+            document.getElementById('eyeRadius').textContent = `${eyeRadius} miles`;
+            
+            // Rainfall based on forward speed (slower = more rain)
+            const rainfallAmount = forwardSpeed < 15 ? '15-25' : forwardSpeed < 25 ? '10-15' : '6-10';
+            document.getElementById('rainfall').textContent = `${rainfallAmount} inches`;
+            
+            // Flooding severity
+            const floodingLevels = ['Minimal', 'Minor', 'Moderate', 'Extensive', 'Catastrophic', 'Devastating'];
+            const floodIndex = Math.floor(stormSurge / 5);
+            document.getElementById('flooding').textContent = floodingLevels[Math.min(floodIndex, 5)];
+            
+            // Power outages based on category
+            const outageTexts = {
+                'Tropical Depression': 'Brief or none',
+                'Tropical Storm': 'Hours to days',
+                'Category 1': 'Several days',
+                'Category 2': 'Days to weeks',
+                'Category 3': 'Weeks to months',
+                'Category 4': 'Weeks to months',
+                'Category 5': 'Months'
+            };
+            document.getElementById('outages').textContent = outageTexts[category.rating];
+
+            // Update damage and warning text
+            document.getElementById('damageText').textContent = damageDescription;
+            document.getElementById('warningText').textContent = warningText;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        windSpeedSlider.addEventListener('input', updateSimulator);
+        pressureSlider.addEventListener('input', updateSimulator);
+        diameterSlider.addEventListener('input', updateSimulator);
+        stormSurgeSlider.addEventListener('input', updateSimulator);
+        forwardSpeedSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

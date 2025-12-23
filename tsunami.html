@@ -4,228 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tsunami Simulator</title>
-    <script src="translations.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0c2340 0%, #1a4d7a 50%, #2980b9 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
-            width: 100%;
-            position: relative;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background: rgba(52, 152, 219, 0.1);
-            border: 2px solid rgba(52, 152, 219, 0.3);
-            border-radius: 50px;
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .back-button:hover {
-            background: rgba(52, 152, 219, 0.2);
-            border-color: rgba(52, 152, 219, 0.5);
-            transform: translateX(-5px);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .tsunami-display {
-            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .tsunami-display h2 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .tsunami-display p {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-
-        .controls-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-group label {
-            display: block;
-            font-weight: 600;
-            color: #34495e;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .control-group input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #dfe6e9;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3498db;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background: #2980b9;
-        }
-
-        .control-group input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3498db;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-        }
-
-        .value-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.95em;
-            color: #7f8c8d;
-        }
-
-        .value-display span {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .damage-description {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .damage-description h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .damage-description p {
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .warning-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .warning-box h3 {
-            color: #721c24;
-            margin-bottom: 10px;
-        }
-
-        .warning-box p {
-            color: #721c24;
-            line-height: 1.6;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h4 {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #2c3e50;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="shared.css">
+    <script src="translations/core.js"></script>
+    <script src="translations/static.js"></script>
+    <script src="translations/dynamic/tsunami.js"></script>
+    
 </head>
-<body>
+<body class="tsunami-theme">
     <div class="container">
-        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
+                <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
         <h1 id="pageTitle">🌊 Tsunami Simulator</h1>
         
@@ -304,7 +91,7 @@
                 <p id="wavelength">200 km</p>
             </div>
             <div class="stat-card">
-                <h4>Wave Period</h4>
+                <h4 id="wavePeriodLabel">Wave Period</h4>
                 <p id="wavePeriod">20 min</p>
             </div>
             <div class="stat-card">
@@ -312,11 +99,11 @@
                 <p id="runupHeight">15 m</p>
             </div>
             <div class="stat-card">
-                <h4>Inundation Distance</h4>
+                <h4 id="inundationLabel">Inundation Distance</h4>
                 <p id="inundationDist">2.5 km</p>
             </div>
             <div class="stat-card">
-                <h4>Arrival Time</h4>
+                <h4 id="arrivalTimeLabel">Arrival Time</h4>
                 <p id="arrivalTime">60 min</p>
             </div>
         </div>
@@ -506,9 +293,65 @@
             document.getElementById('elevationLabel').textContent = getTranslation('tsunami.elevation');
             document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
             document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            // Translate title elements
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            
+            // Translate stat labels
+            document.getElementById('wavePeriodLabel').textContent = getTranslation('tsunami.wavePeriod');
+            document.getElementById('waveSpeedLabel').textContent = getTranslation('tsunami.waveSpeed');
+            document.getElementById('arrivalTimeLabel').textContent = getTranslation('tsunami.arrivalTime');
+            document.getElementById('runupHeightLabel').textContent = getTranslation('tsunami.runupHeight');
+            document.getElementById('inundationLabel').textContent = getTranslation('tsunami.inundationDistance');
+            document.getElementById('impactForceLabel').textContent = getTranslation('tsunami.impactForce');
         });
         updateSimulator();
         
-    </script>
+    
+        // Language change function
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            loadTranslations();
+            updateTsunamiSimulator(); // Update dynamic content too
+        }
+
+        // Load translations function
+        function loadTranslations() {
+            const lang = getLanguage();
+            
+            // Set language selector value
+            // Update page title
+            document.title = getTranslation('tsunami.title');
+            
+            // Translate static UI elements
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '🌊 ' + getTranslation('tsunami.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            
+            // Translate specific labels
+            document.getElementById('magnitudeLabel').textContent = getTranslation('tsunami.magnitude');
+            document.getElementById('waterDepthLabel').textContent = getTranslation('tsunami.waterDepth');
+            document.getElementById('distanceLabel').textContent = getTranslation('tsunami.distance');
+            document.getElementById('slopeLabel').textContent = getTranslation('tsunami.slope');
+            document.getElementById('elevationLabel').textContent = getTranslation('tsunami.elevation');
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            // Translate title elements
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            
+            // Translate stat labels
+            document.getElementById('wavePeriodLabel').textContent = getTranslation('tsunami.wavePeriod');
+            document.getElementById('waveSpeedLabel').textContent = getTranslation('tsunami.waveSpeed');
+            document.getElementById('arrivalTimeLabel').textContent = getTranslation('tsunami.arrivalTime');
+            document.getElementById('runupHeightLabel').textContent = getTranslation('tsunami.runupHeight');
+            document.getElementById('inundationLabel').textContent = getTranslation('tsunami.inundationDistance');
+            document.getElementById('impactForceLabel').textContent = getTranslation('tsunami.impactForce');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTranslations();
+            updateTsunamiSimulator();
+        });
+</script>
 </body>
 </html>

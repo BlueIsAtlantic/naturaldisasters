@@ -1,0 +1,462 @@
+/* shared.css - Common styles for all disaster simulators */
+
+/* ==================== CSS VARIABLES (Accent Colors) ==================== */
+/* Each simulator will override --accent-color and --accent-dark */
+:root {
+    --accent-color: #3498db;
+    --accent-dark: #2980b9;
+}
+
+/* Tornado - Red/Crimson */
+.tornado-theme {
+    --accent-color: #e74c3c;
+    --accent-dark: #c0392b;
+}
+
+/* Earthquake - Brown/Earth */
+.earthquake-theme {
+    --accent-color: #8b4513;
+    --accent-dark: #654321;
+}
+
+/* Tsunami - Blue/Ocean */
+.tsunami-theme {
+    --accent-color: #0984e3;
+    --accent-dark: #0652a8;
+}
+
+/* Flood - Deep Blue */
+.flood-theme {
+    --accent-color: #2874a6;
+    --accent-dark: #1b4f72;
+}
+
+/* Wildfire - Orange/Fire */
+.wildfire-theme {
+    --accent-color: #e67e22;
+    --accent-dark: #d35400;
+}
+
+/* Solar Storm - Purple/Space */
+.solarstorm-theme {
+    --accent-color: #8e44ad;
+    --accent-dark: #71368a;
+}
+
+/* Meteor - Dark Purple/Space */
+.meteor-theme {
+    --accent-color: #6c3483;
+    --accent-dark: #512e5f;
+}
+
+/* Heatwave - Red/Orange */
+.heatwave-theme {
+    --accent-color: #c0392b;
+    --accent-dark: #922b21;
+}
+
+/* Landslide - Brown/Mountain */
+.landslide-theme {
+    --accent-color: #7d6608;
+    --accent-dark: #5d4e06;
+}
+
+/* Hurricane - Teal/Ocean */
+.hurricane-theme {
+    --accent-color: #16a085;
+    --accent-dark: #138d75;
+}
+
+/* ==================== RESET & BASE ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ==================== MAIN CONTAINER ==================== */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 1200px;
+    width: 100%;
+    position: relative;
+}
+
+/* ==================== BACK BUTTON ==================== */
+.back-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background: rgba(52, 152, 219, 0.1);
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    border-radius: 50px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1em;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: rgba(52, 152, 219, 0.5);
+    transform: translateX(-5px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* ==================== HEADINGS ==================== */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== CONTROLS SECTION ==================== */
+.controls-section {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.control-group {
+    margin-bottom: 25px;
+}
+
+.control-group label {
+    display: block;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+/* Range Sliders */
+.control-group input[type="range"] {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #dfe6e9;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: var(--accent-dark);
+}
+
+.control-group input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+}
+
+.control-group input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    background: var(--accent-dark);
+}
+
+/* Value Display */
+.value-display {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.95em;
+    color: #7f8c8d;
+}
+
+.value-display span {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* ==================== MAIN DISPLAY (EF Scale, Magnitude, etc) ==================== */
+.ef-scale-display,
+.magnitude-display,
+.tsunami-display,
+.flood-display,
+.wildfire-display,
+.fire-display,
+.storm-display,
+.meteor-display,
+.heat-display,
+.landslide-display,
+.hurricane-display,
+.impact-display {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.ef-scale-display h2,
+.magnitude-display h2,
+.tsunami-display h2,
+.flood-display h2,
+.wildfire-display h2,
+.fire-display h2,
+.storm-display h2,
+.meteor-display h2,
+.heat-display h2,
+.landslide-display h2,
+.hurricane-display h2,
+.impact-display h2 {
+    font-size: 3em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ef-scale-display p,
+.magnitude-display p,
+.tsunami-display p,
+.flood-display p,
+.wildfire-display p,
+.fire-display p,
+.storm-display p,
+.meteor-display p,
+.heat-display p,
+.landslide-display p,
+.hurricane-display p,
+.impact-display p {
+    font-size: 1.2em;
+    margin: 5px 0;
+}
+
+/* ==================== DAMAGE/DESCRIPTION BOX ==================== */
+.damage-description,
+.effects-description,
+.behavior-description {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.damage-description h3,
+.effects-description h3,
+.behavior-description h3 {
+    color: #856404;
+    margin-bottom: 10px;
+}
+
+.damage-description p,
+.effects-description p,
+.behavior-description p {
+    color: #856404;
+    line-height: 1.6;
+}
+
+/* ==================== WARNING BOX ==================== */
+.warning-box,
+.tsunami-warning {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.warning-box h3,
+.tsunami-warning h3 {
+    color: #721c24;
+    margin-bottom: 10px;
+}
+
+.warning-box p,
+.tsunami-warning p {
+    color: #721c24;
+    line-height: 1.6;
+}
+
+/* Tsunami warning specific - hidden by default */
+.tsunami-warning {
+    display: none;
+}
+
+.tsunami-warning.show {
+    display: block;
+}
+
+/* ==================== CHECKBOX GROUP ==================== */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+.checkbox-group label {
+    font-weight: 500;
+    color: #2c3e50;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* ==================== STATS GRID ==================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h4 {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.stat-card p {
+    color: #2c3e50;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+/* ==================== LANGUAGE SELECTOR ==================== */
+.language-selector {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+
+.language-selector select {
+    padding: 8px 15px;
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    border-radius: 8px;
+    background: white;
+    color: #2c3e50;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.language-selector select:hover {
+    border-color: rgba(52, 152, 219, 0.6);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .language-selector {
+        position: static;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .ef-scale-display h2,
+    .magnitude-display h2,
+    .tsunami-display h2,
+    .flood-display h2,
+    .wildfire-display h2,
+    .storm-display h2,
+    .meteor-display h2,
+    .heat-display h2,
+    .landslide-display h2 {
+        font-size: 2em;
+    }
+}
+
+/* ==================== BUTTONS (if needed) ==================== */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}

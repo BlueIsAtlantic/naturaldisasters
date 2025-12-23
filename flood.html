@@ -4,228 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flood Simulator</title>
-    <script src="translations.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #4a90e2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
-            width: 100%;
-            position: relative;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background: rgba(52, 152, 219, 0.1);
-            border: 2px solid rgba(52, 152, 219, 0.3);
-            border-radius: 50px;
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .back-button:hover {
-            background: rgba(52, 152, 219, 0.2);
-            border-color: rgba(52, 152, 219, 0.5);
-            transform: translateX(-5px);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .flood-display {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .flood-display h2 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .flood-display p {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-
-        .controls-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-group label {
-            display: block;
-            font-weight: 600;
-            color: #34495e;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .control-group input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #dfe6e9;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3498db;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background: #2980b9;
-        }
-
-        .control-group input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3498db;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-        }
-
-        .value-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.95em;
-            color: #7f8c8d;
-        }
-
-        .value-display span {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .damage-description {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .damage-description h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .damage-description p {
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .warning-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .warning-box h3 {
-            color: #721c24;
-            margin-bottom: 10px;
-        }
-
-        .warning-box p {
-            color: #721c24;
-            line-height: 1.6;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h4 {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #2c3e50;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="shared.css">
+    <script src="translations/core.js"></script>
+    <script src="translations/static.js"></script>
+    <script src="translations/dynamic/flood.js"></script>
+    
 </head>
-<body>
+<body class="flood-theme">
     <div class="container">
-        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
+                <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
         <h1 id="pageTitle">💧 Flood Simulator</h1>
         
@@ -415,13 +202,32 @@
             }
         }
 
+        function getFloodCategoryObject(waterLevel) {
+            const categories = [
+                { min: 0, max: 0.3, category: 'Nuisance', color: '#3498db', damage: 'Minor ponding in low spots. Some streets may flood. Generally passable with caution.' },
+                { min: 0.3, max: 1, category: 'Minor', color: '#2ecc71', damage: 'Flooding of basements and low-lying roads. Some road closures. Minor property damage possible.' },
+                { min: 1, max: 2, category: 'Moderate', color: '#f39c12', damage: 'Flooding of first floors in low areas. Several roads impassable. Evacuations may be necessary. Property damage likely.' },
+                { min: 2, max: 4, category: 'Major', color: '#e67e22', damage: 'Extensive flooding of structures. Many roads closed. Large-scale evacuations required. Significant property damage.' },
+                { min: 4, max: 7, category: 'Severe', color: '#d35400', damage: 'Catastrophic flooding. Complete submersion of ground floors. Infrastructure failure. Life-threatening conditions. Mass evacuations essential.' },
+                { min: 7, max: Infinity, category: 'Extreme', color: '#c0392b', damage: 'Total devastation. Multi-story flooding. Complete infrastructure collapse. Extreme danger to life. Immediate evacuation critical.' }
+            ];
+            
+            for (let cat of categories) {
+                if (waterLevel >= cat.min && waterLevel < cat.max) {
+                    return cat;
+                }
+            }
+            return categories[categories.length - 1];
+        }
+        
         function getFloodCategory(waterLevel) {
-            if (waterLevel < 0.3) return getDynamicTranslation('flood', 'categories', 'Nuisance');
-            else if (waterLevel < 1) return getDynamicTranslation('flood', 'categories', 'Minor');
-            else if (waterLevel < 2) return getDynamicTranslation('flood', 'categories', 'Moderate');
-            else if (waterLevel < 4) return getDynamicTranslation('flood', 'categories', 'Major');
-            else if (waterLevel < 7) return getDynamicTranslation('flood', 'categories', 'Severe');
-            else return getDynamicTranslation('flood', 'categories', 'Extreme');
+            const cat = getFloodCategoryObject(waterLevel);
+            return getDynamicTranslation('flood', 'categories', cat.category);
+        }
+        
+        function getFloodDescription(waterLevel) {
+            const cat = getFloodCategoryObject(waterLevel);
+            return getDynamicTranslation('flood', 'descriptions', cat.category);
         }
 
         function updateSimulator() {
@@ -438,13 +244,13 @@
             const affectedArea = calculateAffectedArea(waterLevel, terrain);
             const totalRainfall = rainfall * duration;
             
-            const category = getFloodCategory(waterLevel);
+            const categoryObj = getFloodCategoryObject(waterLevel);
 
             // Update Display
             document.getElementById('waterLevel').textContent = `Water Level: ${waterLevel.toFixed(1)} m`;
-            document.getElementById('floodCategory').textContent = category.category + ' Flooding';
+            document.getElementById('floodCategory').textContent = getFloodCategory(waterLevel) + ' Flooding';
             document.getElementById('flowRate').textContent = `Flow Rate: ${flowRate} m³/s`;
-            document.getElementById('floodDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
+            document.getElementById('floodDisplay').style.background = `linear-gradient(135deg, ${categoryObj.color} 0%, ${adjustColor(categoryObj.color, -20)} 100%)`;
             
             // Update Values
             document.getElementById('rainfallValue').textContent = `${rainfall} mm/hour`;
@@ -457,8 +263,8 @@
             document.getElementById('riverValue').textContent = `${riverBase.toFixed(1)} m`;
             document.getElementById('riverFeet').textContent = `${(riverBase * 3.28084).toFixed(1)} feet`;
             
-            document.getElementById('damageText').textContent = category.damage;
-            document.getElementById('warningText').textContent = getFloodWarning(waterLevel, category);
+            document.getElementById('damageText').textContent = getFloodDescription(waterLevel);
+            document.getElementById('warningText').textContent = getFloodWarning(waterLevel, categoryObj);
 
             // Update Stats
             document.getElementById('totalRainfall').textContent = `${totalRainfall.toFixed(0)} mm`;
@@ -500,9 +306,61 @@
             document.getElementById('riverLevelLabel').textContent = getTranslation('flood.riverLevel');
             document.getElementById('impactTitle').textContent = getTranslation('common.expectedImpact');
             document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            // Translate title elements
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            
+            // Translate stat labels
+            document.getElementById('waterLevelLabel').textContent = getTranslation('flood.waterLevel');
+            document.getElementById('floodExtentLabel').textContent = getTranslation('flood.floodExtent');
+            document.getElementById('flowVelocityLabel').textContent = getTranslation('flood.flowVelocity');
+            document.getElementById('peakTimeLabel').textContent = getTranslation('flood.peakTime');
         });
         updateSimulator();
         
-    </script>
+    
+        // Language change function
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            loadTranslations();
+            updateFloodSimulator(); // Update dynamic content too
+        }
+
+        // Load translations function
+        function loadTranslations() {
+            const lang = getLanguage();
+            
+            // Set language selector value
+            // Update page title
+            document.title = getTranslation('flood.title');
+            
+            // Translate static UI elements
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '💧 ' + getTranslation('flood.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            
+            // Translate specific labels
+            document.getElementById('rainfallLabel').textContent = getTranslation('flood.rainfall');
+            document.getElementById('durationLabel').textContent = getTranslation('flood.duration');
+            document.getElementById('terrainLabel').textContent = getTranslation('flood.terrain');
+            document.getElementById('drainageLabel').textContent = getTranslation('flood.drainage');
+            document.getElementById('riverLevelLabel').textContent = getTranslation('flood.riverLevel');
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            // Translate title elements
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            
+            // Translate stat labels
+            document.getElementById('waterLevelLabel').textContent = getTranslation('flood.waterLevel');
+            document.getElementById('floodExtentLabel').textContent = getTranslation('flood.floodExtent');
+            document.getElementById('flowVelocityLabel').textContent = getTranslation('flood.flowVelocity');
+            document.getElementById('peakTimeLabel').textContent = getTranslation('flood.peakTime');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTranslations();
+            updateFloodSimulator();
+        });
+</script>
 </body>
 </html>

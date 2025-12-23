@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-    <script src="translations.js"></script>
+    <script src="translations/core.js"></script>
+    <script src="translations/static.js"></script>
     <style>
         * {
             margin: 0;
@@ -84,44 +85,7 @@
             transform: translateY(0px);
         }
 
-        .language-selector {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .language-select {
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            outline: none;
-        }
-
-        .language-select:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .language-select:focus {
-            background: rgba(52, 152, 219, 0.3);
-            border-color: rgba(52, 152, 219, 0.5);
-        }
-
-        .language-select option {
-            background: rgba(13, 27, 62, 0.98);
-            color: white;
-            padding: 10px;
-        }
-
-        .topbar-right {
+                                                .topbar-right {
             display: flex;
             gap: 20px;
             align-items: center;
@@ -370,6 +334,10 @@
             background: linear-gradient(135deg, rgba(139, 69, 19, 0.15) 0%, rgba(160, 82, 45, 0.15) 100%);
         }
 
+        .hurricane-card {
+            background: linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(19, 141, 117, 0.15) 100%);
+        }
+
         .footer {
             margin-top: 60px;
             color: rgba(255, 255, 255, 0.7);
@@ -442,16 +410,7 @@
                 gap: 10px;
             }
 
-            .language-selector {
-                gap: 5px;
-            }
-
-            .language-select {
-                padding: 6px 10px;
-                font-size: 0.75em;
-            }
-
-            .download-button {
+                                    .download-button {
                 font-size: 0.7em;
                 padding: 8px 12px;
             }
@@ -472,17 +431,8 @@
             <span>blueisatlantic</span>
         </div>
         <div class="topbar-right">
-            <div class="language-selector">
-                <select class="language-select" id="languageSelect" onchange="changeLanguage(this.value)">
-                    <option value="en">English</option>
-                    <option value="lt">Lietuvių</option>
-                    <option value="es">Español</option>
-                    <option value="ru">Русский</option>
-                    <option value="de">Deutsch</option>
-                </select>
-            </div>
-            <a href="#" class="download-button" onclick="alert(getTranslation('index.downloadAlert')); return false;">
-                <span id="downloadButtonText">Download Desktop App</span>
+                        <a href="download.html" class="download-button">
+                <span id="downloadButtonText">Download</span>
             </a>
         </div>
     </div>
@@ -611,6 +561,19 @@
                 </ul>
                 <a href="landslide.html" class="card-button" id="landslideBtn">Launch Simulator</a>
             </div>
+
+            <div class="simulator-card hurricane-card" onclick="window.location.href='hurricane.html'">
+                <div class="icon-wrapper">🌀</div>
+                <h2>Hurricane</h2>
+                <p>Experience tropical cyclones from Category 1 to catastrophic Category 5. Understand storm surge, wind damage, and coastal impacts.</p>
+                <ul class="features-list">
+                    <li>Saffir-Simpson scale ratings</li>
+                    <li>Storm surge calculations</li>
+                    <li>Wind speed up to 200+ mph</li>
+                    <li>Coastal flooding analysis</li>
+                </ul>
+                <a href="hurricane.html" class="card-button">Launch Simulator</a>
+            </div>
         </div>
 
         <div class="footer">
@@ -631,8 +594,6 @@
             const lang = getLanguage();
             
             // Update dropdown selection
-            document.getElementById('languageSelect').value = lang;
-            
             // Update page title
             document.title = getTranslation('index.title');
             

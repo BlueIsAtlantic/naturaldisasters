@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - Natural Disaster Simulators</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <script src="translations/core.js"></script>
+    <script src="translations/static.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #000000 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* EXACT SAME TOPBAR AS INDEX.HTML */
+        .topbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(13, 27, 62, 0.95) 0%, rgba(25, 42, 86, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .topbar-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5em;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .topbar-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+                                        .home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .home-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 40px;
+            width: 100%;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-section h1 {
+            font-size: 4.5em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+
+        .hero-section p {
+            font-size: 1.4em;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .download-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px 40px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffffff, #808080);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .download-card:hover::before {
+            opacity: 1;
+        }
+
+        .download-card:nth-child(1) { animation-delay: 0.1s; }
+        .download-card:nth-child(2) { animation-delay: 0.2s; }
+        .download-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .download-card:hover {
+            transform: translateY(-15px);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .platform-icon {
+            font-size: 5em;
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .download-card h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .download-card p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.15em;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .version-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 18px 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            font-size: 1em;
+        }
+
+        .version-info span {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        .version-info strong {
+            color: white;
+            font-weight: 600;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 20px 35px;
+            background: white;
+            border: 2px solid white;
+            border-radius: 16px;
+            color: #000;
+            font-weight: 700;
+            font-size: 1.15em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background: transparent;
+            color: white;
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .download-btn.coming-soon {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+
+        .download-btn.coming-soon:hover {
+            transform: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .features-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 60px 50px;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease 0.4s;
+            animation-fill-mode: both;
+        }
+
+        .features-section h2 {
+            font-size: 3em;
+            margin-bottom: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+        }
+
+        .feature-content h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .feature-content p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .system-requirements {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 60px 50px;
+            animation: fadeInUp 0.8s ease 0.5s;
+            animation-fill-mode: both;
+            margin-bottom: 40px;
+        }
+
+        .system-requirements h2 {
+            font-size: 3em;
+            margin-bottom: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .requirement-section {
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+
+        .requirement-section h3 {
+            font-size: 1.6em;
+            margin-bottom: 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .requirement-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .requirement-section li {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.05em;
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .requirement-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.95em;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .topbar-right {
+                flex-direction: column;
+                width: 100%;
+                gap: 15px;
+            }
+
+                        .hero-section h1 {
+                font-size: 2.8em;
+            }
+
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- EXACT SAME TOPBAR AS INDEX.HTML -->
+    <div class="topbar">
+        <div class="topbar-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <span>blueisatlantic</span>
+        </div>
+        <div class="topbar-right">
+                        <a href="index.html" class="home-button" id="homeButton">
+                ← <span id="homeButtonText">Back to Home</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="hero-section">
+            <h1 id="heroTitle">Download Desktop App</h1>
+            <p id="heroSubtitle">Experience all 9 natural disaster simulators in a powerful desktop application. Available for Windows, macOS, and Linux.</p>
+        </div>
+
+        <div class="download-grid">
+            <div class="download-card">
+                <div class="platform-icon">🪟</div>
+                <h2 id="windowsTitle">Windows</h2>
+                <p id="windowsDesc">Full-featured desktop application for Windows 10 and Windows 11.</p>
+                <div class="version-info">
+                    <span id="versionLabel1">Version:</span>
+                    <strong>1.0.0</strong>
+                </div>
+                <div class="version-info">
+                    <span id="sizeLabel1">Size:</span>
+                    <strong>Unknown</strong>
+                </div>
+                <button class="download-btn coming-soon" onclick="showComingSoon()">
+                    ⬇️ <span id="comingSoonBtn1">Coming Soon</span>
+                </button>
+            </div>
+
+            <div class="download-card">
+                <div class="platform-icon">🍎</div>
+                <h2 id="macosTitle">macOS</h2>
+                <p id="macosDesc">Native application optimized for macOS Monterey and later.</p>
+                <div class="version-info">
+                    <span id="versionLabel2">Version:</span>
+                    <strong>1.0.0</strong>
+                </div>
+                <div class="version-info">
+                    <span id="sizeLabel2">Size:</span>
+                    <strong>Unknown</strong>
+                </div>
+                <button class="download-btn coming-soon" onclick="showComingSoon()">
+                    ⬇️ <span id="comingSoonBtn2">Coming Soon</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2 id="featuresTitle">✨ Desktop App Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-content">
+                        <h3 id="feature1Title">Offline Access</h3>
+                        <p id="feature1Desc">Run all simulators without internet connection</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-content">
+                        <h3 id="feature2Title">Native Performance</h3>
+                        <p id="feature2Desc">Optimized for smooth, fast simulations</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💾</div>
+                    <div class="feature-content">
+                        <h3 id="feature3Title">Save & Export</h3>
+                        <p id="feature3Desc">Save your scenarios and export results</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌍</div>
+                    <div class="feature-content">
+                        <h3 id="feature4Title">Multi-Language</h3>
+                        <p id="feature4Desc">Full support for 5 languages</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔔</div>
+                    <div class="feature-content">
+                        <h3 id="feature5Title">Auto Updates</h3>
+                        <p id="feature5Desc">Automatic updates with new features</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-content">
+                        <h3 id="feature6Title">Enhanced Features</h3>
+                        <p id="feature6Desc">Additional data visualization options</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="system-requirements">
+            <h2 id="requirementsTitle">💻 System Requirements</h2>
+            <div class="requirements-grid">
+                <div class="requirement-section">
+                    <h3>🪟 Windows</h3>
+                    <ul>
+                        <li id="winReq1">Windows 10 or Windows 11</li>
+                        <li id="winReq2">4 GB RAM minimum (8 GB recommended)</li>
+                        <li id="winReq3">500 MB available disk space</li>
+                        <li id="winReq4">DirectX 11 compatible graphics</li>
+                        <li id="winReq5">1280x720 display resolution</li>
+                    </ul>
+                </div>
+                <div class="requirement-section">
+                    <h3>🍎 macOS</h3>
+                    <ul>
+                        <li id="macReq1">macOS Monterey (12.0) or later</li>
+                        <li id="macReq2">4 GB RAM minimum (8 GB recommended)</li>
+                        <li id="macReq3">500 MB available disk space</li>
+                        <li id="macReq4">Metal-compatible graphics</li>
+                        <li id="macReq5">1280x720 display resolution</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p id="footerCopyright">© 2024 blueisatlantic | Natural Disaster Simulators</p>
+        <p id="footerTagline">Educational software for understanding disaster dynamics and safety protocols</p>
+    </div>
+
+    <script>
+        function showComingSoon() {
+            alert('Desktop app coming soon! Stay tuned for updates.');
+        }
+
+        // Translations removed - English only
+    </script>
+</body>
+</html>

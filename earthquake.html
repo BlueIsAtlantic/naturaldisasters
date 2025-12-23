@@ -4,271 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earthquake Simulator</title>
-    <script src="translations.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4a2c2a 0%, #7f5539 50%, #9c6644 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
-            width: 100%;
-            position: relative;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background: rgba(52, 152, 219, 0.1);
-            border: 2px solid rgba(52, 152, 219, 0.3);
-            border-radius: 50px;
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .back-button:hover {
-            background: rgba(52, 152, 219, 0.2);
-            border-color: rgba(52, 152, 219, 0.5);
-            transform: translateX(-5px);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .magnitude-display {
-            background: linear-gradient(135deg, #d35400 0%, #e74c3c 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .magnitude-display h2 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .magnitude-display p {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-
-        .controls-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-group label {
-            display: block;
-            font-weight: 600;
-            color: #34495e;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .control-group input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #dfe6e9;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #e74c3c;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background: #c0392b;
-        }
-
-        .control-group input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #e74c3c;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-        }
-
-        .value-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.95em;
-            color: #7f8c8d;
-        }
-
-        .value-display span {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .damage-description {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .damage-description h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .damage-description p {
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        .checkbox-group label {
-            font-size: 1em;
-            font-weight: normal;
-            cursor: pointer;
-            margin-bottom: 0;
-        }
-
-        .tsunami-warning {
-            background: #d1ecf1;
-            border-left: 4px solid #0c5460;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .tsunami-warning.active {
-            display: block;
-        }
-
-        .tsunami-warning h3 {
-            color: #0c5460;
-            margin-bottom: 10px;
-        }
-
-        .tsunami-warning p {
-            color: #0c5460;
-            line-height: 1.6;
-        }
-
-        .warning-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .warning-box h3 {
-            color: #721c24;
-            margin-bottom: 10px;
-        }
-
-        .warning-box p {
-            color: #721c24;
-            line-height: 1.6;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h4 {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #2c3e50;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="shared.css">
+    <script src="translations/core.js"></script>
+    <script src="translations/static.js"></script>
+    <script src="translations/dynamic/earthquake.js"></script>
+    
 </head>
-<body>
+<body class="earthquake-theme">
     <div class="container">
-        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
+                <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
         <h1 id="pageTitle">🌍 Earthquake Simulator</h1>
         
@@ -282,7 +26,7 @@
             <h3 style="margin-bottom: 20px; color: #2c3e50;" id="parametersTitle">Earthquake Parameters</h3>
             
             <div class="control-group">
-                <label for="magnitude">Magnitude (Moment Magnitude Scale)</label>
+                <label for="magnitude" id="magnitudeLabel">Magnitude (Moment Magnitude Scale)</label>
                 <input type="range" id="magnitudeSlider" min="1.0" max="10.0" value="5.0" step="0.1">
                 <div class="value-display">
                     <span id="magnitudeValue">5.0</span>
@@ -291,7 +35,7 @@
             </div>
 
             <div class="control-group">
-                <label for="depth">Depth (kilometers)</label>
+                <label for="depth" id="depthLabel">Depth (kilometers)</label>
                 <input type="range" id="depthSlider" min="0" max="700" value="10" step="5">
                 <div class="value-display">
                     <span id="depthValue">10 km</span>
@@ -320,7 +64,7 @@
                 <label>Earthquake Location</label>
                 <div class="checkbox-group">
                     <input type="checkbox" id="underwaterCheck">
-                    <label for="underwaterCheck">Underwater/Submarine Earthquake</label>
+                    <label for="underwaterCheck" id="underwaterLabel">Underwater/Submarine Earthquake</label>
                 </div>
             </div>
 
@@ -342,27 +86,27 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <h4>Mercalli Intensity</h4>
+                <h4 id="mercalliLabel">Mercalli Intensity</h4>
                 <p id="mercalliIntensity">VI</p>
             </div>
             <div class="stat-card">
-                <h4>Felt Radius</h4>
+                <h4 id="feltRadiusLabel">Felt Radius</h4>
                 <p id="feltRadius">150 km</p>
             </div>
             <div class="stat-card">
-                <h4>Peak Ground Accel.</h4>
+                <h4 id="peakAccelLabel">Peak Ground Accel.</h4>
                 <p id="peakAccel">0.18 g</p>
             </div>
             <div class="stat-card">
-                <h4>Aftershock Estimate</h4>
+                <h4 id="aftershockLabel">Aftershock Estimate</h4>
                 <p id="aftershocks">10-30</p>
             </div>
             <div class="stat-card">
-                <h4>Fault Rupture Length</h4>
+                <h4 id="ruptureLengthLabel">Fault Rupture Length</h4>
                 <p id="ruptureLength">10 km</p>
             </div>
             <div class="stat-card">
-                <h4>TNT Equivalent</h4>
+                <h4 id="tntEquivLabel">TNT Equivalent</h4>
                 <p id="tntEquivalent">~500 tons</p>
             </div>
         </div>
@@ -399,6 +143,20 @@
                 "Catastrophic": getDynamicTranslation("earthquake", "warnings", "Extreme")
             };
             return warnings[type] || warnings["Micro"];
+        }
+
+        function getEarthquakeIntensity(type) {
+            const intensities = {
+                "Micro": getDynamicTranslation("earthquake", "intensities", "Not Felt"),
+                "Minor": getDynamicTranslation("earthquake", "intensities", "Weak"),
+                "Light": getDynamicTranslation("earthquake", "intensities", "Light"),
+                "Moderate": getDynamicTranslation("earthquake", "intensities", "Moderate"),
+                "Strong": getDynamicTranslation("earthquake", "intensities", "Strong"),
+                "Major": getDynamicTranslation("earthquake", "intensities", "Very Strong"),
+                "Great": getDynamicTranslation("earthquake", "intensities", "Severe"),
+                "Catastrophic": getDynamicTranslation("earthquake", "intensities", "Extreme")
+            };
+            return intensities[type] || type;
         }
 
         function checkTsunamiRisk(magnitude, depth, underwater) {
@@ -473,7 +231,7 @@
             };
         }
 
-        function getEarthquakeWarning(magnitude, tsunamiRisk) {
+        function getEarthquakeWarningOLD(magnitude, tsunamiRisk) {
             let baseWarning = '';
             
             if (magnitude < 3.0) {
@@ -589,7 +347,7 @@
 
             // Update Magnitude Display
             document.getElementById('magnitudeRating').textContent = `Magnitude ${magnitude.toFixed(1)}`;
-            document.getElementById('magnitudeType').textContent = magData.type + ' Earthquake';
+            document.getElementById('magnitudeType').textContent = getEarthquakeIntensity(magData.type) + ' Earthquake';
             document.getElementById('energyRelease').textContent = `Energy: ${calculateEnergy(magnitude)}`;
             document.getElementById('magnitudeDisplay').style.background = `linear-gradient(135deg, ${magData.color} 0%, ${adjustColor(magData.color, -20)} 100%)`;
             
@@ -614,7 +372,7 @@
             }
             
             // Update warning based on magnitude and tsunami risk
-            const warningText = getEarthquakeWarning(magnitudeInfo.type);
+            const warningText = getEarthquakeWarning(magData.type);
             document.getElementById('warningText').textContent = warningText;
 
             // Update Stats
@@ -638,27 +396,58 @@
 
         // Initialize
         
-        // Load translations
-        window.addEventListener('DOMContentLoaded', () => {
+        
+        updateSimulator();
+        
+        
+    
+        // Language change function
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            loadTranslations();
+            updateEarthquakeSimulator(); // Update dynamic content too
+        }
+
+        // Load translations function
+        function loadTranslations() {
+            const lang = getLanguage();
+            
+            // Set language selector value
+            // Update page title
             document.title = getTranslation('earthquake.title');
+            
+            // Translate static UI elements
             document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '🌍 ' + getTranslation('earthquake.title');
+            document.getElementById('pageTitle').textContent = '🌎 ' + getTranslation('earthquake.title');
             document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            
+            // Translate specific labels
             document.getElementById('magnitudeLabel').textContent = getTranslation('earthquake.magnitude');
             document.getElementById('depthLabel').textContent = getTranslation('earthquake.depth');
             document.getElementById('distanceLabel').textContent = getTranslation('earthquake.distance');
             document.getElementById('durationLabel').textContent = getTranslation('earthquake.duration');
             document.getElementById('underwaterLabel').textContent = getTranslation('earthquake.underwater');
-            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
+            document.getElementById('damageTitle').textContent = getTranslation('common.expectedEffects');
             document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
+            // Translate title elements that were missing
+            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
             const tsunamiTitle = document.getElementById('tsunamiTitle');
             if (tsunamiTitle) tsunamiTitle.textContent = '🌊 ' + getTranslation('common.tsunamiRisk');
-        });
-        updateSimulator();
-        
-        // Load translations
+            
+            // Translate stat labels
+            document.getElementById('mercalliLabel').textContent = getTranslation('earthquake.mercalliIntensity');
+            document.getElementById('feltRadiusLabel').textContent = getTranslation('earthquake.feltRadius');
+            document.getElementById('peakAccelLabel').textContent = getTranslation('earthquake.peakGroundAccel');
+            document.getElementById('aftershockLabel').textContent = getTranslation('earthquake.aftershockEstimate');
+            document.getElementById('ruptureLengthLabel').textContent = getTranslation('earthquake.ruptureLength');
+            document.getElementById('tntEquivLabel').textContent = getTranslation('earthquake.tntEquivalent');
+        }
+
+        // Initialize on page load
         window.addEventListener('DOMContentLoaded', () => {
+            loadTranslations();
+            updateEarthquakeSimulator();
         });
-    </script>
+</script>
 </body>
 </html>

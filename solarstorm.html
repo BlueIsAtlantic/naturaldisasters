@@ -4,228 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solar Storm Simulator</title>
-    <script src="translations.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
-            width: 100%;
-            position: relative;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background: rgba(52, 152, 219, 0.1);
-            border: 2px solid rgba(52, 152, 219, 0.3);
-            border-radius: 50px;
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .back-button:hover {
-            background: rgba(52, 152, 219, 0.2);
-            border-color: rgba(52, 152, 219, 0.5);
-            transform: translateX(-5px);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .storm-display {
-            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .storm-display h2 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .storm-display p {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-
-        .controls-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-group label {
-            display: block;
-            font-weight: 600;
-            color: #34495e;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .control-group input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #dfe6e9;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #9b59b6;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background: #8e44ad;
-        }
-
-        .control-group input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #9b59b6;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-        }
-
-        .value-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.95em;
-            color: #7f8c8d;
-        }
-
-        .value-display span {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .damage-description {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .damage-description h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .damage-description p {
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .warning-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .warning-box h3 {
-            color: #721c24;
-            margin-bottom: 10px;
-        }
-
-        .warning-box p {
-            color: #721c24;
-            line-height: 1.6;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h4 {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #2c3e50;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="shared.css">
+    <script src="translations/core.js"></script>
+    <script src="translations/static.js"></script>
+    <script src="translations/dynamic/solarstorm.js"></script>
+    
 </head>
-<body>
+<body class="solarstorm-theme">
     <div class="container">
-        <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
+                <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
         
         <h1 id="pageTitle">☀️ Solar Storm Simulator</h1>
         
@@ -307,7 +94,7 @@
                 <p id="auroraVisibility">45° latitude</p>
             </div>
             <div class="stat-card">
-                <h4>Satellite Risk</h4>
+                <h4 id="satelliteLabel">Satellite Risk</h4>
                 <p id="satelliteRisk">Moderate</p>
             </div>
             <div class="stat-card">
@@ -444,7 +231,7 @@
             const auroraLat = getAuroraLatitude(kp);
 
             // Update Display
-            document.getElementById('stormClass').textContent = `${category.geo} - ${category.name} Storm`;
+            document.getElementById('stormClass').textContent = `${category.geo} - ${getStormScaleName(category.geo)} Storm`;
             document.getElementById('kpIndex').textContent = `Kp Index: ${kp}`;
             document.getElementById('fluxLevel').textContent = `X-ray Flux: ${flareClass}`;
             document.getElementById('stormDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
@@ -457,7 +244,7 @@
             document.getElementById('protonFluxValue').textContent = `${protonFlux.toLocaleString()} pfu`;
             document.getElementById('protonLevel').textContent = getProtonLevel(protonFlux);
             document.getElementById('kpIndexValue').textContent = `Kp ${kp}`;
-            document.getElementById('geomagClass').textContent = `${category.geo} - ${category.name}`;
+            document.getElementById('geomagClass').textContent = `${category.geo} - ${getStormScaleName(category.geo)}`;
             document.getElementById('durationValue').textContent = `${duration} hours`;
             
             document.getElementById('damageText').textContent = category.effects;
@@ -497,9 +284,53 @@
             document.getElementById('durationLabel').textContent = getTranslation('solarstorm.duration');
             document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
             document.getElementById('advisoryTitle').textContent = '⚡ ' + getTranslation('common.safetyAdvisory');
+            // Translate title elements
+            document.getElementById('impactTitle').textContent = getTranslation('common.expectedImpact');
+            
+            // Translate stat labels
+            document.getElementById('powerGridLabel').textContent = getTranslation('solarstorm.powerGridRisk');
+            document.getElementById('satelliteLabel').textContent = getTranslation('solarstorm.satelliteRisk');
+            document.getElementById('radioBlackoutLabel').textContent = getTranslation('solarstorm.radioBlackout');
+            document.getElementById('auroraLabel').textContent = getTranslation('solarstorm.auroraLatitude');
         });
         updateSimulator();
         
-    </script>
+    
+        // Language change function
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            loadTranslations();
+            updateSolarStormSimulator(); // Update dynamic content too
+        }
+
+        // Load translations function
+        function loadTranslations() {
+            const lang = getLanguage();
+            
+            // Set language selector value
+            // Update page title
+            document.title = getTranslation('solarstorm.title');
+            
+            // Translate static UI elements
+            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
+            document.getElementById('pageTitle').textContent = '☀️ ' + getTranslation('solarstorm.title');
+            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
+            
+            // Translate specific labels
+            document.getElementById('flareClassLabel').textContent = getTranslation('solarstorm.flareClass');
+            document.getElementById('cmeSpeedLabel').textContent = getTranslation('solarstorm.cmeSpeed');
+            document.getElementById('protonFluxLabel').textContent = getTranslation('solarstorm.protonFlux');
+            document.getElementById('kpIndexLabel').textContent = getTranslation('solarstorm.kpIndex');
+            document.getElementById('durationLabel').textContent = getTranslation('solarstorm.duration');
+            document.getElementById('impactTitle').textContent = getTranslation('common.expectedImpact');
+            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyAdvisory');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTranslations();
+            updateSolarStormSimulator();
+        });
+</script>
 </body>
 </html>
