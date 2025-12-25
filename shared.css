@@ -67,6 +67,18 @@
     --accent-dark: #138d75;
 }
 
+/* Volcano - Red/Orange/Lava */
+.volcano-theme {
+    --accent-color: #d35400;
+    --accent-dark: #a04000;
+}
+
+/* Blizzard - Blue/White/Ice */
+.blizzard-theme {
+    --accent-color: #5d6d7e;
+    --accent-dark: #34495e;
+}
+
 /* ==================== RESET & BASE ==================== */
 * {
     margin: 0;
@@ -214,6 +226,8 @@ h1 {
 .heat-display,
 .landslide-display,
 .hurricane-display,
+.volcano-display,
+.blizzard-display,
 .impact-display {
     background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
     color: white;
@@ -235,6 +249,8 @@ h1 {
 .heat-display h2,
 .landslide-display h2,
 .hurricane-display h2,
+.volcano-display h2,
+.blizzard-display h2,
 .impact-display h2 {
     font-size: 3em;
     margin-bottom: 10px;
@@ -252,6 +268,8 @@ h1 {
 .heat-display p,
 .landslide-display p,
 .hurricane-display p,
+.volcano-display p,
+.blizzard-display p,
 .impact-display p {
     font-size: 1.2em;
     margin: 5px 0;

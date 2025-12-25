@@ -338,6 +338,14 @@
             background: linear-gradient(135deg, rgba(22, 160, 133, 0.15) 0%, rgba(19, 141, 117, 0.15) 100%);
         }
 
+        .volcano-card {
+            background: linear-gradient(135deg, rgba(211, 84, 0, 0.15) 0%, rgba(160, 64, 0, 0.15) 100%);
+        }
+
+        .blizzard-card {
+            background: linear-gradient(135deg, rgba(93, 109, 126, 0.15) 0%, rgba(52, 73, 94, 0.15) 100%);
+        }
+
         .footer {
             margin-top: 60px;
             color: rgba(255, 255, 255, 0.7);
@@ -573,6 +581,32 @@
                     <li>Coastal flooding analysis</li>
                 </ul>
                 <a href="hurricane.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card volcano-card" onclick="window.location.href='volcano.html'">
+                <div class="icon-wrapper">🌋</div>
+                <h2>Volcano</h2>
+                <p>Simulate volcanic eruptions from gentle lava flows to super-colossal explosions. Explore the Volcanic Explosivity Index (VEI 0-8).</p>
+                <ul class="features-list">
+                    <li>VEI scale 0-8 ratings</li>
+                    <li>Pyroclastic flow simulation</li>
+                    <li>Ash plume height modeling</li>
+                    <li>Lava flow calculations</li>
+                </ul>
+                <a href="volcano.html" class="card-button">Launch Simulator</a>
+            </div>
+
+            <div class="simulator-card blizzard-card" onclick="window.location.href='blizzard.html'">
+                <div class="icon-wrapper">❄️</div>
+                <h2>Blizzard</h2>
+                <p>Experience extreme winter storms with heavy snow, dangerous winds, and life-threatening cold. Calculate wind chill and whiteout conditions.</p>
+                <ul class="features-list">
+                    <li>Wind chill calculations</li>
+                    <li>Visibility and whiteout modeling</li>
+                    <li>Snow accumulation rates</li>
+                    <li>Frostbite time estimates</li>
+                </ul>
+                <a href="blizzard.html" class="card-button">Launch Simulator</a>
             </div>
         </div>
 

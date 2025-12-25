@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volcano Simulator</title>
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body class="volcano-theme">
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>🌋 Volcano Simulator</h1>
+        
+        <div class="volcano-display" id="volcanoDisplay">
+            <h2 id="veiRating">VEI 4</h2>
+            <p id="explosivityDisplay">Volcanic Explosivity Index</p>
+            <p id="eruptionType">Cataclysmic Eruption</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Volcanic Parameters</h3>
+            
+            <div class="control-group">
+                <label for="vei">Volcanic Explosivity Index (VEI)</label>
+                <input type="range" id="veiSlider" min="0" max="8" value="4" step="1">
+                <div class="value-display">
+                    <span id="veiValue">VEI 4</span>
+                    <span id="veiDescription">Cataclysmic</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="plumeHeight">Eruption Plume Height (kilometers)</label>
+                <input type="range" id="plumeSlider" min="0.1" max="45" value="15" step="0.5">
+                <div class="value-display">
+                    <span id="plumeValue">15 km</span>
+                    <span id="plumeFeet">49,213 feet</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="lavaFlow">Lava Flow Rate (cubic meters/second)</label>
+                <input type="range" id="lavaSlider" min="1" max="10000" value="100" step="10">
+                <div class="value-display">
+                    <span id="lavaValue">100 m³/s</span>
+                    <span id="lavaSpeed">Moderate flow</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="ashFall">Ash Fall Radius (kilometers)</label>
+                <input type="range" id="ashSlider" min="5" max="500" value="100" step="5">
+                <div class="value-display">
+                    <span id="ashValue">100 km</span>
+                    <span id="ashMiles">62 miles</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="pyroclastic">Pyroclastic Flow Speed (km/h)</label>
+                <input type="range" id="pyroclasticSlider" min="50" max="700" value="300" step="10">
+                <div class="value-display">
+                    <span id="pyroclasticValue">300 km/h</span>
+                    <span id="pyroclasticMph">186 mph</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Impact</h3>
+                <p id="damageText">Cataclysmic eruption. Plume height 10-25 km. Major damage to surrounding areas. Widespread ashfall affects regions hundreds of kilometers away. Aviation hazard. Possible climate effects.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">VOLCANIC ERUPTION! EVACUATE IMMEDIATELY! Lethal pyroclastic flows and ash fall. Stay indoors if unable to evacuate. Protect airways from ash. Avoid low-lying areas prone to lahars (mudflows).</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Eruption Duration</h4>
+                    <p id="duration">Hours to days</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Ejected Material</h4>
+                    <p id="ejecta">0.1-1 km³</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Evacuation Radius</h4>
+                    <p id="evacZone">20-50 km</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Aviation Alert</h4>
+                    <p id="aviation">RED - Avoid</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const veiData = {
+            descriptions: {
+                0: 'Non-explosive eruption. Plume height < 100 m. Effusive lava flows. Very small volume of ejecta. Daily occurrences at some volcanoes. Minimal hazard beyond immediate crater area.',
+                1: 'Gentle eruption. Plume height 100-1000 m. Small lava flows and minor ash emissions. Ejecta volume 10,000 - 100,000 m³. Occurs daily to weekly at active volcanoes. Local hazard only.',
+                2: 'Explosive eruption. Plume height 1-5 km. Moderate ash emissions. Ejecta volume 1-10 million m³. Occurs weekly to yearly. Ash affects local area. Potential for pyroclastic flows.',
+                3: 'Severe eruption. Plume height 3-15 km. Significant ash column. Ejecta volume 10-100 million m³. Occurs yearly to decade. Regional ashfall. Pyroclastic flows likely. Aviation hazard.',
+                4: 'Cataclysmic eruption. Plume height 10-25 km. Major damage to surrounding areas. Ejecta volume 0.1-1 km³. Occurs every 10-100 years. Widespread ashfall affects hundreds of km. Significant aviation hazard.',
+                5: 'Paroxysmal eruption. Plume height 25+ km. Catastrophic damage. Ejecta volume 1-10 km³. Occurs every 100-1000 years. Ashfall affects thousands of km. Major climate effects possible. Devastating pyroclastic flows.',
+                6: 'Colossal eruption. Plume height 25+ km. Severe atmospheric effects. Ejecta volume 10-100 km³. Occurs every 1000-10,000 years. Global ashfall. Significant climate impact. Mass destruction in large area.',
+                7: 'Super-colossal eruption. Plume height 25+ km. Extreme atmospheric effects. Ejecta volume 100-1000 km³. Occurs every 10,000+ years. Global catastrophe. Volcanic winter likely. Civilization-threatening event.',
+                8: 'Mega-colossal eruption. Plume height 25+ km. Catastrophic global effects. Ejecta volume 1000+ km³. Extremely rare (100,000+ years). Global devastation. Prolonged volcanic winter. Mass extinction event.'
+            },
+            warnings: {
+                0: 'MINOR VOLCANIC ACTIVITY: Stay away from active vents and lava flows. Follow park/observatory guidance. Generally safe to observe from designated areas.',
+                1: 'GENTLE ERUPTION: Maintain safe distance from crater. Wear protective gear near active areas. Follow local authorities. Avoid downwind areas due to volcanic gases.',
+                2: 'EXPLOSIVE ERUPTION! Evacuate immediate area. Ash fall likely. Protect airways. Seek shelter indoors. Follow evacuation orders. Avoid river valleys (lahar risk).',
+                3: 'SEVERE VOLCANIC ERUPTION! EVACUATE NOW! Major ash fall expected. Pyroclastic flows possible. Seek shelter if unable to evacuate. Protect head and airways. Aviation alert in effect.',
+                4: 'CATACLYSMIC ERUPTION! EVACUATE IMMEDIATELY! Lethal pyroclastic flows and ash fall. Stay indoors if unable to evacuate. Protect airways from ash. Avoid low-lying areas prone to lahars (mudflows).',
+                5: 'PAROXYSMAL ERUPTION! LIFE-THREATENING! Massive evacuation required. Catastrophic pyroclastic flows. Regional ashfall emergency. Seek underground shelter if unable to evacuate. This is an extreme emergency.',
+                6: 'COLOSSAL ERUPTION! CATASTROPHIC EVENT! Mass evacuation of entire region. Civilization-scale disaster. Seek any available shelter. Global atmospheric effects expected. Prepare for prolonged ashfall.',
+                7: 'SUPER-COLOSSAL ERUPTION! EXISTENTIAL THREAT! Global catastrophe in progress. Volcanic winter likely. Seek deep underground shelter. Stockpile supplies. Civilization-ending event. International emergency.',
+                8: 'MEGA-COLOSSAL ERUPTION! EXTINCTION-LEVEL EVENT! Global devastation. Prolonged darkness and cold. Seek deepest available shelter. Mass extinction in progress. This is the most catastrophic volcanic event possible.'
+            },
+            types: ['Non-explosive', 'Gentle', 'Explosive', 'Severe', 'Cataclysmic', 'Paroxysmal', 'Colossal', 'Super-colossal', 'Mega-colossal']
+        };
+
+        const veiColors = ['#95a5a6', '#3498db', '#f39c12', '#e67e22', '#e74c3c', '#c0392b', '#8b0000', '#660000', '#330000'];
+
+        const veiSlider = document.getElementById('veiSlider');
+        const plumeSlider = document.getElementById('plumeSlider');
+        const lavaSlider = document.getElementById('lavaSlider');
+        const ashSlider = document.getElementById('ashSlider');
+        const pyroclasticSlider = document.getElementById('pyroclasticSlider');
+
+        function updateSimulator() {
+            const vei = parseInt(veiSlider.value);
+            const plumeHeight = parseFloat(plumeSlider.value);
+            const lavaFlow = parseInt(lavaSlider.value);
+            const ashRadius = parseInt(ashSlider.value);
+            const pyroclasticSpeed = parseInt(pyroclasticSlider.value);
+            
+            const damageDescription = veiData.descriptions[vei];
+            const warningText = veiData.warnings[vei];
+            const eruptionType = veiData.types[vei];
+
+            // Update VEI Display
+            document.getElementById('veiRating').textContent = `VEI ${vei}`;
+            document.getElementById('eruptionType').textContent = eruptionType;
+            document.getElementById('volcanoDisplay').style.background = `linear-gradient(135deg, ${veiColors[vei]} 0%, ${adjustColor(veiColors[vei], -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('veiValue').textContent = `VEI ${vei}`;
+            document.getElementById('veiDescription').textContent = eruptionType;
+            document.getElementById('plumeValue').textContent = `${plumeHeight.toFixed(1)} km`;
+            document.getElementById('plumeFeet').textContent = `${Math.round(plumeHeight * 3280.84)} feet`;
+            document.getElementById('lavaValue').textContent = `${lavaFlow} m³/s`;
+            
+            const lavaSpeed = lavaFlow < 50 ? 'Slow flow' : lavaFlow < 200 ? 'Moderate flow' : lavaFlow < 1000 ? 'Fast flow' : 'Very fast flow';
+            document.getElementById('lavaSpeed').textContent = lavaSpeed;
+            
+            document.getElementById('ashValue').textContent = `${ashRadius} km`;
+            document.getElementById('ashMiles').textContent = `${Math.round(ashRadius * 0.621371)} miles`;
+            document.getElementById('pyroclasticValue').textContent = `${pyroclasticSpeed} km/h`;
+            document.getElementById('pyroclasticMph').textContent = `${Math.round(pyroclasticSpeed * 0.621371)} mph`;
+
+            // Update Stats
+            const durations = ['Seconds to minutes', 'Minutes to hours', 'Hours', 'Hours to days', 'Days', 'Days to weeks', 'Weeks', 'Weeks to months', 'Months'];
+            document.getElementById('duration').textContent = durations[vei];
+            
+            const ejectaVolumes = ['< 10,000 m³', '10,000-100,000 m³', '1-10 million m³', '10-100 million m³', '0.1-1 km³', '1-10 km³', '10-100 km³', '100-1000 km³', '> 1000 km³'];
+            document.getElementById('ejecta').textContent = ejectaVolumes[vei];
+            
+            const evacZones = ['< 1 km', '1-5 km', '5-10 km', '10-20 km', '20-50 km', '50-100 km', '100-500 km', '500+ km', '1000+ km'];
+            document.getElementById('evacZone').textContent = evacZones[vei];
+            
+            const aviationLevels = ['GREEN', 'YELLOW', 'ORANGE', 'ORANGE', 'RED', 'RED', 'RED', 'RED', 'RED'];
+            const aviationTexts = ['Normal', 'Advisory', 'Watch', 'Warning', 'Avoid', 'Avoid', 'Avoid', 'Avoid', 'Avoid'];
+            document.getElementById('aviation').textContent = `${aviationLevels[vei]} - ${aviationTexts[vei]}`;
+
+            // Update damage and warning text
+            document.getElementById('damageText').textContent = damageDescription;
+            document.getElementById('warningText').textContent = warningText;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        veiSlider.addEventListener('input', updateSimulator);
+        plumeSlider.addEventListener('input', updateSimulator);
+        lavaSlider.addEventListener('input', updateSimulator);
+        ashSlider.addEventListener('input', updateSimulator);
+        pyroclasticSlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>

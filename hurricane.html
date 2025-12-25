@@ -16,6 +16,7 @@
             <h2 id="categoryRating">Category 3</h2>
             <p id="windSpeedDisplay">Wind Speed: 111-129 mph</p>
             <p id="categoryName">Major Hurricane</p>
+            <p id="beaufortScale" style="font-size: 0.9em; margin-top: 10px; opacity: 0.9;">Beaufort Scale: Force 12 - Hurricane</p>
         </div>
 
         <div class="controls-section">
@@ -66,6 +67,16 @@
                 </div>
             </div>
 
+            <div class="damage-description">
+                <h3>Expected Impact</h3>
+                <p id="damageText">Devastating damage will occur: Well-built framed homes may incur major damage or removal of roof decking and gable ends. Many trees will be snapped or uprooted, blocking numerous roads. Electricity and water will be unavailable for several days to weeks after the storm passes.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">EXTREMELY DANGEROUS HURRICANE! Evacuate immediately if ordered. This is a life-threatening situation. Storm surge and winds will cause catastrophic damage. Complete destruction of mobile/manufactured homes. Extensive structural damage to homes and buildings.</p>
+            </div>
+
             <div class="stats-grid">
                 <div class="stat-card">
                     <h4>Radius of Max Winds</h4>
@@ -83,16 +94,6 @@
                     <h4>Power Outage Duration</h4>
                     <p id="outages">Weeks to months</p>
                 </div>
-            </div>
-
-            <div class="damage-description">
-                <h3>Expected Impact</h3>
-                <p id="damageText">Devastating damage will occur: Well-built framed homes may incur major damage or removal of roof decking and gable ends. Many trees will be snapped or uprooted, blocking numerous roads. Electricity and water will be unavailable for several days to weeks after the storm passes.</p>
-            </div>
-
-            <div class="warning-box">
-                <h3>⚠️ Safety Warning</h3>
-                <p id="warningText">EXTREMELY DANGEROUS HURRICANE! Evacuate immediately if ordered. This is a life-threatening situation. Storm surge and winds will cause catastrophic damage. Complete destruction of mobile/manufactured homes. Extensive structural damage to homes and buildings.</p>
             </div>
         </div>
     </div>
@@ -135,6 +136,25 @@
         const stormSurgeSlider = document.getElementById('stormSurgeSlider');
         const forwardSpeedSlider = document.getElementById('forwardSpeedSlider');
 
+        function getBeaufortScale(windSpeedMph) {
+            // Convert mph to knots for Beaufort scale
+            const knots = windSpeedMph * 0.868976;
+            
+            if (knots < 1) return { force: 0, description: 'Calm' };
+            if (knots < 4) return { force: 1, description: 'Light Air' };
+            if (knots < 7) return { force: 2, description: 'Light Breeze' };
+            if (knots < 11) return { force: 3, description: 'Gentle Breeze' };
+            if (knots < 17) return { force: 4, description: 'Moderate Breeze' };
+            if (knots < 22) return { force: 5, description: 'Fresh Breeze' };
+            if (knots < 28) return { force: 6, description: 'Strong Breeze' };
+            if (knots < 34) return { force: 7, description: 'Near Gale' };
+            if (knots < 41) return { force: 8, description: 'Gale' };
+            if (knots < 48) return { force: 9, description: 'Strong Gale' };
+            if (knots < 56) return { force: 10, description: 'Storm' };
+            if (knots < 64) return { force: 11, description: 'Violent Storm' };
+            return { force: 12, description: 'Hurricane Force' };
+        }
+
         function getHurricaneCategory(windSpeed) {
             for (let category of hurricaneCategories) {
                 if (windSpeed >= category.minSpeed && windSpeed <= category.maxSpeed) {
@@ -152,6 +172,7 @@
             const forwardSpeed = parseInt(forwardSpeedSlider.value);
             
             const category = getHurricaneCategory(windSpeed);
+            const beaufort = getBeaufortScale(windSpeed);
             const damageDescription = hurricaneData.descriptions[category.rating];
             const warningText = hurricaneData.warnings[category.rating];
 
@@ -159,6 +180,7 @@
             document.getElementById('categoryRating').textContent = category.rating;
             document.getElementById('windSpeedDisplay').textContent = `Wind Speed: ${category.minSpeed}-${category.maxSpeed} mph`;
             document.getElementById('categoryName').textContent = category.severity;
+            document.getElementById('beaufortScale').textContent = `Beaufort Scale: Force ${beaufort.force} - ${beaufort.description}`;
             document.getElementById('hurricaneDisplay').style.background = `linear-gradient(135deg, ${category.color} 0%, ${adjustColor(category.color, -20)} 100%)`;
             
             // Update Values

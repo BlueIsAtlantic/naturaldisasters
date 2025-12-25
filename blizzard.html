@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blizzard Simulator</title>
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body class="blizzard-theme">
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Home</a>
+        
+        <h1>❄️ Blizzard Simulator</h1>
+        
+        <div class="blizzard-display" id="blizzardDisplay">
+            <h2 id="severityRating">Severe Blizzard</h2>
+            <p id="conditionsDisplay">Dangerous Winter Storm</p>
+            <p id="visibilityInfo">Visibility: Near Zero</p>
+        </div>
+
+        <div class="controls-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Blizzard Parameters</h3>
+            
+            <div class="control-group">
+                <label for="windSpeed">Wind Speed (mph)</label>
+                <input type="range" id="windSlider" min="10" max="100" value="45" step="1">
+                <div class="value-display">
+                    <span id="windValue">45 mph</span>
+                    <span id="windKmh">72 km/h</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="snowRate">Snowfall Rate (inches/hour)</label>
+                <input type="range" id="snowSlider" min="0.1" max="5" value="2" step="0.1">
+                <div class="value-display">
+                    <span id="snowValue">2.0 in/hr</span>
+                    <span id="snowCm">5.1 cm/hr</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="temperature">Temperature (°F)</label>
+                <input type="range" id="tempSlider" min="-40" max="32" value="10" step="1">
+                <div class="value-display">
+                    <span id="tempValue">10°F</span>
+                    <span id="tempCelsius">-12°C</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="duration">Storm Duration (hours)</label>
+                <input type="range" id="durationSlider" min="1" max="72" value="12" step="1">
+                <div class="value-display">
+                    <span id="durationValue">12 hours</span>
+                    <span id="totalSnow">24 inches total</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="visibility">Visibility (feet)</label>
+                <input type="range" id="visibilitySlider" min="0" max="2640" value="200" step="50">
+                <div class="value-display">
+                    <span id="visibilityValue">200 feet</span>
+                    <span id="visibilityMeters">61 meters</span>
+                </div>
+            </div>
+
+            <div class="damage-description">
+                <h3>Expected Impact</h3>
+                <p id="damageText">Severe blizzard conditions. Travel extremely dangerous to impossible. Whiteout conditions. Life-threatening cold. Power outages likely. Major transportation disruptions. Stay indoors.</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Safety Warning</h3>
+                <p id="warningText">BLIZZARD WARNING! Life-threatening conditions. DO NOT TRAVEL! Extremely dangerous wind chills. Whiteout conditions make travel impossible. Power outages may last days. Stay indoors and keep warm.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Wind Chill</h4>
+                    <p id="windChill">-20°F</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Frostbite Time</h4>
+                    <p id="frostbite">10 minutes</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Snow Drifts</h4>
+                    <p id="drifts">6-10 feet</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Road Conditions</h4>
+                    <p id="roads">Impassable</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const windSlider = document.getElementById('windSlider');
+        const snowSlider = document.getElementById('snowSlider');
+        const tempSlider = document.getElementById('tempSlider');
+        const durationSlider = document.getElementById('durationSlider');
+        const visibilitySlider = document.getElementById('visibilitySlider');
+
+        function calculateWindChill(tempF, windMph) {
+            if (tempF > 50 || windMph < 3) return tempF;
+            return Math.round(35.74 + (0.6215 * tempF) - (35.75 * Math.pow(windMph, 0.16)) + (0.4275 * tempF * Math.pow(windMph, 0.16)));
+        }
+
+        function getBlizzardSeverity(windMph, visibility, snowRate) {
+            // Blizzard = sustained winds 35+ mph, visibility < 1/4 mile for 3+ hours
+            if (windMph >= 35 && visibility <= 1320) { // 1/4 mile = 1320 feet
+                if (windMph >= 45 && visibility <= 660) {
+                    return { level: 'Extreme Blizzard', color: '#34495e', severity: 'Catastrophic' };
+                }
+                return { level: 'Severe Blizzard', color: '#5d6d7e', severity: 'Dangerous' };
+            } else if (windMph >= 25 && snowRate >= 0.5) {
+                return { level: 'Heavy Snow Storm', color: '#85929e', severity: 'Hazardous' };
+            } else if (snowRate >= 1) {
+                return { level: 'Snow Storm', color: '#aeb6bf', severity: 'Moderate' };
+            } else {
+                return { level: 'Light Snow', color: '#d5dbdb', severity: 'Minor' };
+            }
+        }
+
+        function getImpactDescription(severity, windChill, totalSnow) {
+            if (severity === 'Catastrophic') {
+                return 'Extreme blizzard conditions. Whiteout. Zero visibility. Travel impossible. Life-threatening cold and wind chills. Structures may collapse under snow load. Complete isolation possible. Power and heat outages likely for extended period.';
+            } else if (severity === 'Dangerous') {
+                return 'Severe blizzard conditions. Travel extremely dangerous to impossible. Whiteout conditions. Life-threatening cold. Power outages likely. Major transportation disruptions. Stay indoors.';
+            } else if (severity === 'Hazardous') {
+                return 'Heavy snow storm with strong winds. Travel very difficult and dangerous. Poor visibility. Significant snow accumulation. Power outages possible. Avoid unnecessary travel.';
+            } else if (severity === 'Moderate') {
+                return 'Snow storm with moderate accumulation. Travel difficult. Reduced visibility. Slippery roads. Allow extra time for travel. Use caution.';
+            } else {
+                return 'Light snow conditions. Minor travel impacts. Reduced visibility possible. Roads may become slippery. Drive carefully.';
+            }
+        }
+
+        function getWarningText(severity, windChill) {
+            if (severity === 'Catastrophic') {
+                return 'EXTREME BLIZZARD WARNING! LIFE-THREATENING CONDITIONS! DO NOT TRAVEL UNDER ANY CIRCUMSTANCES! Whiteout conditions. Deadly wind chills. Shelter in place. This is an emergency situation.';
+            } else if (severity === 'Dangerous') {
+                return 'BLIZZARD WARNING! Life-threatening conditions. DO NOT TRAVEL! Extremely dangerous wind chills. Whiteout conditions make travel impossible. Power outages may last days. Stay indoors and keep warm.';
+            } else if (severity === 'Hazardous') {
+                return 'WINTER STORM WARNING! Heavy snow and dangerous conditions. Travel not recommended. Dangerous wind chills. Stay off roads if possible. Prepare for power outages.';
+            } else if (severity === 'Moderate') {
+                return 'WINTER WEATHER ADVISORY: Snow storm in progress. Travel difficult. Use caution on roads. Dress warmly. Check on elderly neighbors.';
+            } else {
+                return 'WINTER WEATHER: Light snow expected. Use caution while driving. Roads may be slippery. Dress appropriately for cold weather.';
+            }
+        }
+
+        function updateSimulator() {
+            const windSpeed = parseInt(windSlider.value);
+            const snowRate = parseFloat(snowSlider.value);
+            const temperature = parseInt(tempSlider.value);
+            const duration = parseInt(durationSlider.value);
+            const visibility = parseInt(visibilitySlider.value);
+            
+            const windChill = calculateWindChill(temperature, windSpeed);
+            const totalSnow = (snowRate * duration).toFixed(1);
+            const blizzardInfo = getBlizzardSeverity(windSpeed, visibility, snowRate);
+            const damageDescription = getImpactDescription(blizzardInfo.severity, windChill, totalSnow);
+            const warningText = getWarningText(blizzardInfo.severity, windChill);
+
+            // Update Display
+            document.getElementById('severityRating').textContent = blizzardInfo.level;
+            document.getElementById('conditionsDisplay').textContent = blizzardInfo.severity + ' Winter Storm';
+            document.getElementById('visibilityInfo').textContent = `Visibility: ${visibility} feet`;
+            document.getElementById('blizzardDisplay').style.background = `linear-gradient(135deg, ${blizzardInfo.color} 0%, ${adjustColor(blizzardInfo.color, -20)} 100%)`;
+            
+            // Update Values
+            document.getElementById('windValue').textContent = `${windSpeed} mph`;
+            document.getElementById('windKmh').textContent = `${Math.round(windSpeed * 1.60934)} km/h`;
+            document.getElementById('snowValue').textContent = `${snowRate.toFixed(1)} in/hr`;
+            document.getElementById('snowCm').textContent = `${(snowRate * 2.54).toFixed(1)} cm/hr`;
+            document.getElementById('tempValue').textContent = `${temperature}°F`;
+            document.getElementById('tempCelsius').textContent = `${Math.round((temperature - 32) * 5/9)}°C`;
+            document.getElementById('durationValue').textContent = `${duration} hours`;
+            document.getElementById('totalSnow').textContent = `${totalSnow} inches total`;
+            document.getElementById('visibilityValue').textContent = `${visibility} feet`;
+            document.getElementById('visibilityMeters').textContent = `${Math.round(visibility * 0.3048)} meters`;
+
+            // Update Stats
+            document.getElementById('windChill').textContent = `${windChill}°F (${Math.round((windChill - 32) * 5/9)}°C)`;
+            
+            // Frostbite time based on wind chill
+            let frostbiteTime;
+            if (windChill > 0) frostbiteTime = '30+ minutes';
+            else if (windChill > -20) frostbiteTime = '10-30 minutes';
+            else if (windChill > -35) frostbiteTime = '5-10 minutes';
+            else if (windChill > -50) frostbiteTime = '2-5 minutes';
+            else frostbiteTime = '< 2 minutes';
+            document.getElementById('frostbite').textContent = frostbiteTime;
+            
+            // Snow drifts
+            const driftHeight = Math.min(Math.round(totalSnow * windSpeed / 20), 25);
+            document.getElementById('drifts').textContent = `${Math.round(driftHeight * 0.7)}-${driftHeight} feet`;
+            
+            // Road conditions
+            let roadCondition;
+            if (blizzardInfo.severity === 'Catastrophic') roadCondition = 'Impassable';
+            else if (blizzardInfo.severity === 'Dangerous') roadCondition = 'Impassable';
+            else if (blizzardInfo.severity === 'Hazardous') roadCondition = 'Very dangerous';
+            else if (blizzardInfo.severity === 'Moderate') roadCondition = 'Hazardous';
+            else roadCondition = 'Slippery';
+            document.getElementById('roads').textContent = roadCondition;
+
+            // Update damage and warning text
+            document.getElementById('damageText').textContent = damageDescription;
+            document.getElementById('warningText').textContent = warningText;
+        }
+
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        windSlider.addEventListener('input', updateSimulator);
+        snowSlider.addEventListener('input', updateSimulator);
+        tempSlider.addEventListener('input', updateSimulator);
+        durationSlider.addEventListener('input', updateSimulator);
+        visibilitySlider.addEventListener('input', updateSimulator);
+
+        // Initialize
+        updateSimulator();
+    </script>
+</body>
+</html>
