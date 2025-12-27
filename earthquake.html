@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earthquake Simulator</title>
     <link rel="stylesheet" href="shared.css">
-    <script src="translations/core.js"></script>
-    <script src="translations/static.js"></script>
-    <script src="translations/dynamic/earthquake.js"></script>
-    
-</head>
+            </head>
 <body class="earthquake-theme">
     <div class="container">
                 <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
@@ -131,32 +127,35 @@
         const durationSlider = document.getElementById('durationSlider');
         const underwaterCheck = document.getElementById('underwaterCheck');
 
+        
+        const earthquakeWarnings = {
+            "Micro": "Not felt by people. Only detected by instruments.",
+            "Minor": "Felt by people at rest, especially on upper floors. Hanging objects may swing.",
+            "Light": "Felt by most people indoors. Dishes and windows rattle. Parked cars rock slightly.",
+            "Moderate": "Felt by all. Many frightened. Some heavy furniture moved. Some plaster falls. Chimneys may be damaged.",
+            "Strong": "Everyone runs outdoors. Damage considerable in ordinary buildings. Ground cracks conspicuously.",
+            "Major": "Few structures remain standing. Bridges destroyed. Broad fissures in ground. Underground pipes destroyed.",
+            "Great": "Total damage. Waves seen on ground surface. Objects thrown into air. Massive destruction over large area.",
+            "Catastrophic": "Near-total destruction. Massive ground deformation. Changed course of rivers. Extreme devastation over vast area."
+        };
+        
+        const earthquakeIntensities = {
+            "Micro": "Not Felt",
+            "Minor": "Weak",
+            "Light": "Light",
+            "Moderate": "Moderate",
+            "Strong": "Strong",
+            "Major": "Very Strong",
+            "Great": "Severe",
+            "Catastrophic": "Extreme"
+        };
+
         function getEarthquakeWarning(type) {
-            const warnings = {
-                "Micro": getDynamicTranslation("earthquake", "warnings", "Not Felt"),
-                "Minor": getDynamicTranslation("earthquake", "warnings", "Weak"),
-                "Light": getDynamicTranslation("earthquake", "warnings", "Light"),
-                "Moderate": getDynamicTranslation("earthquake", "warnings", "Moderate"),
-                "Strong": getDynamicTranslation("earthquake", "warnings", "Strong"),
-                "Major": getDynamicTranslation("earthquake", "warnings", "Very Strong"),
-                "Great": getDynamicTranslation("earthquake", "warnings", "Severe"),
-                "Catastrophic": getDynamicTranslation("earthquake", "warnings", "Extreme")
-            };
-            return warnings[type] || warnings["Micro"];
+            return earthquakeWarnings[type] || earthquakeWarnings["Micro"];
         }
 
         function getEarthquakeIntensity(type) {
-            const intensities = {
-                "Micro": getDynamicTranslation("earthquake", "intensities", "Not Felt"),
-                "Minor": getDynamicTranslation("earthquake", "intensities", "Weak"),
-                "Light": getDynamicTranslation("earthquake", "intensities", "Light"),
-                "Moderate": getDynamicTranslation("earthquake", "intensities", "Moderate"),
-                "Strong": getDynamicTranslation("earthquake", "intensities", "Strong"),
-                "Major": getDynamicTranslation("earthquake", "intensities", "Very Strong"),
-                "Great": getDynamicTranslation("earthquake", "intensities", "Severe"),
-                "Catastrophic": getDynamicTranslation("earthquake", "intensities", "Extreme")
-            };
-            return intensities[type] || type;
+            return earthquakeIntensities[type] || type;
         }
 
         function checkTsunamiRisk(magnitude, depth, underwater) {
@@ -365,10 +364,10 @@
             // Update tsunami warning - only show if there's actual risk
             const tsunamiWarningEl = document.getElementById('tsunamiWarning');
             if (tsunamiRisk.risk) {
-                tsunamiWarningEl.classList.add('active');
+                tsunamiWarningEl.classList.add('show');
                 document.getElementById('tsunamiText').textContent = tsunamiRisk.message;
             } else {
-                tsunamiWarningEl.classList.remove('active');
+                tsunamiWarningEl.classList.remove('show');
             }
             
             // Update warning based on magnitude and tsunami risk
@@ -401,53 +400,7 @@
         
         
     
-        // Language change function
-        function changeLanguage(lang) {
-            setLanguage(lang);
-            loadTranslations();
-            updateEarthquakeSimulator(); // Update dynamic content too
-        }
-
-        // Load translations function
-        function loadTranslations() {
-            const lang = getLanguage();
-            
-            // Set language selector value
-            // Update page title
-            document.title = getTranslation('earthquake.title');
-            
-            // Translate static UI elements
-            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '🌎 ' + getTranslation('earthquake.title');
-            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
-            
-            // Translate specific labels
-            document.getElementById('magnitudeLabel').textContent = getTranslation('earthquake.magnitude');
-            document.getElementById('depthLabel').textContent = getTranslation('earthquake.depth');
-            document.getElementById('distanceLabel').textContent = getTranslation('earthquake.distance');
-            document.getElementById('durationLabel').textContent = getTranslation('earthquake.duration');
-            document.getElementById('underwaterLabel').textContent = getTranslation('earthquake.underwater');
-            document.getElementById('damageTitle').textContent = getTranslation('common.expectedEffects');
-            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
-            // Translate title elements that were missing
-            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
-            const tsunamiTitle = document.getElementById('tsunamiTitle');
-            if (tsunamiTitle) tsunamiTitle.textContent = '🌊 ' + getTranslation('common.tsunamiRisk');
-            
-            // Translate stat labels
-            document.getElementById('mercalliLabel').textContent = getTranslation('earthquake.mercalliIntensity');
-            document.getElementById('feltRadiusLabel').textContent = getTranslation('earthquake.feltRadius');
-            document.getElementById('peakAccelLabel').textContent = getTranslation('earthquake.peakGroundAccel');
-            document.getElementById('aftershockLabel').textContent = getTranslation('earthquake.aftershockEstimate');
-            document.getElementById('ruptureLengthLabel').textContent = getTranslation('earthquake.ruptureLength');
-            document.getElementById('tntEquivLabel').textContent = getTranslation('earthquake.tntEquivalent');
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadTranslations();
-            updateEarthquakeSimulator();
-        });
+                        
 </script>
 </body>
 </html>

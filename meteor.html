@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meteor Impact Simulator</title>
     <link rel="stylesheet" href="shared.css">
-    <script src="translations/core.js"></script>
-    <script src="translations/static.js"></script>
-    <script src="translations/dynamic/meteor.js"></script>
-    
-</head>
+            </head>
 <body class="meteor-theme">
     <div class="container">
                 <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
@@ -122,7 +118,49 @@
     </div>
 
     <script>
-        const impactCategories = [
+        
+        const meteorImpactDescriptions = {
+            "Small": "Small localized impact. Minimal damage. Airburst likely. Comparable to small conventional explosions.",
+            "Moderate": "Moderate local damage. Buildings damaged in immediate area. Comparable to Chelyabinsk 2013 event.",
+            "Large": "Large regional impact. Significant destruction. Crater formation likely. Widespread damage over several kilometers.",
+            "Very Large": "Major regional catastrophe. Massive crater. Extreme destruction over large area. Regional climate effects possible.",
+            "Devastating": "Continental-scale disaster. Enormous crater. Total devastation over vast area. Significant global climate impact.",
+            "Catastrophic": "Global catastrophe. Impact winter likely. Mass extinction event. Civilization-threatening."
+        };
+        
+        const meteorWarnings = {
+            "Small": "IMPACT ALERT: Small meteor impact. Seek shelter indoors. Avoid windows. Impact will cause localized damage and possible injuries from flying debris.",
+            "Moderate": "DANGEROUS IMPACT! Moderate-sized meteor. TAKE COVER IMMEDIATELY! Significant blast wave and debris. Stay away from windows. Expect structural damage in impact area.",
+            "Large": "MAJOR IMPACT WARNING! Large meteor impact imminent. EVACUATE IMPACT ZONE! Catastrophic damage expected. Massive blast wave. Regional emergency.",
+            "Very Large": "CATASTROPHIC IMPACT! Very large meteor. MASS EVACUATION REQUIRED! Total destruction in impact zone. Global atmospheric effects expected. This is a regional disaster.",
+            "Devastating": "EXTINCTION-LEVEL THREAT! Devastating impact. CONTINENTAL EMERGENCY! Complete annihilation of impact region. Global climate catastrophe. Civilization-scale disaster.",
+            "Catastrophic": "GLOBAL CATASTROPHE! Catastrophic meteor impact. SPECIES-LEVEL EXTINCTION EVENT! Impact winter. Mass extinction in progress. This is the most severe impact scenario possible."
+        };
+
+        const meteorThreats = {
+            "Negligible": "Negligible",
+            "Very Low": "Very Low",
+            "Low": "Low",
+            "Moderate": "Moderate",
+            "High": "High",
+            "Very High": "Very High",
+            "Extreme": "Extreme",
+            "Catastrophic": "Catastrophic"
+        };
+        
+        const meteorWarningLevels = {
+            "Negligible": "MINOR IMPACT: Very small meteor. Minimal hazard. May produce visible fireball but little to no ground damage.",
+            "Very Low": "SMALL IMPACT: Small meteor impact. Localized damage possible. Airburst likely. Stay indoors during impact.",
+            "Low": "IMPACT ALERT: Meteor impact. Seek shelter. Localized damage expected. Avoid impact area.",
+            "Moderate": "DANGEROUS IMPACT: Moderate meteor. Take cover immediately. Significant blast wave. Regional alert.",
+            "High": "MAJOR IMPACT: Large meteor. Evacuate impact zone. Catastrophic local damage. Emergency response required.",
+            "Very High": "CATASTROPHIC IMPACT: Very large meteor. Mass evacuation. Continental emergency. Global effects possible.",
+            "Extreme": "EXTINCTION-LEVEL IMPACT: Devastating meteor. Global catastrophe. Impact winter expected.",
+            "Catastrophic": "GLOBAL EXTINCTION EVENT: Catastrophic impact. Species-level threat. Mass extinction in progress."
+        };
+
+
+const impactCategories = [
             { min: 0, max: 1, category: 'Negligible', color: '#3498db', effects: 'Meteor burns up in atmosphere. Bright fireball visible. No ground damage. May produce meteorites.' },
             { min: 1, max: 10, category: 'Minor', color: '#2ecc71', effects: 'Small airburst. Loud sonic boom. Broken windows possible. Minor injuries from glass. Small meteorite fragments.' },
             { min: 10, max: 100, category: 'Local Event', color: '#f39c12', effects: 'Significant airburst. Moderate damage to structures. Trees flattened over small area. Casualties possible.' },
@@ -255,21 +293,21 @@
             let baseWarning = '';
             
             if (energy < 1) {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'Negligible');
+                baseWarning = meteorWarningLevels['Negligible'];
             } else if (energy < 10) {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'Very Low');
+                baseWarning = meteorWarningLevels['Very Low'];
             } else if (energy < 100) {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'Low');
+                baseWarning = meteorWarningLevels['Low'];
             } else if (energy < 1000) {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'Moderate');
+                baseWarning = meteorWarningLevels['Moderate'];
             } else if (energy < 100000) {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'High');
+                baseWarning = meteorWarningLevels['High'];
             } else if (energy < 1000000) {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'Very High');
+                baseWarning = meteorWarningLevels['Very High'];
             } else if (energy < 10000000) {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'Extreme');
+                baseWarning = meteorWarningLevels['Extreme'];
             } else {
-                baseWarning = getDynamicTranslation('meteor', 'warnings', 'Catastrophic');
+                baseWarning = meteorWarningLevels['Catastrophic'];
             }
 
             // Add tsunami warning if there's risk
@@ -281,14 +319,14 @@
         }
 
         function getMeteorThreatLevel(energy) {
-            if (energy < 1) return getDynamicTranslation('meteor', 'threats', 'Negligible');
-            else if (energy < 10) return getDynamicTranslation('meteor', 'threats', 'Very Low');
-            else if (energy < 100) return getDynamicTranslation('meteor', 'threats', 'Low');
-            else if (energy < 1000) return getDynamicTranslation('meteor', 'threats', 'Moderate');
-            else if (energy < 100000) return getDynamicTranslation('meteor', 'threats', 'High');
-            else if (energy < 1000000) return getDynamicTranslation('meteor', 'threats', 'Very High');
-            else if (energy < 10000000) return getDynamicTranslation('meteor', 'threats', 'Extreme');
-            else return getDynamicTranslation('meteor', 'threats', 'Catastrophic');
+            if (energy < 1) return meteorThreats['Negligible'];
+            else if (energy < 10) return meteorThreats['Very Low'];
+            else if (energy < 100) return meteorThreats['Low'];
+            else if (energy < 1000) return meteorThreats['Moderate'];
+            else if (energy < 100000) return meteorThreats['High'];
+            else if (energy < 1000000) return meteorThreats['Very High'];
+            else if (energy < 10000000) return meteorThreats['Extreme'];
+            else return meteorThreats['Catastrophic'];
         }
 
         function updateSimulator() {
@@ -355,10 +393,10 @@
             // Update tsunami warning display
             const tsunamiWarningEl = document.getElementById('tsunamiWarning');
             if (tsunamiRisk.risk) {
-                tsunamiWarningEl.classList.add('active');
+                tsunamiWarningEl.classList.add('show');
                 document.getElementById('tsunamiText').textContent = tsunamiRisk.message;
             } else {
-                tsunamiWarningEl.classList.remove('active');
+                tsunamiWarningEl.classList.remove('show');
             }
             
             document.getElementById('warningText').textContent = getImpactWarning(category.category, energy, tsunamiRisk);
@@ -402,70 +440,10 @@
         // Initialize
         
         // Load translations
-        window.addEventListener('DOMContentLoaded', () => {
-            document.title = getTranslation('meteor.title');
-            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '☄️ ' + getTranslation('meteor.title');
-            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
-            document.getElementById('diameterLabel').textContent = getTranslation('meteor.diameter');
-            document.getElementById('velocityLabel').textContent = getTranslation('meteor.velocity');
-            document.getElementById('angleLabel').textContent = getTranslation('meteor.angle');
-            document.getElementById('densityLabel').textContent = getTranslation('meteor.density');
-            document.getElementById('altitudeLabel').textContent = getTranslation('meteor.altitude');
-            document.getElementById('waterImpactLabel').textContent = getTranslation('meteor.waterImpact');
-            document.getElementById('effectsTitle').textContent = getTranslation('common.impactEffects');
-            document.getElementById('assessmentTitle').textContent = '⚠️ ' + getTranslation('common.threatAssessment');
-            const tsunamiTitle = document.getElementById('tsunamiTitle');
-            if (tsunamiTitle) tsunamiTitle.textContent = '🌊 ' + getTranslation('common.tsunamiRisk');
-        });
         updateSimulator();
         
     
-        // Language change function
-        function changeLanguage(lang) {
-            setLanguage(lang);
-            loadTranslations();
-            updateMeteorSimulator(); // Update dynamic content too
-        }
-
-        // Load translations function
-        function loadTranslations() {
-            const lang = getLanguage();
-            
-            // Set language selector value
-            // Update page title
-            document.title = getTranslation('meteor.title');
-            
-            // Translate static UI elements
-            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '☄️ ' + getTranslation('meteor.title');
-            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
-            
-            // Translate specific labels
-            document.getElementById('diameterLabel').textContent = getTranslation('meteor.diameter');
-            document.getElementById('velocityLabel').textContent = getTranslation('meteor.velocity');
-            document.getElementById('angleLabel').textContent = getTranslation('meteor.angle');
-            document.getElementById('densityLabel').textContent = getTranslation('meteor.density');
-            document.getElementById('altitudeLabel').textContent = getTranslation('meteor.altitude');
-            document.getElementById('impactTitle').textContent = getTranslation('common.impactEffects');
-            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.threatAssessment');
-            // Translate title elements
-            document.getElementById('effectsTitle').textContent = getTranslation('common.impactEffects');
-            const tsunamiTitle = document.getElementById('tsunamiTitle');
-            if (tsunamiTitle) tsunamiTitle.textContent = '🌊 ' + getTranslation('common.tsunamiRisk');
-            
-            // Translate stat labels
-            document.getElementById('kineticEnergyLabel').textContent = getTranslation('meteor.kineticEnergy');
-            document.getElementById('fireballLabel').textContent = getTranslation('meteor.fireballRadius');
-            document.getElementById('shockwaveLabel').textContent = getTranslation('meteor.shockwaveRadius');
-            document.getElementById('thermalLabel').textContent = getTranslation('meteor.thermalRadiation');
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadTranslations();
-            updateMeteorSimulator();
-        });
+                        
 </script>
 </body>
 </html>

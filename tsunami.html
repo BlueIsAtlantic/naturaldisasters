@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tsunami Simulator</title>
     <link rel="stylesheet" href="shared.css">
-    <script src="translations/core.js"></script>
-    <script src="translations/static.js"></script>
-    <script src="translations/dynamic/tsunami.js"></script>
-    
-</head>
+            </head>
 <body class="tsunami-theme">
     <div class="container">
                 <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
@@ -198,21 +194,21 @@
         }
 
         function getWarningLevel(coastalHeight) {
-            if (coastalHeight < 1) return getDynamicTranslation('tsunami', 'warnings', 'No Threat');
-            if (coastalHeight < 3) return getDynamicTranslation('tsunami', 'warnings', 'Minor');
-            if (coastalHeight < 6) return getDynamicTranslation('tsunami', 'warnings', 'Moderate');
-            if (coastalHeight < 10) return getDynamicTranslation('tsunami', 'warnings', 'Major');
-            if (coastalHeight < 15) return getDynamicTranslation('tsunami', 'warnings', 'Severe');
-            return getDynamicTranslation('tsunami', 'warnings', 'Catastrophic');
+            if (coastalHeight < 1) return tsunamiWarnings['No Threat'];
+            if (coastalHeight < 3) return tsunamiWarnings['Minor'];
+            if (coastalHeight < 6) return tsunamiWarnings['Moderate'];
+            if (coastalHeight < 10) return tsunamiWarnings['Major'];
+            if (coastalHeight < 15) return tsunamiWarnings['Severe'];
+            return tsunamiWarnings['Catastrophic'];
         }
 
         function getThreatCategory(coastalHeight) {
-            if (coastalHeight < 1) return getDynamicTranslation('tsunami', 'categories', 'No Threat');
-            if (coastalHeight < 3) return getDynamicTranslation('tsunami', 'categories', 'Minor');
-            if (coastalHeight < 6) return getDynamicTranslation('tsunami', 'categories', 'Moderate');
-            if (coastalHeight < 10) return getDynamicTranslation('tsunami', 'categories', 'Major');
-            if (coastalHeight < 15) return getDynamicTranslation('tsunami', 'categories', 'Severe');
-            return getDynamicTranslation('tsunami', 'categories', 'Catastrophic');
+            if (coastalHeight < 1) return tsunamiCategories['No Threat'];
+            if (coastalHeight < 3) return tsunamiCategories['Minor'];
+            if (coastalHeight < 6) return tsunamiCategories['Moderate'];
+            if (coastalHeight < 10) return tsunamiCategories['Major'];
+            if (coastalHeight < 15) return tsunamiCategories['Severe'];
+            return tsunamiCategories['Catastrophic'];
         }
 
         function updateSimulator() {
@@ -281,77 +277,10 @@
         // Initialize
         
         // Load translations
-        window.addEventListener('DOMContentLoaded', () => {
-            document.title = getTranslation('tsunami.title');
-            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '🌊 ' + getTranslation('tsunami.title');
-            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
-            document.getElementById('magnitudeLabel').textContent = getTranslation('tsunami.magnitude');
-            document.getElementById('waterDepthLabel').textContent = getTranslation('tsunami.waterDepth');
-            document.getElementById('distanceLabel').textContent = getTranslation('tsunami.distance');
-            document.getElementById('slopeLabel').textContent = getTranslation('tsunami.slope');
-            document.getElementById('elevationLabel').textContent = getTranslation('tsunami.elevation');
-            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
-            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
-            // Translate title elements
-            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
-            
-            // Translate stat labels
-            document.getElementById('wavePeriodLabel').textContent = getTranslation('tsunami.wavePeriod');
-            document.getElementById('waveSpeedLabel').textContent = getTranslation('tsunami.waveSpeed');
-            document.getElementById('arrivalTimeLabel').textContent = getTranslation('tsunami.arrivalTime');
-            document.getElementById('runupHeightLabel').textContent = getTranslation('tsunami.runupHeight');
-            document.getElementById('inundationLabel').textContent = getTranslation('tsunami.inundationDistance');
-            document.getElementById('impactForceLabel').textContent = getTranslation('tsunami.impactForce');
-        });
-        updateSimulator();
+                updateSimulator();
         
     
-        // Language change function
-        function changeLanguage(lang) {
-            setLanguage(lang);
-            loadTranslations();
-            updateTsunamiSimulator(); // Update dynamic content too
-        }
-
-        // Load translations function
-        function loadTranslations() {
-            const lang = getLanguage();
-            
-            // Set language selector value
-            // Update page title
-            document.title = getTranslation('tsunami.title');
-            
-            // Translate static UI elements
-            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '🌊 ' + getTranslation('tsunami.title');
-            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
-            
-            // Translate specific labels
-            document.getElementById('magnitudeLabel').textContent = getTranslation('tsunami.magnitude');
-            document.getElementById('waterDepthLabel').textContent = getTranslation('tsunami.waterDepth');
-            document.getElementById('distanceLabel').textContent = getTranslation('tsunami.distance');
-            document.getElementById('slopeLabel').textContent = getTranslation('tsunami.slope');
-            document.getElementById('elevationLabel').textContent = getTranslation('tsunami.elevation');
-            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
-            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
-            // Translate title elements
-            document.getElementById('effectsTitle').textContent = getTranslation('common.expectedEffects');
-            
-            // Translate stat labels
-            document.getElementById('wavePeriodLabel').textContent = getTranslation('tsunami.wavePeriod');
-            document.getElementById('waveSpeedLabel').textContent = getTranslation('tsunami.waveSpeed');
-            document.getElementById('arrivalTimeLabel').textContent = getTranslation('tsunami.arrivalTime');
-            document.getElementById('runupHeightLabel').textContent = getTranslation('tsunami.runupHeight');
-            document.getElementById('inundationLabel').textContent = getTranslation('tsunami.inundationDistance');
-            document.getElementById('impactForceLabel').textContent = getTranslation('tsunami.impactForce');
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadTranslations();
-            updateTsunamiSimulator();
-        });
+                        
 </script>
 </body>
 </html>
