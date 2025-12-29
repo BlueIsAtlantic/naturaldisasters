@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landslide Simulator</title>
     <link rel="stylesheet" href="shared.css">
-    <script src="translations/core.js"></script>
-    <script src="translations/static.js"></script>
-    <script src="translations/dynamic/landslide.js"></script>
-    
-</head>
+            </head>
 <body class="landslide-theme">
     <div class="container">
                 <a href="index.html" class="back-button" id="backButton">← Back to Home</a>
@@ -139,20 +135,20 @@
             
             let risk = 0;
             
-            // Slope factor (0-30 points)
-            risk += (slope / 60) * 30;
+            // Slope factor (0-35 points) - increased from 30
+            risk += (slope / 60) * 35;
             
-            // Saturation factor (0-25 points)
-            risk += (saturation / 100) * 25;
+            // Saturation factor (0-30 points) - increased from 25
+            risk += (saturation / 100) * 30;
             
-            // Rainfall factor (0-20 points)
-            risk += (rainfall / 500) * 20;
+            // Rainfall factor (0-25 points) - increased from 20
+            risk += (rainfall / 500) * 25;
             
-            // Cohesion factor (reduces risk, -15 to 0 points)
-            risk -= (cohesion / 100) * 15;
+            // Cohesion factor (reduces risk, -10 to 0 points) - reduced from -15
+            risk -= (cohesion / 100) * 10;
             
-            // Vegetation factor (reduces risk, -10 to 0 points)
-            risk -= (vegetation / 100) * 10;
+            // Vegetation factor (reduces risk, -5 to 0 points) - reduced from -10
+            risk -= (vegetation / 100) * 5;
             
             return Math.max(0, Math.min(100, risk));
         }
@@ -230,29 +226,57 @@
             return '<2 min';
         }
 
+        
+        const landslideWarnings = {
+            "Very Low": "VERY LOW LANDSLIDE RISK: Stable slope conditions. No immediate concerns.",
+            "Low": "LOW LANDSLIDE RISK: Stable conditions. Normal precautions.",
+            "Moderate": "MODERATE LANDSLIDE RISK: Monitor conditions. Be alert for signs of slope movement.",
+            "High": "HIGH LANDSLIDE RISK! Evacuate if cracks appear. Avoid steep slopes. Heavy rain increases risk.",
+            "Very High": "VERY HIGH LANDSLIDE RISK! EVACUATE RISK AREAS! Slope failure likely. This is dangerous!",
+            "Extreme": "EXTREME LANDSLIDE DANGER! EVACUATE IMMEDIATELY! Catastrophic slope failure imminent. Life-threatening situation!"
+        };
+        
+        
+        const landslideRisks = {
+            "Very Low": "Very Low Risk",
+            "Low": "Low Risk",
+            "Moderate": "Moderate Risk",
+            "High": "High Risk",
+            "Very High": "Very High Risk",
+            "Extreme": "Extreme Risk"
+        };
+
+        const landslideCategories = {
+            "Low": "Low Risk",
+            "Moderate": "Moderate Risk",
+            "High": "High Risk",
+            "Very High": "Very High Risk",
+            "Extreme": "Extreme Risk"
+        };
+
         function getLandslideWarning(category, riskScore) {
             if (riskScore < 20) {
-                return getDynamicTranslation('landslide', 'warnings', 'Very Low');
+                return landslideWarnings['Very Low'];
             } else if (riskScore < 40) {
-                return getDynamicTranslation('landslide', 'warnings', 'Low');
+                return landslideWarnings['Low'];
             } else if (riskScore < 60) {
-                return getDynamicTranslation('landslide', 'warnings', 'Moderate');
+                return landslideWarnings['Moderate'];
             } else if (riskScore < 80) {
-                return getDynamicTranslation('landslide', 'warnings', 'High');
+                return landslideWarnings['High'];
             } else if (riskScore < 90) {
-                return getDynamicTranslation('landslide', 'warnings', 'Very High');
+                return landslideWarnings['Very High'];
             } else {
-                return getDynamicTranslation('landslide', 'warnings', 'Extreme');
+                return landslideWarnings['Extreme'];
             }
         }
 
         function getLandslideRiskLevel(riskScore) {
-            if (riskScore < 20) return getDynamicTranslation('landslide', 'risks', 'Very Low');
-            else if (riskScore < 40) return getDynamicTranslation('landslide', 'risks', 'Low');
-            else if (riskScore < 60) return getDynamicTranslation('landslide', 'risks', 'Moderate');
-            else if (riskScore < 80) return getDynamicTranslation('landslide', 'risks', 'High');
-            else if (riskScore < 90) return getDynamicTranslation('landslide', 'risks', 'Very High');
-            else return getDynamicTranslation('landslide', 'risks', 'Extreme');
+            if (riskScore < 20) return landslideRisks['Very Low'];
+            else if (riskScore < 40) return landslideRisks['Low'];
+            else if (riskScore < 60) return landslideRisks['Moderate'];
+            else if (riskScore < 80) return landslideRisks['High'];
+            else if (riskScore < 90) return landslideRisks['Very High'];
+            else return landslideRisks['Extreme'];
         }
 
         function updateSimulator() {
@@ -317,73 +341,10 @@
         // Initialize
         
         // Load translations
-        window.addEventListener('DOMContentLoaded', () => {
-            document.title = getTranslation('landslide.title');
-            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '⛰️ ' + getTranslation('landslide.title');
-            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
-            document.getElementById('slopeLabel').textContent = getTranslation('landslide.slope');
-            document.getElementById('saturationLabel').textContent = getTranslation('landslide.saturation');
-            document.getElementById('rainfallLabel').textContent = getTranslation('landslide.rainfall');
-            document.getElementById('cohesionLabel').textContent = getTranslation('landslide.cohesion');
-            document.getElementById('vegetationLabel').textContent = getTranslation('landslide.vegetation');
-            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
-            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
-            // Translate title elements
-            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
-            
-            // Translate stat labels
-            document.getElementById('safetyFactorLabel').textContent = getTranslation('landslide.safetyFactor');
-            document.getElementById('velocityLabel').textContent = getTranslation('landslide.slideVelocity');
-            document.getElementById('runoutLabel').textContent = getTranslation('landslide.runoutDistance');
-            document.getElementById('volumeLabel').textContent = getTranslation('landslide.debrisVolume');
-        });
-        updateSimulator();
+                updateSimulator();
         
     
-        // Language change function
-        function changeLanguage(lang) {
-            setLanguage(lang);
-            loadTranslations();
-            updateLandslideSimulator(); // Update dynamic content too
-        }
-
-        // Load translations function
-        function loadTranslations() {
-            const lang = getLanguage();
-            
-            // Set language selector value
-            // Update page title
-            document.title = getTranslation('landslide.title');
-            
-            // Translate static UI elements
-            document.getElementById('backButton').textContent = '← ' + getTranslation('common.backButton');
-            document.getElementById('pageTitle').textContent = '🏔️ ' + getTranslation('landslide.title');
-            document.getElementById('parametersTitle').textContent = getTranslation('common.parameters');
-            
-            // Translate specific labels
-            document.getElementById('slopeLabel').textContent = getTranslation('landslide.slope');
-            document.getElementById('saturationLabel').textContent = getTranslation('landslide.saturation');
-            document.getElementById('rainfallLabel').textContent = getTranslation('landslide.rainfall');
-            document.getElementById('cohesionLabel').textContent = getTranslation('landslide.cohesion');
-            document.getElementById('vegetationLabel').textContent = getTranslation('landslide.vegetation');
-            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
-            document.getElementById('warningTitle').textContent = '⚠️ ' + getTranslation('common.safetyWarning');
-            // Translate title elements
-            document.getElementById('characteristicsTitle').textContent = getTranslation('common.landslideCharacteristics');
-            
-            // Translate stat labels
-            document.getElementById('safetyFactorLabel').textContent = getTranslation('landslide.safetyFactor');
-            document.getElementById('velocityLabel').textContent = getTranslation('landslide.slideVelocity');
-            document.getElementById('runoutLabel').textContent = getTranslation('landslide.runoutDistance');
-            document.getElementById('volumeLabel').textContent = getTranslation('landslide.debrisVolume');
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadTranslations();
-            updateLandslideSimulator();
-        });
+                        
 </script>
 </body>
 </html>
